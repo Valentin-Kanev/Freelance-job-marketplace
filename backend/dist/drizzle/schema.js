@@ -1,8 +1,60 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Review = exports.Application = exports.Job = exports.Profile = exports.User = exports.UserRole = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
-exports.User = (0, pg_core_1.pgTable)("user", {
+// Enum for user roles
+exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["FREELANCER", "CLIENT"]);
+// Users table
+exports.User = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
-    name: (0, pg_core_1.varchar)("name", { length: 100 }).notNull(),
+    username: (0, pg_core_1.varchar)("username", { length: 100 }).notNull().unique(),
+    password: (0, pg_core_1.varchar)("password", { length: 150 }).notNull(),
+    email: (0, pg_core_1.varchar)("email", { length: 255 }).notNull().unique(),
+    user_type: (0, exports.UserRole)("user_type").notNull(),
+});
+// Profiles table
+exports.Profile = (0, pg_core_1.pgTable)("profiles", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    user_id: (0, pg_core_1.uuid)("user_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    skills: (0, pg_core_1.varchar)("skills", { length: 255 }).notNull(),
+    description: (0, pg_core_1.text)("description").notNull(),
+    hourly_rate: (0, pg_core_1.numeric)("hourly_rate", { precision: 10, scale: 2 }).notNull(),
+});
+// Jobs table
+exports.Job = (0, pg_core_1.pgTable)("jobs", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    client_id: (0, pg_core_1.uuid)("client_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    title: (0, pg_core_1.varchar)("title", { length: 150 }).notNull(),
+    description: (0, pg_core_1.text)("description").notNull(),
+    budget: (0, pg_core_1.numeric)("budget", { precision: 12, scale: 2 }).notNull(),
+    deadline: (0, pg_core_1.timestamp)("deadline").notNull(),
+});
+// Applications table
+exports.Application = (0, pg_core_1.pgTable)("applications", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    job_id: (0, pg_core_1.uuid)("job_id")
+        .references(() => exports.Job.id)
+        .notNull(),
+    freelancer_id: (0, pg_core_1.uuid)("freelancer_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    cover_letter: (0, pg_core_1.text)("cover_letter").notNull(),
+    timestamp: (0, pg_core_1.timestamp)("timestamp").defaultNow().notNull(),
+});
+// Reviews table
+exports.Review = (0, pg_core_1.pgTable)("reviews", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    freelancer_id: (0, pg_core_1.uuid)("freelancer_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    client_id: (0, pg_core_1.uuid)("client_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    rating: (0, pg_core_1.integer)("rating").notNull(),
+    review_text: (0, pg_core_1.text)("review_text").notNull(),
+    timestamp: (0, pg_core_1.timestamp)("timestamp").defaultNow().notNull(),
 });
