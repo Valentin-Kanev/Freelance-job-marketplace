@@ -1,6 +1,6 @@
 export interface Profile {
-  profileId: number;
-  userId: number;
+  profileId: string; // UUID as string
+  userId: string; // UUID as string
   skills: string;
   description: string;
   hourlyRate: number;
@@ -8,19 +8,19 @@ export interface Profile {
 }
 
 interface CreateProfileData {
-  user_id: number;
+  userId: string; // UUID as string
   skills: string;
   description: string;
-  hourly_rate: number;
+  hourlyRate: number;
 }
 
 interface UpdateProfileData {
-  skills: string;
-  description: string;
-  hourly_rate: number;
+  skills?: string;
+  description?: string;
+  hourlyRate?: number;
 }
 
-const BASE_URL = "/profile";
+const BASE_URL = "http://localhost:3001"; // Full backend URL
 
 const fetchClient = async <T>(
   url: string,
@@ -35,16 +35,51 @@ const fetchClient = async <T>(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData?.message || "Something went wrong");
+    let errorMessage = "Something went wrong";
+
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const errorData = await response.json();
+      errorMessage = errorData?.message || errorMessage;
+    } else {
+      errorMessage = `Error ${response.status}: ${response.statusText}`;
+    }
+
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 
 // Fetch all profiles
 export const fetchProfiles = async (): Promise<Profile[]> => {
   return fetchClient<Profile[]>("/profiles");
+};
+
+// Ensure the userId is correctly set and passed
+export const fetchUserProfile = async (userId: string) => {
+  const token = localStorage.getItem("token"); // Get the token from localStorage
+
+  if (!token) {
+    throw new Error("No token provided. Please log in.");
+  }
+
+  const response = await fetch(
+    `http://localhost:3001/profiles/user/${userId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the request
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.statusText}`);
+  }
+
+  return await response.json();
 };
 
 // Create a new profile
@@ -57,15 +92,22 @@ export const createProfile = async (
   });
 };
 
-// Update an existing profile by ID
-// src/api/profileService.ts
-
+// Update an existing profile by ID (id is now a string, not a number)
 export const updateProfile = async (
-  id: number,
+  profileId: string, // Use profileId instead of userId
   data: UpdateProfileData
 ): Promise<Profile> => {
-  return fetchClient<Profile>(`/profiles/${id}`, {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("No token provided. Please log in.");
+  }
+
+  return fetchClient<Profile>(`/profiles/user/${profileId}`, {
     method: "PUT",
     body: JSON.stringify(data),
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };

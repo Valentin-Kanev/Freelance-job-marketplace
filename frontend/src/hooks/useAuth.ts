@@ -1,6 +1,32 @@
 // src/hooks/useAuth.ts
-import { useMutation } from "react-query";
-import { registerUser, loginUser, User } from "../api/userManagmentApi";
+import { jwtDecode } from "jwt-decode";
+import { useMutation, useQuery } from "react-query";
+import { registerUser, loginUser, User } from "../api/userAuthenticationApi";
+
+export const isTokenValid = (token: string): boolean => {
+  try {
+    const decoded: any = (jwtDecode as any)(token);
+    return decoded.exp * 1000 > Date.now(); // exp is in seconds
+  } catch (e) {
+    return false; // Invalid token or decoding error
+  }
+};
+
+export const useAuthUser = () => {
+  return useQuery<{ id: string; userType: string } | null, Error>(
+    "authUser",
+    () => {
+      const token = localStorage.getItem("token");
+      if (token && isTokenValid(token)) {
+        const decoded: any = jwtDecode(token);
+        return { id: decoded.id, userType: decoded.user_type };
+      } else {
+        localStorage.removeItem("token");
+        return null;
+      }
+    }
+  );
+};
 
 // Register Hook
 export const useRegisterUser = () => {
@@ -18,17 +44,24 @@ export const useRegisterUser = () => {
 };
 
 // Login Hook
+// useLoginUser in useAuth.ts
 export const useLoginUser = () => {
-  return useMutation<{ token: string }, Error, Parameters<typeof loginUser>[0]>(
-    loginUser,
-    {
-      onSuccess: (data) => {
+  return useMutation<
+    { token: string; userId: string },
+    Error,
+    Parameters<typeof loginUser>[0]
+  >(loginUser, {
+    onSuccess: (data) => {
+      if (data.token) {
         localStorage.setItem("token", data.token);
-        console.log("Login successful:", data.token);
-      },
-      onError: (error: Error) => {
-        console.error("Error logging in:", error.message);
-      },
-    }
-  );
+        localStorage.setItem("userId", data.userId);
+        console.log("Login successful:", data.token, data.userId);
+      } else {
+        console.error("No token returned from login");
+      }
+    },
+    onError: (error: Error) => {
+      console.error("Error logging in:", error.message);
+    },
+  });
 };

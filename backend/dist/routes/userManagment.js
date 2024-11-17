@@ -58,13 +58,23 @@ const db = (0, node_postgres_1.drizzle)(pool);
 // POST /register
 router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email, user_type } = req.body;
-    // Validate input
     if (!username || !password || !email || !user_type) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
-        // Insert new user into the database
-        const user = yield db
+        // Check if the username or email already exists
+        const existingUsers = yield db
+            .select()
+            .from(schema_1.User)
+            .where((0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.username, username), (0, expressions_1.eq)(schema_1.User.email, email)))
+            .execute();
+        if (existingUsers.length > 0) {
+            return res
+                .status(400)
+                .json({ message: "Username or email already exists" });
+        }
+        // If not, proceed to insert a new user
+        const newUser = yield db
             .insert(schema_1.User)
             .values({
             username,
@@ -73,13 +83,20 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
             user_type,
         })
             .returning();
-        res.status(201).json({ message: "User registered successfully", user });
+        // Automatically create a blank profile for the new user
+        yield db.insert(schema_1.Profile).values({
+            user_id: newUser[0].id, // Use the newly created user's ID
+            skills: "",
+            description: "",
+            hourly_rate: "0.00", // Set default hourly rate to 0.00
+        });
+        res.status(201).json({
+            message: "User registered and profile created successfully",
+            user: newUser,
+        });
     }
     catch (error) {
-        console.error("Error registering user:", error); // Log error to the console
-        if (error.code === "23505") {
-            return res.status(400).json({ message: "Email already in use" });
-        }
+        console.error("Error registering user:", error);
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }));
@@ -113,9 +130,27 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!((_a = isValidPassword[0]) === null || _a === void 0 ? void 0 : _a.isValid)) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
+        // Check if the user has a profile, create one if not
+        const existingProfile = yield db
+            .select()
+            .from(schema_1.Profile)
+            .where((0, expressions_1.eq)(schema_1.Profile.user_id, user.id))
+            .execute();
+        if (existingProfile.length === 0) {
+            // Create a blank profile for the user if they don't have one
+            yield db.insert(schema_1.Profile).values({
+                user_id: user.id,
+                skills: "",
+                description: "",
+                hourly_rate: "0.00",
+            });
+        }
+        // Create JWT token
         // Create JWT token
         const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username, user_type: user.user_type }, SECRET_KEY, { expiresIn: "1h" });
-        res.status(200).json({ message: "Login successful", token });
+        res
+            .status(200)
+            .json({ message: "Login successful", token, userId: user.id }); // Include userId in the response
     }
     catch (error) {
         res.status(500).json({ message: "Server error", error });

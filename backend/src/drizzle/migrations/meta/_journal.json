@@ -22,6 +22,34 @@
       "when": 1726763533827,
       "tag": "0002_wet_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728581822299,
+      "tag": "0003_eager_romulus",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1730478723653,
+      "tag": "0004_pale_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1730479787924,
+      "tag": "0005_brief_kate_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1731431481898,
+      "tag": "0006_clear_madame_masque",
+      "breakpoints": true
     }
   ]
 }

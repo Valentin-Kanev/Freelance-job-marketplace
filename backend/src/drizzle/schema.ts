@@ -7,10 +7,17 @@ import {
   integer,
   numeric,
   timestamp,
+  customType,
 } from "drizzle-orm/pg-core";
 
 // Enum for user roles
-export const UserRole = pgEnum("userRole", ["FREELANCER", "CLIENT"]);
+export const UserRole = pgEnum("userRole", ["freelancer", "client"]); // lowercase
+
+const bytea = customType<{ data: Buffer | null }>({
+  dataType() {
+    return "bytea";
+  },
+});
 
 // Users table
 export const User = pgTable("users", {

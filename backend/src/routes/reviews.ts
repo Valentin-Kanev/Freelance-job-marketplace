@@ -1,13 +1,17 @@
-import { Review, Profile } from "../drizzle/schema";
-import { db } from "../drizzle/db";
+// routes/reviews.ts
 import { Router } from "express";
-import { eq } from "drizzle-orm";
+import { db } from "../drizzle/db";
+import { and, eq } from "drizzle-orm";
+import authenticateToken from "../middleware/Authentication/authenticateToken";
+import { Profile, Review, User } from "../drizzle/schema";
 
 const reviewsRouter = Router();
 
-reviewsRouter.post("/profiles/:id/reviews", async (req, res) => {
-  const { id: freelancer_id } = req.params; // Freelancer (Profile) ID from the URL
-  const { client_id, rating, review_text } = req.body; // Client ID, rating, and review text from the request body
+// Route to create a new review
+// Route to create a new review
+reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
+  const { id: freelancer_id } = req.params;
+  const { client_id, rating, review_text } = req.body;
 
   if (!client_id || !rating || !review_text) {
     return res
@@ -20,7 +24,7 @@ reviewsRouter.post("/profiles/:id/reviews", async (req, res) => {
   }
 
   try {
-    // Check if the freelancer exists (you might also want to check if the user is a freelancer)
+    // Check if the freelancer profile exists
     const profile = await db
       .select()
       .from(Profile)
@@ -31,9 +35,27 @@ reviewsRouter.post("/profiles/:id/reviews", async (req, res) => {
       return res.status(404).json({ message: "Freelancer not found" });
     }
 
-    // Use the user_id from the profile table to post the review
+    // Check if the client has already submitted a review for this freelancer
+    const existingReview = await db
+      .select()
+      .from(Review)
+      .where(
+        and(
+          eq(Review.freelancer_id, profile[0].user_id),
+          eq(Review.client_id, client_id)
+        )
+      )
+      .limit(1);
+
+    if (existingReview.length > 0) {
+      return res.status(400).json({
+        message: "You have already submitted a review for this freelancer.",
+      });
+    }
+
+    // Insert the new review
     await db.insert(Review).values({
-      freelancer_id: profile[0].user_id, // Make sure to use the user_id
+      freelancer_id: profile[0].user_id,
       client_id,
       rating,
       review_text,
@@ -46,21 +68,39 @@ reviewsRouter.post("/profiles/:id/reviews", async (req, res) => {
   }
 });
 
-reviewsRouter.get("/profiles/:id/reviews", async (req, res) => {
-  const { id: freelancer_id } = req.params; // Freelancer (Profile) ID from the URL
+// Route to fetch all reviews for a freelancer
+// Route to fetch all reviews for a freelancer, including the client's username
+reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
+  const { id: profile_id } = req.params;
 
   try {
-    // Fetch all reviews for the freelancer
-    const reviews = await db
+    // Fetch the user_id associated with this profile_id
+    const profile = await db
       .select()
-      .from(Review)
-      .where(eq(Review.freelancer_id, freelancer_id));
+      .from(Profile)
+      .where(eq(Profile.id, profile_id))
+      .limit(1);
 
-    if (reviews.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No reviews found for this freelancer" });
+    if (profile.length === 0) {
+      return res.status(404).json({ message: "Freelancer profile not found" });
     }
+
+    const user_id = profile[0].user_id;
+
+    // Fetch reviews along with the client's username
+    const reviews = await db
+      .select({
+        id: Review.id,
+        freelancer_id: Review.freelancer_id,
+        client_id: Review.client_id,
+        rating: Review.rating,
+        review_text: Review.review_text,
+        client_username: User.username,
+      })
+      .from(Review)
+      .innerJoin(Profile, eq(Review.client_id, Profile.user_id))
+      .innerJoin(User, eq(Profile.user_id, User.id))
+      .where(eq(Review.freelancer_id, user_id));
 
     res.json(reviews);
   } catch (error) {

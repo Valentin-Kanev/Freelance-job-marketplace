@@ -1,3 +1,4 @@
+// src/api/userManagmentApi.ts
 export interface User {
   id: number;
   username: string;
@@ -51,9 +52,37 @@ export const registerUser = async (data: RegisterUserData): Promise<User> => {
 // Login user
 export const loginUser = async (
   data: LoginUserData
-): Promise<{ token: string }> => {
-  return fetchClient<{ token: string }>("/login", {
+): Promise<{ token: string; userId: string; userType: string }> => {
+  const response = await fetchClient<{
+    token: string;
+    userId: string;
+    userType: string;
+  }>("/login", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+
+  return response;
+};
+
+export const logoutUser = () => {
+  localStorage.removeItem("token"); // Remove token from localStorage
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userType");
+};
+
+// Fetch logged-in user's profile
+export const fetchUserProfile = async (): Promise<User> => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("No token found. Please log in.");
+  }
+
+  return fetchClient<User>("/profile", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`, // Make sure token is included
+    },
   });
 };

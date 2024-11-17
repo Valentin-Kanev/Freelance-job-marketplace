@@ -7,6 +7,7 @@ import {
   deleteJob,
   Job,
   UpdateJobData,
+  fetchJob,
 } from "../api/jobApi";
 
 // Fetch all jobs
@@ -39,10 +40,14 @@ export const useUpdateJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ id, data }: { id: number; data: UpdateJobData }) => updateJob(id, data),
+    ({ id, data }: { id: string; data: UpdateJobData }) => updateJob(id, data),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries("jobs"); // Refetch jobs after update
+      onSuccess: (updateJob, { id }) => {
+        // Invalidate the job details to refetch the updated job
+        queryClient.invalidateQueries(["job", id]);
+
+        // Optionally, invalidate the job list if it's affected by the update
+        queryClient.invalidateQueries("jobs");
       },
       onError: (error: Error) => {
         console.error("Error updating job:", error.message);
@@ -55,12 +60,23 @@ export const useUpdateJob = () => {
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((id: number) => deleteJob(id), {
+  return useMutation((id: string) => deleteJob(id), {
+    // Change id to string
     onSuccess: () => {
       queryClient.invalidateQueries("jobs"); // Refetch jobs after deletion
     },
     onError: (error: Error) => {
       console.error("Error deleting job:", error.message);
+    },
+  });
+};
+
+export const useJob = (id: string) => {
+  return useQuery<Job, Error>(["job", id], () => fetchJob(id), {
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // Cache job data for 5 minutes
+    onError: (error: Error) => {
+      console.error("Error fetching job:", error.message);
     },
   });
 };

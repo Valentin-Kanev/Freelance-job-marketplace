@@ -4,7 +4,7 @@ import {
   applyForJob,
   fetchJobApplications,
   Application,
-} from "../api/ApplicationApi";
+} from "../api/ApplicationApi"; // Make sure to import from the correct path
 
 // Apply for a job
 export const useApplyForJob = () => {
@@ -13,9 +13,9 @@ export const useApplyForJob = () => {
       jobId,
       data,
     }: {
-      jobId: number;
-      data: { freelancer_id: number; cover_letter: string };
-    }) => applyForJob(jobId, data),
+      jobId: string; // Change to string to match the new Application interface
+      data: { freelancer_id: string; cover_letter: string }; // Change to string
+    }) => applyForJob(jobId, data), // Pass the file to the API function
     {
       onSuccess: () => {
         console.log("Application submitted successfully");
@@ -28,7 +28,8 @@ export const useApplyForJob = () => {
 };
 
 // Fetch all applications for a specific job
-export const useJobApplications = (jobId: number) => {
+export const useJobApplications = (jobId: string) => {
+  // Change jobId to string
   return useQuery<Application[], Error>(
     ["jobApplications", jobId],
     () => fetchJobApplications(jobId),

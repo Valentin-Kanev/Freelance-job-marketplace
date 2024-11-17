@@ -11,29 +11,34 @@ export const useSubmitReview = () => {
       freelancerId,
       data,
     }: {
-      freelancerId: number;
-      data: { client_id: number; rating: number; review_text: string };
+      freelancerId: string;
+      data: { client_id: string; rating: number; review_text: string };
     }) => submitReview(freelancerId, data),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries("freelancerReviews"); // Invalidate the reviews query to refetch
+      onSuccess: (_, { freelancerId }) => {
+        queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
         console.log("Review submitted successfully");
       },
       onError: (error: Error) => {
-        console.error("Error submitting review:", error.message);
+        if (error.message.includes("already submitted")) {
+          alert("You have already submitted a review for this freelancer.");
+        } else {
+          console.error("Error submitting review:", error.message);
+          alert("An error occurred while submitting the review.");
+        }
       },
     }
   );
 };
 
 // Fetch all reviews for a freelancer
-export const useFreelancerReviews = (freelancerId: number) => {
+export const useFreelancerReviews = (freelancerId: string) => {
   return useQuery<Review[], Error>(
     ["freelancerReviews", freelancerId],
     () => fetchFreelancerReviews(freelancerId),
     {
-      staleTime: 5 * 60 * 1000, // Cache reviews for 5 minutes
-      retry: 2, // Retry failed requests twice
+      staleTime: 5 * 60 * 1000,
+      retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching reviews:", error.message);
       },

@@ -3,7 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = exports.Application = exports.Job = exports.Profile = exports.User = exports.UserRole = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 // Enum for user roles
-exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["FREELANCER", "CLIENT"]);
+exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["freelancer", "client"]); // lowercase
+const bytea = (0, pg_core_1.customType)({
+    dataType() {
+        return "bytea";
+    },
+});
 // Users table
 exports.User = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),

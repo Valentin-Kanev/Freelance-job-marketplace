@@ -1,42 +1,56 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProfileManagement from "./components/ProfileManagment";
-import JobManagement from "./components/Job";
-import FreelancerReviews from "./components/FreelancerReviews";
-import UserManagement from "./components/UserAuthentication";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import JobManagement from "./components/jobs/JobsManagment";
+// import FreelancerReviews from "./components/FreelancerReviews";
 import ProtectedRoute from "./components/Protectedroute";
+import Header from "./components/UI/Header";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import JobDetails from "./components/jobs/jobDetails/JobDetails";
+import { ProfileContainer } from "./components/profile/ProfileContainer";
+import AuthMode from "./components/userAuthentication/AuthMode";
 
-export const App: React.FC = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
-
+const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/auth" element={<UserManagement />} />{" "}
-        {/* Login/Register */}
-        <Route path="/jobs" element={<JobManagement />} />
-        {/* Dynamic Route for freelancer profiles */}
-        <Route path="/profiles/:id/reviews" element={<FreelancerReviews />} />
-        {/* Protected Route */}
-        <Route
-          path="/profile-management"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <ProfileManagement />
-            </ProtectedRoute>
-          }
-        />
-        {/* Default route */}
-        {/* Make the default route the authentication page */}
-        <Route path="/" element={<h1>Welcome to the Job Portal</h1>} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Header />
+        <AppRoutes /> {/* Routes moved to a separate component */}
+      </Router>
+    </AuthProvider>
   );
 };
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-root.render(<App />);
+const AppRoutes: React.FC = () => {
+  const { userId } = useAuth();
+  const safeUserId = userId ?? null;
+
+  return (
+    <Routes>
+      <Route path="/auth" element={<AuthMode />} />
+      <Route path="/jobs" element={<JobManagement />} />
+      <Route path="/jobs/:id" element={<JobDetails />} />
+      {/* <Route path="/profiles/:id/reviews" element={<FreelancerReviews />} /> */}
+      <Route path="/profiles/:freelancerId" element={<ProfileContainer />} />
+      <Route
+        path="/profile-management"
+        element={
+          <ProtectedRoute>
+            {safeUserId ? (
+              <ProfileContainer userId={safeUserId} />
+            ) : (
+              <div>Please log in to view your profile.</div>
+            )}
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={<Navigate to="/jobs" replace />} />
+    </Routes>
+  );
+};
+
+export default App;
