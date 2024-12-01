@@ -44,7 +44,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="space-y-6">
+    <form onSubmit={handleRegister} className="space-y-3">
       <Input
         label="Username"
         name="username"

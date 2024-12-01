@@ -8,41 +8,73 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-  const modalRef = useRef<HTMLDivElement | null>(null); // Ref for modal content
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
 
-  // Close modal when clicking outside
   const handleClickOutside = (event: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       onClose();
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      onClose();
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
+      previouslyFocusedElement.current = document.activeElement as HTMLElement;
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+      modalRef.current?.focus();
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      previouslyFocusedElement.current?.focus();
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   });
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-50"
+      role="dialog"
+      aria-modal="true"
+    >
       <div
         ref={modalRef}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg"
+        className="bg-gray-50 p-8 rounded-2xl shadow-xl max-w-md w-full transform transition-all"
+        style={{ boxSizing: "border-box" }}
+        tabIndex={-1}
       >
         {title && (
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{title}</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+            {title}
+          </h2>
         )}
         <div>{children}</div>
-        <button onClick={onClose} className="mt-4 text-red-500 hover:underline">
-          Close
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          aria-label="Close"
+        >
+          &times;
         </button>
       </div>
     </div>

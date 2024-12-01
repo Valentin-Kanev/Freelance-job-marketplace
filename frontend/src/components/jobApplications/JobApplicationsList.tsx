@@ -28,17 +28,14 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
     return <p className="text-gray-500">Unauthorized to view applications</p>;
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        Job Applications
-      </h2>
+    <div>
+      <h2 className="text-2xl font-semibold text-gray-800">Job Applications</h2>
       {applications?.length ? (
-        <ul className="divide-y divide-gray-200">
+        <ul className="">
           {applications.map((application) => (
-            <JobApplicationItem
-              key={application.id}
-              application={application}
-            />
+            <li key={application.id} className="border-b border-gray-300 pb-2">
+              <JobApplicationItem application={application} />
+            </li>
           ))}
         </ul>
       ) : (

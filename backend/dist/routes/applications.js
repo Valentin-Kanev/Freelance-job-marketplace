@@ -26,25 +26,36 @@ function isAuthenticatedUser(user) {
 applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: job_id } = req.params;
     const { freelancer_id, cover_letter } = req.body;
-    if (!req.file || !freelancer_id || !cover_letter) {
+    if (!freelancer_id || !cover_letter) {
         return res.status(400).json({
-            message: "Freelancer ID, cover letter, and file are required",
+            message: "Freelancer ID and cover letter are required",
         });
     }
     try {
-        // Save only the relative path
-        const filePath = `/uploads/${req.file.filename}`;
-        yield db_1.db.insert(schema_1.Application).values({
-            job_id,
-            freelancer_id,
-            cover_letter,
-            timestamp: new Date(),
-        });
+        console.log("Job ID:", job_id, "Freelancer ID:", freelancer_id);
+        const existingApplication = yield db_1.db
+            .select()
+            .from(schema_1.Application)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Application.job_id, job_id), (0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancer_id)))
+            .limit(1);
+        if (existingApplication.length > 0) {
+            return res
+                .status(400)
+                .json({ message: "You have already applied to this job" });
+        }
+        yield db_1.db.transaction((trx) => __awaiter(void 0, void 0, void 0, function* () {
+            yield trx.insert(schema_1.Application).values({
+                job_id,
+                freelancer_id,
+                cover_letter,
+                timestamp: new Date(),
+            });
+        }));
         res.status(201).json({ message: "Application submitted successfully" });
     }
     catch (error) {
-        console.error("Error inserting application:", error);
-        res.status(500).json({ message: "Error applying for the job" });
+        console.error("Error applying for the job:", error);
+        res.status(500).json({ message: "Error applying for the job", error });
     }
 }));
 // GET route to fetch all applications for a job (only accessible by the job creator)

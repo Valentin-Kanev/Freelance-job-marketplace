@@ -75,7 +75,7 @@ export function ProfilePresentation({
       </div>
 
       {/* Modal for Create Review */}
-      <Modal isOpen={isModalOpen} onClose={closeModal} title="Leave a Review">
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
         <CreateReview freelancerId={profile.profileId} onClose={closeModal} />
       </Modal>
     </div>

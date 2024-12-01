@@ -8,10 +8,6 @@ export interface Application {
   cover_letter: string; // Add this property
 }
 
-interface ApplyJobData {
-  freelancer_id: string; // Change to string
-}
-
 // Base URL for applications API
 const BASE_URL = "/applications";
 
@@ -40,14 +36,14 @@ const fetchClient = async <T>(
 // Apply for a job
 export const applyForJob = async (
   jobId: string,
-  data: ApplyJobData
+  data: { freelancer_id: string; cover_letter: string }
 ): Promise<Application> => {
-  const formData = new FormData();
-  formData.append("freelancer_id", data.freelancer_id);
-
   return fetchClient<Application>(`/jobs/${jobId}/apply`, {
     method: "POST",
-    body: formData,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
 };
 

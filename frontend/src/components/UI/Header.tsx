@@ -1,9 +1,9 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext"; // Import the useAuth hook
+import { useAuth } from "../../contexts/AuthContext";
+import CreateJob from "../jobs/jobActions/CreateJob";
 
 const Header: React.FC = () => {
-  const { isLoggedIn, logout } = useAuth(); // Access the authentication state and logout function
+  const { isLoggedIn, userType, userId, logout } = useAuth();
 
   return (
     <header className="bg-gray-800 p-4 shadow-lg">
@@ -16,7 +16,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="space-x-4">
+        <div className="flex space-x-4 items-center">
           {isLoggedIn ? (
             <>
               <Link
@@ -25,8 +25,11 @@ const Header: React.FC = () => {
               >
                 View Profile
               </Link>
+              {userType === "client" && (
+                <CreateJob userId={userId || ""} isLoggedIn={isLoggedIn} />
+              )}
               <button
-                onClick={logout} // Call the logout function from the context
+                onClick={logout}
                 className="text-white hover:text-gray-400"
               >
                 Logout
@@ -39,9 +42,6 @@ const Header: React.FC = () => {
           )}
           <Link to="/jobs" className="text-white hover:text-gray-400">
             Jobs
-          </Link>
-          <Link to="/" className="text-white hover:text-gray-400">
-            Home
           </Link>
         </div>
       </nav>

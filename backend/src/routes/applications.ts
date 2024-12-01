@@ -1,7 +1,7 @@
 import { Application, Job, User } from "../drizzle/schema";
 import { db } from "../drizzle/db";
 import { Router, Request, Response } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -26,27 +26,45 @@ applicationsRouter.post(
     const { id: job_id } = req.params;
     const { freelancer_id, cover_letter } = req.body;
 
-    if (!req.file || !freelancer_id || !cover_letter) {
+    if (!freelancer_id || !cover_letter) {
       return res.status(400).json({
-        message: "Freelancer ID, cover letter, and file are required",
+        message: "Freelancer ID and cover letter are required",
       });
     }
 
     try {
-      // Save only the relative path
-      const filePath = `/uploads/${req.file.filename}`;
+      console.log("Job ID:", job_id, "Freelancer ID:", freelancer_id);
 
-      await db.insert(Application).values({
-        job_id,
-        freelancer_id,
-        cover_letter,
-        timestamp: new Date(),
+      const existingApplication = await db
+        .select()
+        .from(Application)
+        .where(
+          and(
+            eq(Application.job_id, job_id),
+            eq(Application.freelancer_id, freelancer_id)
+          )
+        )
+        .limit(1);
+
+      if (existingApplication.length > 0) {
+        return res
+          .status(400)
+          .json({ message: "You have already applied to this job" });
+      }
+
+      await db.transaction(async (trx) => {
+        await trx.insert(Application).values({
+          job_id,
+          freelancer_id,
+          cover_letter,
+          timestamp: new Date(),
+        });
       });
 
       res.status(201).json({ message: "Application submitted successfully" });
     } catch (error) {
-      console.error("Error inserting application:", error);
-      res.status(500).json({ message: "Error applying for the job" });
+      console.error("Error applying for the job:", error);
+      res.status(500).json({ message: "Error applying for the job", error });
     }
   }
 );

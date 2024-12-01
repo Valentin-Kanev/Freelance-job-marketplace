@@ -28,7 +28,7 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
             budget: schema_1.Job.budget,
             deadline: schema_1.Job.deadline,
             client_id: schema_1.Job.client_id,
-            client_username: schema_1.User.username, // Fetch the client's username
+            client_username: schema_1.User.username,
         })
             .from(schema_1.Job)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.User.id, schema_1.Job.client_id));
@@ -41,21 +41,29 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
 }));
 // Add the PUT route to update an existing job by ID
 jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params; // Get the job ID from the URL
-    const { title, description, budget, deadline } = req.body; // Data from the client
-    const userType = req.user.user_type; // Check if user is a client
-    // Ensure only clients can edit jobs
+    const { id } = req.params;
+    const { title, description, budget, deadline } = req.body;
+    const userType = req.user.user_type;
     if (userType !== "client") {
         return res.status(403).json({ message: "Only clients can edit jobs" });
+    }
+    // Validate and parse deadline
+    let parsedDeadline;
+    if (deadline) {
+        parsedDeadline = new Date(deadline);
+        if (isNaN(parsedDeadline.getTime())) {
+            return res
+                .status(400)
+                .json({ message: "Invalid date format for deadline" });
+        }
     }
     try {
         const updatedJob = yield db_1.db
             .update(schema_1.Job)
-            .set({ title, description, budget, deadline: new Date(deadline) })
+            .set(Object.assign({ title,
+            description,
+            budget }, (parsedDeadline && { deadline: parsedDeadline })))
             .where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
-        if (!updatedJob) {
-            return res.status(404).json({ message: "Job not found" });
-        }
         res.json({ message: "Job updated successfully" });
     }
     catch (error) {
@@ -75,7 +83,7 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
             budget: schema_1.Job.budget,
             deadline: schema_1.Job.deadline,
             client_id: schema_1.Job.client_id,
-            clientUsername: schema_1.User.username, // Add client's username
+            clientUsername: schema_1.User.username,
         })
             .from(schema_1.Job)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.User.id, schema_1.Job.client_id))
@@ -84,7 +92,7 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         if (!job.length) {
             return res.status(404).json({ message: "Job not found" });
         }
-        res.json(job[0]); // Return the job with client’s username
+        res.json(job[0]);
     }
     catch (error) {
         console.error(error);
@@ -96,15 +104,14 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.id;
     const userType = req.user.user_type;
-    // Ensure only clients can create jobs
     if (userType !== "client") {
         return res.status(403).json({ message: "Only clients can create jobs" });
     }
-    // Validate input fields
     if (!title || !description || !budget || !deadline) {
         return res.status(400).json({ message: "All fields are required" });
     }
-    const parsedDeadline = new Date(deadline); // Make sure this is valid
+    // Validate and parse deadline
+    const parsedDeadline = new Date(deadline);
     if (isNaN(parsedDeadline.getTime())) {
         return res
             .status(400)
@@ -118,10 +125,10 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
             budget,
             deadline: parsedDeadline,
         });
-        res.status(201).json(newJob); // Return the created job
+        res.status(201).json(newJob);
     }
     catch (error) {
-        console.error(error);
+        console.error("Error creating job:", error);
         res.status(500).json({ message: "Error creating job" });
     }
 }));

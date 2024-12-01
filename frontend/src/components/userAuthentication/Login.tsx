@@ -60,7 +60,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleLogin} className="space-y-6 h-full">
+    <form onSubmit={handleLogin} className="space-y-3 h-full">
       <Input
         label="Email"
         name="email"

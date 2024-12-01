@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { useApplyForJob } from "../../hooks/useApplication";
+import { useMutation } from "react-query";
+import Button from "../UI/Button";
+import { applyForJob } from "../../api/ApplicationApi";
+import { useToast } from "../ToastManager";
 
 interface JobApplicationProps {
   jobId: string;
@@ -7,71 +10,69 @@ interface JobApplicationProps {
 }
 
 const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
-  const [coverLetter, setCoverLetter] = useState<string>("");
-  const { mutate: applyForJob, isLoading } = useApplyForJob();
+  const [coverLetter, setCoverLetter] = useState("");
+  const freelancerId = localStorage.getItem("userId"); // Retrieve logged-in user ID
+  const { addToast } = useToast();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const {
+    mutate: submitApplication,
+    isLoading,
+    isError,
+    error,
+  } = useMutation(
+    () =>
+      applyForJob(jobId, {
+        freelancer_id: freelancerId!,
+        cover_letter: coverLetter,
+      }),
+    {
+      onSuccess: () => {
+        addToast("Application submitted successfully!");
+        onClose();
+      },
+      onError: (error: any) => {
+        console.error("Error applying for job:", error.message);
+      },
+    }
+  );
 
-    const freelancerId = localStorage.getItem("userId");
-    if (!freelancerId) {
-      alert("You need to be logged in to apply for this job.");
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!coverLetter.trim()) {
+      alert("Cover letter cannot be empty!");
       return;
     }
 
-    applyForJob({
-      jobId,
-      data: { freelancer_id: freelancerId, cover_letter: coverLetter },
-    });
-    onClose();
-  };
-
-  const handleClickOutside = (event: React.MouseEvent) => {
-    // If the click is outside the modal content, close the modal
-    const target = event.target as HTMLElement;
-    if (target.id === "modal-overlay") {
-      onClose();
-    }
+    submitApplication();
   };
 
   return (
-    <div
-      id="modal-overlay"
-      className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-75"
-      onClick={handleClickOutside}
-    >
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Apply for Job
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={coverLetter}
-            onChange={(e) => setCoverLetter(e.target.value)}
-            placeholder="Enter your cover letter here..."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4"
-            rows={6}
-            required
-          />
-          <div className="flex justify-between items-center">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-200 ease-in-out"
-            >
-              {isLoading ? "Submitting..." : "Submit"}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-red-500 hover:text-red-700 transition duration-200"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+    <form onSubmit={handleSubmit} className="p-4">
+      <textarea
+        className="w-full border p-2 mb-4"
+        placeholder="Write your cover letter here..."
+        value={coverLetter}
+        onChange={(e) => setCoverLetter(e.target.value)}
+      />
+      {isError && (
+        <p className="text-red-500">Error: {(error as any)?.message}</p>
+      )}
+      <div className="flex justify-end gap-4">
+        <Button
+          type="button"
+          label="Cancel"
+          onClick={onClose}
+          className="bg-gray-400 text-white hover:bg-gray-500"
+        />
+        <Button
+          type="submit"
+          label={isLoading ? "Submitting..." : "Submit"}
+          disabled={isLoading}
+          className="bg-blue-600 text-white hover:bg-blue-700"
+        />
       </div>
-    </div>
+    </form>
   );
 };
 

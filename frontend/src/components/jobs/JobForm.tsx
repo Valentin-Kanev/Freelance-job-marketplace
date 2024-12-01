@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useCreateJob, useUpdateJob } from "../../hooks/useJobs";
+import React from "react";
 import Input from "../UI/Input";
+import useJobForm from "../../hooks/useJobForm";
+import { useJobMutations } from "../../hooks/useJobs";
 
 interface JobFormProps {
   userId: string;
-  initialJobDetails: {
-    id: string;
-    title: string;
-    description: string;
-    budget: number;
-    deadline: string;
-  };
-  onSubmitSuccess: (updatedJob: any) => void;
+  initialJobDetails: any;
   onClose: () => void;
+  onSubmitSuccess: (job: any) => void;
 }
 
 const JobForm: React.FC<JobFormProps> = ({
@@ -21,71 +16,26 @@ const JobForm: React.FC<JobFormProps> = ({
   onClose,
   onSubmitSuccess,
 }) => {
-  const createJobMutation = useCreateJob();
-  const updateJobMutation = useUpdateJob();
-
-  const [jobDetails, setJobDetails] = useState({
-    title: "",
-    description: "",
-    budget: 0,
-    deadline: "",
-  });
-
-  useEffect(() => {
-    if (initialJobDetails) {
-      setJobDetails(initialJobDetails);
-    }
-  }, [initialJobDetails]);
+  const { jobDetails, handleChange } = useJobForm(initialJobDetails);
+  const { handleJobSubmit } = useJobMutations(userId, onSubmitSuccess);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (initialJobDetails?.id) {
-      updateJobMutation.mutate(
-        { id: initialJobDetails.id, data: jobDetails },
-        {
-          onSuccess: () => {
-            onClose();
-            if (onSubmitSuccess)
-              onSubmitSuccess({ ...initialJobDetails, ...jobDetails });
-          },
-          onError: (error: any) =>
-            console.error("Error updating job:", error.message),
-        }
-      );
-    } else {
-      createJobMutation.mutate(
-        { ...jobDetails, client_id: userId },
-        {
-          onSuccess: (newJob) => {
-            onClose();
-            if (onSubmitSuccess) onSubmitSuccess(newJob);
-          },
-          onError: (error: any) =>
-            console.error("Error creating job:", error.message),
-        }
-      );
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setJobDetails({
-      ...jobDetails,
-      [e.target.name]: e.target.value,
-    });
+    handleJobSubmit(
+      Boolean(initialJobDetails?.id),
+      jobDetails,
+      initialJobDetails?.id
+    );
+    onClose();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 p-6 bg-white rounded-lg shadow-md"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         label="Job Title"
         name="title"
         value={jobDetails.title}
         onChange={handleChange}
-        required
         placeholder="Enter job title"
       />
       <Input
@@ -93,16 +43,13 @@ const JobForm: React.FC<JobFormProps> = ({
         name="description"
         value={jobDetails.description}
         onChange={handleChange}
-        required
         placeholder="Enter job description"
-        className="h-32"
       />
       <Input
         label="Budget"
         name="budget"
         value={jobDetails.budget}
         onChange={handleChange}
-        required
         type="number"
         placeholder="Enter budget"
       />
@@ -111,12 +58,11 @@ const JobForm: React.FC<JobFormProps> = ({
         name="deadline"
         value={jobDetails.deadline}
         onChange={handleChange}
-        required
         type="date"
       />
       <button
         type="submit"
-        className="w-full bg-accent text-white py-2 rounded-lg hover:bg-teal-600 transition duration-300"
+        className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
       >
         {initialJobDetails?.id ? "Update Job" : "Create Job"}
       </button>

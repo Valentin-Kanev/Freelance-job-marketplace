@@ -17,7 +17,7 @@ jobsRouter.get("/jobs", async (req, res) => {
         budget: Job.budget,
         deadline: Job.deadline,
         client_id: Job.client_id,
-        client_username: User.username, // Fetch the client's username
+        client_username: User.username,
       })
       .from(Job)
       .leftJoin(User, eq(User.id, Job.client_id));
@@ -31,24 +31,35 @@ jobsRouter.get("/jobs", async (req, res) => {
 
 // Add the PUT route to update an existing job by ID
 jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params; // Get the job ID from the URL
-  const { title, description, budget, deadline } = req.body; // Data from the client
-  const userType = (req.user as JwtPayload).user_type; // Check if user is a client
+  const { id } = req.params;
+  const { title, description, budget, deadline } = req.body;
+  const userType = (req.user as JwtPayload).user_type;
 
-  // Ensure only clients can edit jobs
   if (userType !== "client") {
     return res.status(403).json({ message: "Only clients can edit jobs" });
+  }
+
+  // Validate and parse deadline
+  let parsedDeadline;
+  if (deadline) {
+    parsedDeadline = new Date(deadline);
+    if (isNaN(parsedDeadline.getTime())) {
+      return res
+        .status(400)
+        .json({ message: "Invalid date format for deadline" });
+    }
   }
 
   try {
     const updatedJob = await db
       .update(Job)
-      .set({ title, description, budget, deadline: new Date(deadline) })
+      .set({
+        title,
+        description,
+        budget,
+        ...(parsedDeadline && { deadline: parsedDeadline }), // Only update if deadline is valid
+      })
       .where(eq(Job.id, id));
-
-    if (!updatedJob) {
-      return res.status(404).json({ message: "Job not found" });
-    }
 
     res.json({ message: "Job updated successfully" });
   } catch (error) {
@@ -60,7 +71,6 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
 // Add this route to your `jobsRouter` in the backend to fetch a job by ID.
 jobsRouter.get("/jobs/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
     const job = await db
       .select({
@@ -70,7 +80,7 @@ jobsRouter.get("/jobs/:id", async (req, res) => {
         budget: Job.budget,
         deadline: Job.deadline,
         client_id: Job.client_id,
-        clientUsername: User.username, // Add client's username
+        clientUsername: User.username,
       })
       .from(Job)
       .leftJoin(User, eq(User.id, Job.client_id))
@@ -81,7 +91,7 @@ jobsRouter.get("/jobs/:id", async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    res.json(job[0]); // Return the job with client’s username
+    res.json(job[0]);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error retrieving job" });
@@ -94,17 +104,16 @@ jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
   const userId = (req.user as JwtPayload).id;
   const userType = (req.user as JwtPayload).user_type;
 
-  // Ensure only clients can create jobs
   if (userType !== "client") {
     return res.status(403).json({ message: "Only clients can create jobs" });
   }
 
-  // Validate input fields
   if (!title || !description || !budget || !deadline) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const parsedDeadline = new Date(deadline); // Make sure this is valid
+  // Validate and parse deadline
+  const parsedDeadline = new Date(deadline);
   if (isNaN(parsedDeadline.getTime())) {
     return res
       .status(400)
@@ -119,9 +128,9 @@ jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
       budget,
       deadline: parsedDeadline,
     });
-    res.status(201).json(newJob); // Return the created job
+    res.status(201).json(newJob);
   } catch (error) {
-    console.error(error);
+    console.error("Error creating job:", error);
     res.status(500).json({ message: "Error creating job" });
   }
 });
