@@ -35,8 +35,8 @@ const JobDashboard: React.FC<{
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
 
   return (
-    <div className="flex justify-center min-h-screen bg-gray-50">
-      <div className="flex w-[1100px] h-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="pt-12 flex justify-center min-h-screen bg-gray-50">
+      <div className="flex w-[1100px] h-full bg-white shadow-lg rounded-lg">
         {/* Job List */}
         <div className="w-[300px] max-h-screen overflow-y-auto p-4">
           <JobList
@@ -47,7 +47,7 @@ const JobDashboard: React.FC<{
         </div>
 
         {/* Job Details */}
-        <div className="flex-1 p-6 max-h-screen overflow-y-auto">
+        <div className="flex-1 p-6 h-full">
           <JobDetails
             job={selectedJob}
             userId={userId}

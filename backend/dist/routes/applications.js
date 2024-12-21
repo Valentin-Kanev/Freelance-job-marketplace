@@ -98,4 +98,29 @@ applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (r
         res.status(500).json({ message: "Error retrieving applications" });
     }
 }));
+applicationsRouter.get("/applications/my-applications", // Corrected route
+authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || typeof req.user === "string") {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    const freelancerId = req.user.id;
+    try {
+        const applications = yield db_1.db
+            .select({
+            jobId: schema_1.Application.job_id,
+            jobTitle: schema_1.Job.title,
+            coverLetter: schema_1.Application.cover_letter,
+            applicationDate: schema_1.Application.timestamp,
+        })
+            .from(schema_1.Application)
+            .innerJoin(schema_1.Job, (0, drizzle_orm_1.eq)(schema_1.Application.job_id, schema_1.Job.id))
+            .where((0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancerId));
+        console.log("Fetched applications:", applications);
+        res.json(applications);
+    }
+    catch (error) {
+        console.error("Error fetching applications:", error);
+        res.status(500).json({ message: "Error fetching applications" });
+    }
+}));
 exports.default = applicationsRouter;

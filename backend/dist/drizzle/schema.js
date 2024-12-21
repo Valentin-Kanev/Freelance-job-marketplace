@@ -42,7 +42,7 @@ exports.Job = (0, pg_core_1.pgTable)("jobs", {
 exports.Application = (0, pg_core_1.pgTable)("applications", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     job_id: (0, pg_core_1.uuid)("job_id")
-        .references(() => exports.Job.id)
+        .references(() => exports.Job.id, { onDelete: "cascade" }) // Add onDelete: "cascade"
         .notNull(),
     freelancer_id: (0, pg_core_1.uuid)("freelancer_id")
         .references(() => exports.User.id)

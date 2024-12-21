@@ -1,11 +1,10 @@
-// src/components/ProfileContainer.tsx
 import { useState, useEffect } from "react";
 import { useUserProfile } from "../../hooks/useProfiles";
-import { EditProfileForm } from "./EditProfileForm";
 import { ProfilePresentation } from "./ProfilePresentation";
 import { useUpdateProfile } from "../../hooks/useProfiles";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import EditProfileForm from "./EditProfileForm";
 
 interface ProfileContainerProps {
   userId?: string | null;
@@ -20,7 +19,7 @@ export function ProfileContainer({
 
   const { data: profile, isLoading, isError, refetch } = useUserProfile(userId);
   const { mutate: updateProfile } = useUpdateProfile();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (userId) refetch();
@@ -38,20 +37,24 @@ export function ProfileContainer({
 
   const handleSave = (updatedData: any) => {
     updateProfile({ id: profile.profileId, data: updatedData });
-    setIsEditing(false);
+    setIsModalOpen(false);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {!isEditing ? (
-        <ProfilePresentation
-          profile={profile}
-          onEdit={() => setIsEditing(true)}
-          isOwner={isOwner}
-        />
-      ) : (
-        <EditProfileForm profile={profile} onSave={handleSave} />
-      )}
+      <ProfilePresentation
+        profile={profile}
+        onEdit={() => setIsModalOpen(true)}
+        isOwner={isOwner}
+      />
+
+      {/* Always Render EditProfileForm */}
+      <EditProfileForm
+        profile={profile}
+        onSave={handleSave}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

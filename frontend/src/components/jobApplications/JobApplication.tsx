@@ -50,7 +50,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
   return (
     <form onSubmit={handleSubmit} className="p-4">
       <textarea
-        className="w-full border p-2 mb-4"
+        className="w-full border p-2 mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Write your cover letter here..."
         value={coverLetter}
         onChange={(e) => setCoverLetter(e.target.value)}
@@ -58,7 +58,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
       {isError && (
         <p className="text-red-500">Error: {(error as any)?.message}</p>
       )}
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-center gap-3">
         <Button
           type="button"
           label="Cancel"

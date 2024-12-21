@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
 import Input from "../UI/Input"; // Premade Input component
 import { jwtDecode } from "jwt-decode";
+import Button from "../UI/Button";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -60,7 +61,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleLogin} className="space-y-3 h-full">
+    <form onSubmit={handleLogin} className="space-y-3 h-full ">
       <Input
         label="Email"
         name="email"
@@ -79,12 +80,11 @@ const Login: React.FC = () => {
         required
         placeholder="Enter your password"
       />
-      <button
+      <Button
+        label="Login"
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-      >
-        Login
-      </button>
+        className="w-full bg-blue-500 text-white py-2 rounded-lg "
+      />
       {loginMutation.isError && (
         <p className="text-red-500 mt-2">{loginMutation.error?.message}</p>
       )}

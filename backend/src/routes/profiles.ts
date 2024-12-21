@@ -7,35 +7,31 @@ import authenticateToken from "../middleware/Authentication/authenticateToken";
 const router = Router();
 
 // Route to retrieve all freelancer profiles
-router.get(
-  "/profiles",
-  authenticateToken,
-  async (req: Request, res: Response) => {
-    try {
-      const profiles = await db
-        .select({
-          profileId: Profile.id,
-          userId: Profile.user_id,
-          skills: Profile.skills,
-          description: Profile.description,
-          hourlyRate: Profile.hourly_rate,
-          username: User.username,
-        })
-        .from(Profile)
-        .leftJoin(User, eq(Profile.user_id, User.id))
-        .where(eq(User.user_type, "freelancer"));
+router.get("/profiles", async (req: Request, res: Response) => {
+  try {
+    const profiles = await db
+      .select({
+        profileId: Profile.id,
+        userId: Profile.user_id,
+        skills: Profile.skills,
+        description: Profile.description,
+        hourlyRate: Profile.hourly_rate,
+        username: User.username,
+      })
+      .from(Profile)
+      .leftJoin(User, eq(Profile.user_id, User.id))
+      .where(eq(User.user_type, "freelancer"));
 
-      res.status(200).json(profiles);
-    } catch (error) {
-      console.error(error); // Log the error for debugging
-      res.status(500).json({ error: "Failed to retrieve profiles" });
-    }
+    res.status(200).json(profiles);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: "Failed to retrieve profiles" });
   }
-);
+});
 
 // Route to retrieve a specific user profile by userId
-router.get("/profiles/user/:id", authenticateToken, async (req, res) => {
-  const { id: userId } = req.params; // Get the userId from the URL
+router.get("/profiles/user/:user_id", authenticateToken, async (req, res) => {
+  const { user_id: userId } = req.params; // Use user_id directly from params
 
   if (!userId) {
     return res.status(400).json({ message: "User ID not provided" });
@@ -53,7 +49,7 @@ router.get("/profiles/user/:id", authenticateToken, async (req, res) => {
       })
       .from(Profile)
       .leftJoin(User, eq(Profile.user_id, User.id))
-      .where(eq(Profile.user_id, userId)); // Compare UUID
+      .where(eq(Profile.user_id, userId)); // Compare by user_id
 
     if (profile.length === 0) {
       return res.status(404).json({ message: "Profile not found" });

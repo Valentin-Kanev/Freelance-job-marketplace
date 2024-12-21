@@ -55,7 +55,7 @@ export const Job = pgTable("jobs", {
 export const Application = pgTable("applications", {
   id: uuid("id").primaryKey().defaultRandom(),
   job_id: uuid("job_id")
-    .references(() => Job.id)
+    .references(() => Job.id, { onDelete: "cascade" }) // Add onDelete: "cascade"
     .notNull(),
   freelancer_id: uuid("freelancer_id")
     .references(() => User.id)

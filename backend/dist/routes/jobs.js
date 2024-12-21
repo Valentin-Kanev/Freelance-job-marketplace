@@ -134,23 +134,56 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
 }));
 jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const userType = req.user.user_type; // Get user type
+    const { id: userId, user_type } = req.user;
     // Check if the user is a client
-    if (userType !== "client") {
+    if (user_type !== "client") {
         return res.status(403).json({ message: "Only clients can delete jobs" });
     }
     try {
-        const deletedJob = yield db_1.db.delete(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
-        if (deletedJob) {
-            res.json({ message: "Job deleted successfully" });
+        // Check if the job exists and belongs to the logged-in client
+        const job = yield db_1.db.select().from(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id)).limit(1);
+        if (!job.length) {
+            return res.status(404).json({ message: "Job not found" });
         }
-        else {
-            res.status(404).json({ message: "Job not found" });
+        if (job[0].client_id !== userId) {
+            return res
+                .status(403)
+                .json({ message: "You are not authorized to delete this job" });
         }
+        // Delete the job
+        yield db_1.db.delete(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
+        res.json({ message: "Job deleted successfully" });
     }
     catch (error) {
-        console.error(error);
+        console.error("Error deleting job:", error);
         res.status(500).json({ message: "Error deleting job" });
+    }
+}));
+jobsRouter.get("/jobs/created-by/:clientId", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { clientId } = req.params;
+    const { id: loggedInUserId, user_type } = req.user;
+    if (user_type !== "client" || clientId !== loggedInUserId) {
+        return res.status(403).json({ message: "Unauthorized access" });
+    }
+    try {
+        const jobs = yield db_1.db
+            .select({
+            id: schema_1.Job.id,
+            title: schema_1.Job.title,
+            description: schema_1.Job.description,
+            budget: schema_1.Job.budget,
+            deadline: schema_1.Job.deadline,
+            client_id: schema_1.Job.client_id,
+            client_username: schema_1.User.username,
+        })
+            .from(schema_1.Job)
+            .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.User.id, schema_1.Job.client_id))
+            .where((0, drizzle_orm_1.eq)(schema_1.Job.client_id, clientId));
+        res.json(jobs);
+    }
+    catch (error) {
+        console.error("Error fetching jobs:", error);
+        res.status(500).json({ message: "Failed to fetch jobs" });
     }
 }));
 exports.default = jobsRouter;

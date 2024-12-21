@@ -1,33 +1,47 @@
-// src/components/ProfilePresentation.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Profile } from "../../api/profileApi";
 import ReviewList from "../Reviews/ReviewsList";
-import CreateReview from "../Reviews/CreateReview";
-import Modal from "../UI/Modal";
+import MyJobs from "../jobs/MyJobs";
+import MyReviews from "../Reviews/ClientmadeReviews";
+import MyApplications from "../jobApplications/MyApplications";
 import Button from "../UI/Button";
+import CreateReview from "../Reviews/CreateReview";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ProfilePresentationProps {
   profile: Profile;
   isOwner: boolean;
-  onEdit: () => void; // Add onEdit function here
+  onEdit: () => void;
 }
 
 export function ProfilePresentation({
   profile,
   isOwner,
-  onEdit, // Destructure the onEdit prop here
+  onEdit,
 }: ProfilePresentationProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { userId, userType } = useAuth();
+  const isFreelancer = userType === "freelancer";
+  const [activeTab, setActiveTab] = useState(
+    isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
+  );
+  const [isReviewing, setIsReviewing] = useState(false);
+  const isProfileOwner = String(userId) === String(profile.userId);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const handleOpenReview = () => {
+    setIsReviewing(true);
+  };
+
+  const handleCloseReview = () => {
+    setIsReviewing(false);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 mt-8 mb-12 border border-gray-200">
+    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-16 border border-gray-200 mt-4 h-screen overflow-y-auto">
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">
         {profile.username || "User"}'s Profile
       </h1>
 
+      {/* Profile Details */}
       <div className="space-y-4">
         <div>
           <strong className="font-medium">Skills:</strong>
@@ -41,43 +55,119 @@ export function ProfilePresentation({
             {profile.description || "No description provided."}
           </p>
         </div>
-        <div>
-          <strong className="font-medium">Hourly Rate:</strong>
-          <p className="text-lg text-gray-600">${profile.hourlyRate}</p>
-        </div>
+        {!isFreelancer && isProfileOwner ? null : (
+          <div>
+            <strong className="font-medium">Hourly Rate:</strong>
+            <p className="text-lg text-gray-600">
+              {profile?.hourlyRate ? `$${profile.hourlyRate}/hr` : "N/A"}
+            </p>
+          </div>
+        )}
       </div>
 
+      {/* Edit Button for Profile Owner */}
       {isOwner && (
         <div className="mt-6 flex justify-left">
           <Button
             label="Edit Profile"
-            onClick={onEdit} // Call onEdit when the button is clicked
+            onClick={onEdit}
             className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
           />
         </div>
       )}
 
-      {/* Create Review Button Above Review List */}
-      {!isOwner && (
-        <div className="mt-10 flex justify-left">
+      {/* Add Review Button for Non-Owners */}
+      {!isOwner && !isFreelancer && (
+        <div className="mt-6 flex justify-left">
           <Button
-            label="Create Review"
-            onClick={openModal}
-            className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+            label="Add Review"
+            onClick={handleOpenReview}
+            className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
           />
         </div>
       )}
 
-      {/* Review Section */}
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Reviews</h2>
-        <ReviewList freelancerId={profile.profileId} />
+      {/* Tab Navigation */}
+      <div className="mt-8 flex space-x-4 border-b pb-2">
+        {isFreelancer && (
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`${
+              activeTab === "reviews"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-500"
+            } px-4 py-2`}
+          >
+            Reviews
+          </button>
+        )}
+
+        {isFreelancer && isOwner ? (
+          <>
+            <button
+              onClick={() => setActiveTab("applications")}
+              className={`${
+                activeTab === "applications"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-500"
+              } px-4 py-2`}
+            >
+              My Applications
+            </button>
+          </>
+        ) : (
+          <>
+            {!isFreelancer && isOwner && (
+              <button
+                onClick={() => setActiveTab("jobs")}
+                className={`${
+                  activeTab === "jobs"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-500"
+                } px-4 py-2`}
+              >
+                My Jobs
+              </button>
+            )}
+
+            {!isFreelancer && isOwner && (
+              <button
+                onClick={() => setActiveTab("myReviews")}
+                className={`${
+                  activeTab === "myReviews"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-500"
+                } px-4 py-2`}
+              >
+                Reviews I've left
+              </button>
+            )}
+          </>
+        )}
       </div>
 
-      {/* Modal for Create Review */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <CreateReview freelancerId={profile.profileId} onClose={closeModal} />
-      </Modal>
+      {/* Tab Content */}
+      <div className="mt-6">
+        {activeTab === "reviews" && (
+          <ReviewList freelancerId={profile.profileId} />
+        )}
+        {activeTab === "applications" && isFreelancer && <MyApplications />}
+        {activeTab === "jobs" && !isFreelancer && (
+          <MyJobs clientId={profile.userId} />
+        )}
+        {activeTab === "myReviews" && !isFreelancer && (
+          <MyReviews clientId={profile.userId} />
+        )}
+      </div>
+
+      {/* Review Modal */}
+      {isReviewing && (
+        <CreateReview
+          freelancerId={profile.profileId}
+          isOpen={isReviewing}
+          onClose={handleCloseReview}
+        />
+      )}
     </div>
   );
 }

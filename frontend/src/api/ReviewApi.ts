@@ -5,6 +5,7 @@ export interface Review {
   rating: number;
   review_text: string;
   client_username: string;
+  freelancer_username: string;
 }
 
 interface SubmitReviewData {
@@ -65,4 +66,12 @@ export const fetchFreelancerReviews = async (
 ): Promise<Review[]> => {
   console.log(`Fetching reviews for freelancer_id: ${freelancerId}`);
   return fetchClient<Review[]>(`/profiles/${freelancerId}/reviews`);
+};
+
+// Fetch all reviews written by a client
+export const fetchClientReviews = async (
+  clientId: string
+): Promise<Review[]> => {
+  console.log(`Fetching reviews for client_id: ${clientId}`);
+  return fetchClient<Review[]>(`/reviews/client/${clientId}`);
 };

@@ -124,3 +124,7 @@ export const deleteJob = async (id: string): Promise<void> => {
 export const fetchJob = async (id: string): Promise<Job> => {
   return fetchClient<Job>(`/jobs/${id}`);
 };
+
+export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {
+  return fetchClient<Job[]>(`/jobs/created-by/${clientId}`);
+};

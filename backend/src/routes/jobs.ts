@@ -137,25 +137,68 @@ jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
 
 jobsRouter.delete("/jobs/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const userType = (req.user as JwtPayload).user_type; // Get user type
+  const { id: userId, user_type } = req.user as JwtPayload;
 
   // Check if the user is a client
-  if (userType !== "client") {
+  if (user_type !== "client") {
     return res.status(403).json({ message: "Only clients can delete jobs" });
   }
 
   try {
-    const deletedJob = await db.delete(Job).where(eq(Job.id, id));
+    // Check if the job exists and belongs to the logged-in client
+    const job = await db.select().from(Job).where(eq(Job.id, id)).limit(1);
 
-    if (deletedJob) {
-      res.json({ message: "Job deleted successfully" });
-    } else {
-      res.status(404).json({ message: "Job not found" });
+    if (!job.length) {
+      return res.status(404).json({ message: "Job not found" });
     }
+
+    if (job[0].client_id !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this job" });
+    }
+
+    // Delete the job
+    await db.delete(Job).where(eq(Job.id, id));
+    res.json({ message: "Job deleted successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting job:", error);
     res.status(500).json({ message: "Error deleting job" });
   }
 });
+
+jobsRouter.get(
+  "/jobs/created-by/:clientId",
+  authenticateToken,
+  async (req, res) => {
+    const { clientId } = req.params;
+    const { id: loggedInUserId, user_type } = req.user as JwtPayload;
+
+    if (user_type !== "client" || clientId !== loggedInUserId) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    try {
+      const jobs = await db
+        .select({
+          id: Job.id,
+          title: Job.title,
+          description: Job.description,
+          budget: Job.budget,
+          deadline: Job.deadline,
+          client_id: Job.client_id,
+          client_username: User.username,
+        })
+        .from(Job)
+        .leftJoin(User, eq(User.id, Job.client_id))
+        .where(eq(Job.client_id, clientId));
+
+      res.json(jobs);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      res.status(500).json({ message: "Failed to fetch jobs" });
+    }
+  }
+);
 
 export default jobsRouter;

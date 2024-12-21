@@ -27,6 +27,7 @@ app.use(express_1.default.json());
 app.use(userManagment_1.default);
 app.use("/applications", applications_1.default);
 app.use(profiles_1.default);
+app.use("/reviews", reviews_1.default);
 app.use("/profiles", reviews_1.default);
 app.use(jobs_1.default);
 // Start server

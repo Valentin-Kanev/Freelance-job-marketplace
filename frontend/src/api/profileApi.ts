@@ -1,4 +1,5 @@
 export interface Profile {
+  userType: string;
   profileId: string; // UUID as string
   userId: string; // UUID as string
   skills: string;
@@ -57,19 +58,18 @@ export const fetchProfiles = async (): Promise<Profile[]> => {
   return fetchClient<Profile[]>("/profiles");
 };
 
-// Ensure the userId is correctly set and passed
 export const fetchUserProfile = async (userId: string) => {
-  const token = localStorage.getItem("token"); // Get the token from localStorage
+  const token = localStorage.getItem("token");
 
   if (!token) {
     throw new Error("No token provided. Please log in.");
   }
 
   const response = await fetch(
-    `http://localhost:3001/profiles/user/${userId}`,
+    `http://localhost:3001/profiles/user/${userId}`, // Updated URL
     {
       headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the request
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     }

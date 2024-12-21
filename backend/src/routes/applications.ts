@@ -118,4 +118,36 @@ applicationsRouter.get(
   }
 );
 
+applicationsRouter.get(
+  "/applications/my-applications", // Corrected route
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    if (!req.user || typeof req.user === "string") {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const freelancerId = req.user.id;
+
+    try {
+      const applications = await db
+        .select({
+          jobId: Application.job_id,
+          jobTitle: Job.title,
+          coverLetter: Application.cover_letter,
+          applicationDate: Application.timestamp,
+        })
+        .from(Application)
+        .innerJoin(Job, eq(Application.job_id, Job.id))
+        .where(eq(Application.freelancer_id, freelancerId));
+
+      console.log("Fetched applications:", applications);
+
+      res.json(applications);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      res.status(500).json({ message: "Error fetching applications" });
+    }
+  }
+);
+
 export default applicationsRouter;

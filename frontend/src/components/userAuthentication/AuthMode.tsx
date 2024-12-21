@@ -6,7 +6,7 @@ const AuthMode: React.FC = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-4">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm border border-gray-300 mt-4">
         {" "}
         {/* Changed padding and max-width */}

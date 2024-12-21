@@ -4,6 +4,8 @@ import {
   applyForJob,
   fetchJobApplications,
   Application,
+  MyApplication,
+  fetchMyApplications,
 } from "../api/ApplicationApi"; // Make sure to import from the correct path
 
 // Apply for a job
@@ -38,6 +40,20 @@ export const useJobApplications = (jobId: string) => {
       retry: 2, // Retry failed requests twice
       onError: (error: Error) => {
         console.error("Error fetching applications:", error.message);
+      },
+    }
+  );
+};
+
+export const useMyApplications = () => {
+  return useQuery<MyApplication[], Error>(
+    "myApplications",
+    fetchMyApplications,
+    {
+      staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      retry: 2, // Retry failed requests twice
+      onError: (error: Error) => {
+        console.error("Error fetching my applications:", error.message);
       },
     }
   );

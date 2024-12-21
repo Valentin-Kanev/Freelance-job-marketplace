@@ -35,8 +35,8 @@ const JobDetails: React.FC<JobDetailsProps> = ({
 
   if (!job) {
     return (
-      <div className="text-center text-gray-500 flex items-center justify-center w-full h-full">
-        <div>
+      <div className="flex items-center justify-center text-center text-gray-500 h-screen ">
+        <div className="space-y-4 mt-[-15vh]">
           <h3 className="text-2xl">Select a job to view details</h3>
           <p className="text-md">
             Click on a job from the list to see more information.
@@ -56,7 +56,14 @@ const JobDetails: React.FC<JobDetailsProps> = ({
     !isInModal && currentModal === null && userType === "freelancer";
 
   return (
-    <div className="w-full max-h-screen">
+    <div
+      className="w-full overflow-y-auto p-4"
+      style={{
+        maxHeight: "85vh", // Set the maximum height to 80% of the viewport height
+        scrollbarWidth: "thin", // Optional, for thin scrollbar
+        scrollbarColor: "#4A5568 #E2E8F0", // Optional, custom scrollbar color
+      }}
+    >
       <h2 className="text-4xl font-bold mb-4">{job.title}</h2>
       <p className="text-lg text-gray-700 mb-4">
         Posted by: {job.client_username}
@@ -105,10 +112,12 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       {activeModal === "delete" && (
         <DeleteJob
           jobId={job.id}
+          isOpen={activeModal === "delete"} // Explicitly control visibility
           onSuccess={onJobUpdate}
           onClose={() => setActiveModal(null)}
         />
       )}
+
       {activeModal === "apply" && (
         <ApplyForJob jobId={job.id} onClose={() => setActiveModal(null)} />
       )}

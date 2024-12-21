@@ -14,11 +14,14 @@ const useJobForm = (initialDetails: any) => {
     }
   }, [initialDetails]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setJobDetails({
-      ...jobDetails,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setJobDetails((prevDetails: any) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
 
   return { jobDetails, handleChange };

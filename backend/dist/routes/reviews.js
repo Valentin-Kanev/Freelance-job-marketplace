@@ -103,4 +103,28 @@ reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __a
         res.status(500).json({ message: "Error retrieving reviews" });
     }
 }));
+// Route to fetch all reviews written by a client
+reviewsRouter.get("/client/:clientId", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { clientId } = req.params;
+    try {
+        const reviews = yield db_1.db
+            .select({
+            id: schema_1.Review.id,
+            freelancer_id: schema_1.Review.freelancer_id,
+            client_id: schema_1.Review.client_id,
+            rating: schema_1.Review.rating,
+            review_text: schema_1.Review.review_text,
+            freelancer_username: schema_1.User.username,
+        })
+            .from(schema_1.Review)
+            .innerJoin(schema_1.Profile, (0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, schema_1.Profile.user_id))
+            .innerJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
+            .where((0, drizzle_orm_1.eq)(schema_1.Review.client_id, clientId));
+        res.json(reviews);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving client reviews" });
+    }
+}));
 exports.default = reviewsRouter;

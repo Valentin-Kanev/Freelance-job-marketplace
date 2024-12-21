@@ -19,7 +19,7 @@ const schema_1 = require("../drizzle/schema");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const router = (0, express_1.Router)();
 // Route to retrieve all freelancer profiles
-router.get("/profiles", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profiles = yield db_1.db
             .select({
@@ -41,8 +41,8 @@ router.get("/profiles", authenticateToken_1.default, (req, res) => __awaiter(voi
     }
 }));
 // Route to retrieve a specific user profile by userId
-router.get("/profiles/user/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id: userId } = req.params; // Get the userId from the URL
+router.get("/profiles/user/:user_id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user_id: userId } = req.params; // Use user_id directly from params
     if (!userId) {
         return res.status(400).json({ message: "User ID not provided" });
     }
@@ -58,7 +58,7 @@ router.get("/profiles/user/:id", authenticateToken_1.default, (req, res) => __aw
         })
             .from(schema_1.Profile)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, userId)); // Compare UUID
+            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, userId)); // Compare by user_id
         if (profile.length === 0) {
             return res.status(404).json({ message: "Profile not found" });
         }

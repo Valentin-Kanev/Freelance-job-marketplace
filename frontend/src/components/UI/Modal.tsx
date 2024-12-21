@@ -33,8 +33,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollbarWidth}px`;
-
-      modalRef.current?.focus();
     } else {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
@@ -61,7 +59,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         ref={modalRef}
         className="bg-gray-50 p-8 rounded-2xl shadow-xl max-w-md w-full transform transition-all"
         style={{ boxSizing: "border-box" }}
-        tabIndex={-1}
       >
         {title && (
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">

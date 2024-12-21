@@ -15,7 +15,7 @@ const Button: React.FC<CustomButtonProps> = ({
   type = "button",
 }) => {
   const baseClass =
-    "bg-blue-600 text-white py-2 px-6 text-sm rounded-full hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50";
+    "bg-blue-600 text-white py-2 px-6 text-sm rounded-full hover:bg-blue-700 transition duration-300 ease-in-out transform  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50";
   return (
     <button
       type={type}

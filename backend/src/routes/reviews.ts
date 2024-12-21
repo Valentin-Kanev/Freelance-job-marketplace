@@ -109,4 +109,30 @@ reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to fetch all reviews written by a client
+reviewsRouter.get("/client/:clientId", authenticateToken, async (req, res) => {
+  const { clientId } = req.params;
+
+  try {
+    const reviews = await db
+      .select({
+        id: Review.id,
+        freelancer_id: Review.freelancer_id,
+        client_id: Review.client_id,
+        rating: Review.rating,
+        review_text: Review.review_text,
+        freelancer_username: User.username,
+      })
+      .from(Review)
+      .innerJoin(Profile, eq(Review.freelancer_id, Profile.user_id))
+      .innerJoin(User, eq(Profile.user_id, User.id))
+      .where(eq(Review.client_id, clientId));
+
+    res.json(reviews);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving client reviews" });
+  }
+});
+
 export default reviewsRouter;

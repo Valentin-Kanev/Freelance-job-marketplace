@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter, // This is correct for the browser
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import JobManagement from "./components/jobs/JobsManagment";
 import JobDashboard from "./components/jobs/JobDashboard";
 import ProtectedRoute from "./components/Protectedroute";
@@ -14,13 +9,13 @@ import { ProfileContainer } from "./components/profile/ProfileContainer";
 import AuthMode from "./components/userAuthentication/AuthMode";
 import { ToastProvider } from "./components/ToastManager";
 import { useJobs } from "./hooks/useJobs";
+import FreelancerProfilesList from "./components/profile/ProfilesList";
+import ProfileDetails from "./components/profile/ProfileDetails";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {" "}
-        {/* Use BrowserRouter here */}
         <ToastProvider>
           <Header />
           <AppRoutes />
@@ -53,10 +48,9 @@ const AppRoutes: React.FC = () => {
             error={error}
           />
         }
-      />{" "}
-      {/* Job details */}
-      {/* Profiles */}
-      <Route path="/profiles/:freelancerId" element={<ProfileContainer />} />
+      />
+      <Route path="/profiles" element={<FreelancerProfilesList />} />
+      <Route path="/profiles/:user_id" element={<ProfileDetails />} />
       <Route
         path="/profile-management"
         element={

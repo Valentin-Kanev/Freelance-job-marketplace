@@ -10,10 +10,11 @@ interface DeleteJobModalProps {
   onClose: () => void;
 }
 
-const DeleteJob: React.FC<DeleteJobModalProps> = ({
+const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
   jobId,
   onSuccess,
   onClose,
+  isOpen,
 }) => {
   const deleteJobMutation = useDeleteJob();
   const { addToast } = useToast();
@@ -22,17 +23,20 @@ const DeleteJob: React.FC<DeleteJobModalProps> = ({
     deleteJobMutation.mutate(jobId, {
       onSuccess: () => {
         addToast("Job deleted successfully!");
-        if (onSuccess) onSuccess(); // Call only if it exists
+        if (onSuccess) onSuccess();
+        onClose(); // Close modal after success
       },
       onError: (err) => console.error("Error deleting job:", err.message),
     });
   };
 
+  if (!isOpen) return null; // Prevent rendering when not open
+
   return (
-    <Modal isOpen={true} onClose={onClose} title="Confirm Deletion">
-      <div className="space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion">
+      <div className="space-y-4 text-center">
         <p>Are you sure you want to delete this job?</p>
-        <div className="flex justify-left space-x-4">
+        <div className="flex justify-center space-x-4">
           <Button
             label="Delete"
             onClick={handleDelete}

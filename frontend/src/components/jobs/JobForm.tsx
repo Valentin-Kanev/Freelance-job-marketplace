@@ -38,13 +38,23 @@ const JobForm: React.FC<JobFormProps> = ({
         onChange={handleChange}
         placeholder="Enter job title"
       />
-      <Input
-        label="Description"
-        name="description"
-        value={jobDetails.description}
-        onChange={handleChange}
-        placeholder="Enter job description"
-      />
+      <div>
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Description
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          value={jobDetails.description}
+          onChange={handleChange}
+          placeholder="Enter job description"
+          rows={5}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        />
+      </div>
       <Input
         label="Budget"
         name="budget"

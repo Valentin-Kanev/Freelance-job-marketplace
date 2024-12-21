@@ -1,5 +1,3 @@
-// src/components/Reviews/ReviewList.tsx
-import React from "react";
 import { useFreelancerReviews } from "../../hooks/useReview";
 
 interface ReviewListProps {
@@ -28,7 +26,7 @@ export default function ReviewList({ freelancerId }: ReviewListProps) {
             <p className="text-lg font-semibold text-gray-800">
               Client: {review.client_username}
             </p>
-            <p className="text-yellow-500">
+            <p className="text-yellow-500 font-semibold">
               Rating: {"⭐".repeat(review.rating)}
             </p>
             <p className="text-gray-700">{review.review_text}</p>

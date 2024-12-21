@@ -22,7 +22,7 @@ const Toast: React.FC<ToastProps> = ({ message, duration = 3000, onClose }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 bg-green-500 text-white py-3 px-6 rounded-md shadow-md">
+    <div className="fixed bottom-5 left-5 z-50 bg-blue-600 text-white py-3 px-6 rounded-md shadow-md">
       {message}
     </div>
   );

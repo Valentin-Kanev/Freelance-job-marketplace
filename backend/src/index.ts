@@ -27,6 +27,7 @@ app.use(express.json());
 app.use(userManagmentRouter);
 app.use("/applications", applicationsRouter);
 app.use(profilesRouter);
+app.use("/reviews", reviewsRouter);
 app.use("/profiles", reviewsRouter);
 app.use(jobsRouter);
 

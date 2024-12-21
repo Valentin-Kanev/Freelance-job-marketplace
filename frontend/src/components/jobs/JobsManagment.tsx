@@ -19,7 +19,7 @@ const JobManagement: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8 px-4">
+    <div className=" bg-gray-50  flex-col items-center overflow-hidden h-screen no-scrollbar">
       {/* Job Dashboard */}
       <JobDashboard
         jobs={jobs || []}
