@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import CreateReview from "../Reviews/CreateReview";
+import Button from "../UI/Button";
 
 interface ApplicationItemProps {
   application: {
@@ -13,6 +15,15 @@ interface ApplicationItemProps {
 const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
   const [showMore, setShowMore] = useState(false);
   const isLongText = application.cover_letter.length > 200;
+  const [isReviewing, setIsReviewing] = useState(false);
+
+  const handleOpenReview = () => {
+    setIsReviewing(true);
+  };
+
+  const handleCloseReview = () => {
+    setIsReviewing(false);
+  };
 
   return (
     <li className="py-4">
@@ -40,6 +51,20 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
             </button>
           )}
         </div>
+        <div className="mt-6 flex justify-left">
+          <Button
+            label="Add Review"
+            onClick={handleOpenReview}
+            className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
+          />
+        </div>
+        {isReviewing && (
+          <CreateReview
+            freelancerId={application.freelancer_id}
+            isOpen={isReviewing}
+            onClose={handleCloseReview}
+          />
+        )}
       </div>
     </li>
   );

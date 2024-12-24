@@ -20,7 +20,6 @@ const authenticateToken_1 = __importDefault(require("../middleware/Authenticatio
 const schema_1 = require("../drizzle/schema");
 const reviewsRouter = (0, express_1.Router)();
 // Route to create a new review
-// Route to create a new review
 reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: freelancer_id } = req.params;
     const { client_id, rating, review_text } = req.body;
@@ -37,7 +36,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         const profile = yield db_1.db
             .select()
             .from(schema_1.Profile)
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, freelancer_id))
+            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, freelancer_id))
             .limit(1);
         if (profile.length === 0) {
             return res.status(404).json({ message: "Freelancer not found" });
@@ -46,7 +45,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         const existingReview = yield db_1.db
             .select()
             .from(schema_1.Review)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, profile[0].user_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, freelancer_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)))
             .limit(1);
         if (existingReview.length > 0) {
             return res.status(400).json({
@@ -55,7 +54,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         }
         // Insert the new review
         yield db_1.db.insert(schema_1.Review).values({
-            freelancer_id: profile[0].user_id,
+            freelancer_id,
             client_id,
             rating,
             review_text,
@@ -63,8 +62,11 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         res.status(201).json({ message: "Review posted successfully" });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error posting review" });
+        console.error("Error posting review:", error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res
+            .status(500)
+            .json({ message: "Error posting review", error: errorMessage });
     }
 }));
 // Route to fetch all reviews for a freelancer

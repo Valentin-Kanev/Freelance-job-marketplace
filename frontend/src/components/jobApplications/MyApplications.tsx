@@ -9,7 +9,7 @@ const MyApplications: React.FC = () => {
   if (isError) return <div>Error: {error?.message}</div>;
 
   if (!applications || applications.length === 0) {
-    return <div>No applications found</div>;
+    return <div className="text-gray-500">No applications found</div>;
   }
 
   return (

@@ -8,7 +8,6 @@ import { Profile, Review, User } from "../drizzle/schema";
 const reviewsRouter = Router();
 
 // Route to create a new review
-// Route to create a new review
 reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
   const { id: freelancer_id } = req.params;
   const { client_id, rating, review_text } = req.body;
@@ -28,7 +27,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
     const profile = await db
       .select()
       .from(Profile)
-      .where(eq(Profile.id, freelancer_id))
+      .where(eq(Profile.user_id, freelancer_id))
       .limit(1);
 
     if (profile.length === 0) {
@@ -41,7 +40,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
       .from(Review)
       .where(
         and(
-          eq(Review.freelancer_id, profile[0].user_id),
+          eq(Review.freelancer_id, freelancer_id),
           eq(Review.client_id, client_id)
         )
       )
@@ -55,7 +54,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
 
     // Insert the new review
     await db.insert(Review).values({
-      freelancer_id: profile[0].user_id,
+      freelancer_id,
       client_id,
       rating,
       review_text,
@@ -63,8 +62,12 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
 
     res.status(201).json({ message: "Review posted successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error posting review" });
+    console.error("Error posting review:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    res
+      .status(500)
+      .json({ message: "Error posting review", error: errorMessage });
   }
 });
 

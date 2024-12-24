@@ -73,5 +73,10 @@ export const fetchClientReviews = async (
   clientId: string
 ): Promise<Review[]> => {
   console.log(`Fetching reviews for client_id: ${clientId}`);
-  return fetchClient<Review[]>(`/reviews/client/${clientId}`);
+  try {
+    return await fetchClient<Review[]>(`/reviews/client/${clientId}`);
+  } catch (error) {
+    console.error("Error fetching client reviews:", error);
+    throw error;
+  }
 };

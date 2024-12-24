@@ -5,7 +5,6 @@ import MyJobs from "../jobs/MyJobs";
 import MyReviews from "../Reviews/ClientmadeReviews";
 import MyApplications from "../jobApplications/MyApplications";
 import Button from "../UI/Button";
-import CreateReview from "../Reviews/CreateReview";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface ProfilePresentationProps {
@@ -24,16 +23,7 @@ export function ProfilePresentation({
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
-  const [isReviewing, setIsReviewing] = useState(false);
   const isProfileOwner = String(userId) === String(profile.userId);
-
-  const handleOpenReview = () => {
-    setIsReviewing(true);
-  };
-
-  const handleCloseReview = () => {
-    setIsReviewing(false);
-  };
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-16 border border-gray-200 mt-4 h-screen overflow-y-auto">
@@ -71,17 +61,6 @@ export function ProfilePresentation({
           <Button
             label="Edit Profile"
             onClick={onEdit}
-            className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
-          />
-        </div>
-      )}
-
-      {/* Add Review Button for Non-Owners */}
-      {!isOwner && !isFreelancer && (
-        <div className="mt-6 flex justify-left">
-          <Button
-            label="Add Review"
-            onClick={handleOpenReview}
             className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
           />
         </div>
@@ -159,15 +138,6 @@ export function ProfilePresentation({
           <MyReviews clientId={profile.userId} />
         )}
       </div>
-
-      {/* Review Modal */}
-      {isReviewing && (
-        <CreateReview
-          freelancerId={profile.profileId}
-          isOpen={isReviewing}
-          onClose={handleCloseReview}
-        />
-      )}
     </div>
   );
 }
