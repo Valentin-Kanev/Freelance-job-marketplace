@@ -8,7 +8,7 @@ import {
 } from "../api/profileApi";
 
 interface UpdateProfileVariables {
-  id: string; // Change id to string for UUIDs
+  id: string;
   data: {
     skills: string;
     description: string;
@@ -16,18 +16,16 @@ interface UpdateProfileVariables {
   };
 }
 
-// Fetch all profiles
 export const useProfiles = () => {
   return useQuery<Profile[], Error>("profiles", fetchProfiles, {
-    staleTime: 5 * 60 * 1000, // Cache profiles for 5 minutes
-    retry: 2, // Retry failed requests twice
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
     onError: (error: Error) => {
       console.error("Error fetching profiles:", error.message);
     },
   });
 };
 
-// Fetch a specific user profile by userId (UUID)
 export const useUserProfile = (userId: string | null) => {
   return useQuery<Profile, Error>(
     ["profile", userId],
@@ -42,13 +40,12 @@ export const useUserProfile = (userId: string | null) => {
   );
 };
 
-// Create a new profile
 export const useCreateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation(createProfile, {
     onSuccess: () => {
-      queryClient.invalidateQueries("profiles"); // Refetch profiles after creation
+      queryClient.invalidateQueries("profiles");
     },
     onError: (error: Error) => {
       console.error("Error creating profile:", error.message);
@@ -56,14 +53,13 @@ export const useCreateProfile = () => {
   });
 };
 
-// Update an existing profile
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Profile, Error, UpdateProfileVariables>(
     ({ id, data }) => updateProfile(id, data),
     {
-      onSuccess: (updatedProfile, variables) => {
+      onSuccess: (updatedProfile) => {
         console.log("Profile updated successfully:", updatedProfile);
         queryClient.invalidateQueries("profile");
       },

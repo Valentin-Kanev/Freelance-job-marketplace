@@ -47,22 +47,17 @@ const pg_1 = require("pg");
 const router = express_1.default.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv_1.default.config({ path: envPath });
-// Secret key for JWT
 const SECRET_KEY = process.env.SECRET_KEY || "secret";
-// Initialize PostgreSQL pool connection
 const pool = new pg_1.Pool({
     connectionString: process.env.DATABASE_URL,
 });
-// Create the Drizzle instance using the PostgreSQL client
 const db = (0, node_postgres_1.drizzle)(pool);
-// POST /register
 router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email, user_type } = req.body;
     if (!username || !password || !email || !user_type) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
-        // Check if the username or email already exists
         const existingUsers = yield db
             .select()
             .from(schema_1.User)
@@ -73,7 +68,6 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 .status(400)
                 .json({ message: "Username or email already exists" });
         }
-        // If not, proceed to insert a new user
         const newUser = yield db
             .insert(schema_1.User)
             .values({
@@ -83,12 +77,11 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
             user_type,
         })
             .returning();
-        // Automatically create a blank profile for the new user
         yield db.insert(schema_1.Profile).values({
-            user_id: newUser[0].id, // Use the newly created user's ID
+            user_id: newUser[0].id,
             skills: "",
             description: "",
-            hourly_rate: "0.00", // Set default hourly rate to 0.00
+            hourly_rate: "0.00",
         });
         res.status(201).json({
             message: "User registered and profile created successfully",
@@ -100,26 +93,22 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }));
-// POST /login
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { email, password } = req.body;
-    // Validate input
     if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
     }
     try {
-        // Find user by email
         const users = yield db
             .select()
             .from(schema_1.User)
             .where((0, expressions_1.eq)(schema_1.User.email, email))
             .execute();
-        const user = users[0]; // Get the first user from the results
+        const user = users[0];
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        // Check password using PostgreSQL's crypt function
         const isValidPassword = yield db
             .select({
             isValid: (0, drizzle_orm_1.sql) `crypt(${password}, ${user.password}) = ${user.password}`,
@@ -130,14 +119,12 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!((_a = isValidPassword[0]) === null || _a === void 0 ? void 0 : _a.isValid)) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        // Check if the user has a profile, create one if not
         const existingProfile = yield db
             .select()
             .from(schema_1.Profile)
             .where((0, expressions_1.eq)(schema_1.Profile.user_id, user.id))
             .execute();
         if (existingProfile.length === 0) {
-            // Create a blank profile for the user if they don't have one
             yield db.insert(schema_1.Profile).values({
                 user_id: user.id,
                 skills: "",
@@ -145,12 +132,10 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 hourly_rate: "0.00",
             });
         }
-        // Create JWT token
-        // Create JWT token
         const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username, user_type: user.user_type }, SECRET_KEY, { expiresIn: "1h" });
         res
             .status(200)
-            .json({ message: "Login successful", token, userId: user.id }); // Include userId in the response
+            .json({ message: "Login successful", token, userId: user.id });
     }
     catch (error) {
         res.status(500).json({ message: "Server error", error });

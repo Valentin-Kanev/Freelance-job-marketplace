@@ -64,16 +64,10 @@ export const fetchJobs = async (): Promise<Job[]> => {
   return fetchClient<Job[]>("/jobs");
 };
 
-export const createJob = async (jobData: {
-  client_id: string;
-  title: string;
-  description: string;
-  budget: number;
-  deadline: string;
-}) => {
+export const createJob = async (jobData: CreateJobData): Promise<Job> => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch("http://localhost:3000/jobs", {
+  const response = await fetch(`${BASE_URL}/jobs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -95,7 +89,6 @@ export const updateJob = async (
   data: UpdateJobData
 ): Promise<Job> => {
   try {
-    // Ensure deadline is properly formatted
     if (data.deadline) {
       data.deadline = new Date(data.deadline).toISOString();
     }

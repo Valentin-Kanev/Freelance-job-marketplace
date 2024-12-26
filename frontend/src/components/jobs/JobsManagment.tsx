@@ -20,7 +20,6 @@ const JobManagement: React.FC = () => {
 
   return (
     <div className=" bg-gray-50  flex-col items-center overflow-hidden h-screen no-scrollbar">
-      {/* Job Dashboard */}
       <JobDashboard
         jobs={jobs || []}
         isLoading={isLoading}
@@ -28,7 +27,6 @@ const JobManagement: React.FC = () => {
         error={error}
       />
 
-      {/* Create Job Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { StrictMode } from "react";
-import { QueryClient, QueryClientProvider } from "react-query"; // Import necessary React Query components
-import App from "./App"; // Change this line to default import
+import { QueryClient, QueryClientProvider } from "react-query";
+import App from "./App";
 import "./index.css";
 
 const queryClient = new QueryClient();

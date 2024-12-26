@@ -1,4 +1,3 @@
-// components/ToastManager.tsx
 import React, { useState, createContext, useContext } from "react";
 import Toast from "./UI/Toast";
 

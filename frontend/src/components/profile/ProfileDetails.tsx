@@ -3,13 +3,13 @@ import { useUserProfile } from "../../hooks/useProfiles";
 import { ProfilePresentation } from "./ProfilePresentation";
 
 const ProfileDetails = () => {
-  const { user_id } = useParams(); // Match with the updated route
+  const { user_id } = useParams();
   const {
     data: profile,
     isLoading,
     isError,
     error,
-  } = useUserProfile(user_id || null); // Pass user_id
+  } = useUserProfile(user_id || null);
 
   if (isLoading) {
     return <div className="text-center mt-24">Loading profile...</div>;

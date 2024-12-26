@@ -9,9 +9,9 @@ interface CustomButtonProps {
 
 const Button: React.FC<CustomButtonProps> = ({
   label,
-  className = "", // Default empty string for concatenation
+  className = "",
   onClick,
-  disabled = false, // Explicitly default to false
+  disabled = false,
   type = "button",
 }) => {
   const baseClass =
@@ -20,7 +20,7 @@ const Button: React.FC<CustomButtonProps> = ({
     <button
       type={type}
       className={`${baseClass} ${className}`}
-      onClick={disabled ? undefined : onClick} // Prevent click if disabled
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
     >
       {label}

@@ -78,7 +78,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
         </form>
       </Modal>
 
-      {/* Toast Notification */}
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}

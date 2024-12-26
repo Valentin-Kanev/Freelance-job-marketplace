@@ -3,7 +3,7 @@ import { useLoginUser } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
-import Input from "../UI/Input"; // Premade Input component
+import Input from "../UI/Input";
 import { jwtDecode } from "jwt-decode";
 import Button from "../UI/Button";
 
@@ -37,21 +37,18 @@ const Login: React.FC = () => {
             user_type: string;
           } = jwtDecode(data.token);
 
-          const userType = decodedToken.user_type; // Extract user_type
+          const userType = decodedToken.user_type;
 
-          // Store data in localStorage
           localStorage.setItem("token", data.token);
           localStorage.setItem("userId", decodedToken.id);
           localStorage.setItem("userType", userType);
 
-          // Set the token in the auth context to trigger reactivity
           login(data.token);
 
-          // Wait until login has updated the auth state, then invalidate and refetch
           queryClient.invalidateQueries("profile", { exact: true });
           queryClient.refetchQueries("profile", { exact: true });
 
-          navigate("/jobs"); // Redirect to jobs page
+          navigate("/jobs");
         },
         onError: (error) => {
           console.error("Login failed:", error);

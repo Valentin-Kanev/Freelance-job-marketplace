@@ -1,4 +1,3 @@
-// src/api/userManagmentApi.ts
 export interface User {
   id: number;
   username: string;
@@ -20,7 +19,6 @@ interface LoginUserData {
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
-// Helper function for making API requests using fetch
 const fetchClient = async <T>(
   url: string,
   options?: RequestInit
@@ -41,7 +39,6 @@ const fetchClient = async <T>(
   return response.json();
 };
 
-// Register user
 export const registerUser = async (data: RegisterUserData): Promise<User> => {
   return fetchClient<User>("/register", {
     method: "POST",
@@ -49,7 +46,6 @@ export const registerUser = async (data: RegisterUserData): Promise<User> => {
   });
 };
 
-// Login user
 export const loginUser = async (
   data: LoginUserData
 ): Promise<{ token: string; userId: string; userType: string }> => {
@@ -65,13 +61,12 @@ export const loginUser = async (
   return response;
 };
 
-export const logoutUser = () => {
-  localStorage.removeItem("token"); // Remove token from localStorage
+export const logoutUser = (): void => {
+  localStorage.removeItem("token");
   localStorage.removeItem("userId");
   localStorage.removeItem("userType");
 };
 
-// Fetch logged-in user's profile
 export const fetchUserProfile = async (): Promise<User> => {
   const token = localStorage.getItem("token");
 
@@ -82,7 +77,7 @@ export const fetchUserProfile = async (): Promise<User> => {
   return fetchClient<User>("/profile", {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`, // Make sure token is included
+      Authorization: `Bearer ${token}`,
     },
   });
 };

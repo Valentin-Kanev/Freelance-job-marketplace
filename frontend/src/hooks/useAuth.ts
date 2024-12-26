@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { jwtDecode } from "jwt-decode";
 import { useMutation, useQuery } from "react-query";
 import { registerUser, loginUser, User } from "../api/userAuthenticationApi";
@@ -6,9 +5,9 @@ import { registerUser, loginUser, User } from "../api/userAuthenticationApi";
 export const isTokenValid = (token: string): boolean => {
   try {
     const decoded: any = (jwtDecode as any)(token);
-    return decoded.exp * 1000 > Date.now(); // exp is in seconds
+    return decoded.exp * 1000 > Date.now();
   } catch (e) {
-    return false; // Invalid token or decoding error
+    return false;
   }
 };
 
@@ -28,7 +27,6 @@ export const useAuthUser = () => {
   );
 };
 
-// Register Hook
 export const useRegisterUser = () => {
   return useMutation<User, Error, Parameters<typeof registerUser>[0]>(
     registerUser,
@@ -43,8 +41,6 @@ export const useRegisterUser = () => {
   );
 };
 
-// Login Hook
-// useLoginUser in useAuth.ts
 export const useLoginUser = () => {
   return useMutation<
     { token: string; userId: string },

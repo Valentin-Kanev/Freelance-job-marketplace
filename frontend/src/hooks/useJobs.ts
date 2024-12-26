@@ -9,7 +9,6 @@ import {
   fetchJob,
 } from "../api/jobApi";
 
-// Fetch all jobs
 export const useJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {
     staleTime: 5 * 60 * 1000,
@@ -20,7 +19,6 @@ export const useJobs = () => {
   });
 };
 
-// Create a new job
 export const useCreateJob = (onSuccessCallback?: (newJob: any) => void) => {
   const queryClient = useQueryClient();
 
@@ -35,7 +33,6 @@ export const useCreateJob = (onSuccessCallback?: (newJob: any) => void) => {
   });
 };
 
-// Update an existing job
 export const useUpdateJob = (onSuccessCallback?: (updatedJob: any) => void) => {
   const queryClient = useQueryClient();
 
@@ -54,7 +51,6 @@ export const useUpdateJob = (onSuccessCallback?: (updatedJob: any) => void) => {
   );
 };
 
-// Delete a job
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
@@ -68,7 +64,6 @@ export const useDeleteJob = () => {
   });
 };
 
-// Fetch a single job
 export const useJob = (id: string) => {
   return useQuery<Job, Error>(["job", id], () => fetchJob(id), {
     retry: 2,
@@ -79,7 +74,6 @@ export const useJob = (id: string) => {
   });
 };
 
-// Hook for handling job form submissions
 export const useJobMutations = (
   userId: string,
   onSuccess: (job: any) => void

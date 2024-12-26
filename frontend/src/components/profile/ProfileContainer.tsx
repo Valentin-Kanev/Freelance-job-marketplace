@@ -48,7 +48,6 @@ export function ProfileContainer({
         isOwner={isOwner}
       />
 
-      {/* Always Render EditProfileForm */}
       <EditProfileForm
         profile={profile}
         onSave={handleSave}

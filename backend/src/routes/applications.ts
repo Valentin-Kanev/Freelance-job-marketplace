@@ -11,14 +11,12 @@ interface AuthenticatedUser extends JwtPayload {
 
 const applicationsRouter = Router();
 
-// Type guard to ensure `req.user` has an `id`
 function isAuthenticatedUser(
   user: JwtPayload | string | undefined
 ): user is AuthenticatedUser {
   return !!user && typeof user !== "string" && "id" in user;
 }
 
-// POST route to apply for a job
 applicationsRouter.post(
   "/jobs/:id/apply",
   authenticateToken,
@@ -69,14 +67,12 @@ applicationsRouter.post(
   }
 );
 
-// GET route to fetch all applications for a job (only accessible by the job creator)
 applicationsRouter.get(
   "/jobs/:id/applications",
   authenticateToken,
   async (req: Request, res: Response) => {
     const { id: job_id } = req.params;
 
-    // Type assertion for `req.user` after the type guard check
     if (!isAuthenticatedUser(req.user)) {
       return res
         .status(401)
@@ -86,7 +82,6 @@ applicationsRouter.get(
     const userId = req.user.id;
 
     try {
-      // Verify that the job was created by the authenticated user
       const job = await db
         .select()
         .from(Job)
@@ -98,13 +93,12 @@ applicationsRouter.get(
           .json({ message: "Unauthorized to view applications" });
       }
 
-      // Retrieve all applications for the job
       const applications = await db
         .select({
           id: Application.id,
           cover_letter: Application.cover_letter,
           freelancer_id: Application.freelancer_id,
-          username: User.username, // Select username from the User table
+          username: User.username,
         })
         .from(Application)
         .innerJoin(User, eq(Application.freelancer_id, User.id))
@@ -119,7 +113,7 @@ applicationsRouter.get(
 );
 
 applicationsRouter.get(
-  "/applications/my-applications", // Corrected route
+  "/applications/my-applications",
   authenticateToken,
   async (req: Request, res: Response) => {
     if (!req.user || typeof req.user === "string") {

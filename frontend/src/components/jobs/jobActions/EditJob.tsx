@@ -19,7 +19,7 @@ const EditJobModal: React.FC<EditJobModalProps> = ({ job, onClose }) => {
       {
         onSuccess: () => {
           addToast("Job updated successfully!");
-          // fetchJob(job.id); // Fetch the updated job data
+          // fetchJob(job.id);
         },
 
         onError: (err) => console.error("Error updating job:", err.message),

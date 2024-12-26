@@ -10,8 +10,7 @@ import {
   customType,
 } from "drizzle-orm/pg-core";
 
-// Enum for user roles
-export const UserRole = pgEnum("userRole", ["freelancer", "client"]); // lowercase
+export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
 
 const bytea = customType<{ data: Buffer | null }>({
   dataType() {
@@ -19,7 +18,6 @@ const bytea = customType<{ data: Buffer | null }>({
   },
 });
 
-// Users table
 export const User = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   username: varchar("username", { length: 100 }).notNull().unique(),
@@ -28,7 +26,6 @@ export const User = pgTable("users", {
   user_type: UserRole("user_type").notNull(),
 });
 
-// Profiles table
 export const Profile = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   user_id: uuid("user_id")
@@ -39,7 +36,6 @@ export const Profile = pgTable("profiles", {
   hourly_rate: numeric("hourly_rate", { precision: 10, scale: 2 }).notNull(),
 });
 
-// Jobs table
 export const Job = pgTable("jobs", {
   id: uuid("id").primaryKey().defaultRandom(),
   client_id: uuid("client_id")
@@ -51,11 +47,10 @@ export const Job = pgTable("jobs", {
   deadline: timestamp("deadline").notNull(),
 });
 
-// Applications table
 export const Application = pgTable("applications", {
   id: uuid("id").primaryKey().defaultRandom(),
   job_id: uuid("job_id")
-    .references(() => Job.id, { onDelete: "cascade" }) // Add onDelete: "cascade"
+    .references(() => Job.id, { onDelete: "cascade" })
     .notNull(),
   freelancer_id: uuid("freelancer_id")
     .references(() => User.id)
@@ -64,7 +59,6 @@ export const Application = pgTable("applications", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
-// Reviews table
 export const Review = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
   freelancer_id: uuid("freelancer_id")

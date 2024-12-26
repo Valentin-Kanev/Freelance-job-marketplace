@@ -1,7 +1,7 @@
 export interface Profile {
   userType: string;
-  profileId: string; // UUID as string
-  userId: string; // UUID as string
+  profileId: string;
+  userId: string;
   skills: string;
   description: string;
   hourlyRate: number;
@@ -9,7 +9,7 @@ export interface Profile {
 }
 
 interface CreateProfileData {
-  userId: string; // UUID as string
+  userId: string;
   skills: string;
   description: string;
   hourlyRate: number;
@@ -21,7 +21,7 @@ interface UpdateProfileData {
   hourlyRate?: number;
 }
 
-const BASE_URL = "http://localhost:3001"; // Full backend URL
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
 const fetchClient = async <T>(
   url: string,
@@ -53,27 +53,23 @@ const fetchClient = async <T>(
   return data;
 };
 
-// Fetch all profiles
 export const fetchProfiles = async (): Promise<Profile[]> => {
   return fetchClient<Profile[]>("/profiles");
 };
 
-export const fetchUserProfile = async (userId: string) => {
+export const fetchUserProfile = async (userId: string): Promise<Profile> => {
   const token = localStorage.getItem("token");
 
   if (!token) {
     throw new Error("No token provided. Please log in.");
   }
 
-  const response = await fetch(
-    `http://localhost:3001/profiles/user/${userId}`, // Updated URL
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${BASE_URL}/profiles/user/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -82,7 +78,6 @@ export const fetchUserProfile = async (userId: string) => {
   return await response.json();
 };
 
-// Create a new profile
 export const createProfile = async (
   data: CreateProfileData
 ): Promise<Profile> => {
@@ -92,9 +87,8 @@ export const createProfile = async (
   });
 };
 
-// Update an existing profile by ID (id is now a string, not a number)
 export const updateProfile = async (
-  profileId: string, // Use profileId instead of userId
+  profileId: string,
   data: UpdateProfileData
 ): Promise<Profile> => {
   const token = localStorage.getItem("token");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Input from "../UI/Input";
 import useJobForm from "../../hooks/useJobForm";
 import { useJobMutations } from "../../hooks/useJobs";
@@ -18,15 +18,37 @@ const JobForm: React.FC<JobFormProps> = ({
 }) => {
   const { jobDetails, handleChange } = useJobForm(initialJobDetails);
   const { handleJobSubmit } = useJobMutations(userId, onSubmitSuccess);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!jobDetails.title.trim()) newErrors.title = "Title is required";
+    if (!jobDetails.description.trim())
+      newErrors.description = "Description is required";
+    if (!jobDetails.budget || jobDetails.budget <= 0)
+      newErrors.budget = "Valid budget is required";
+    if (!jobDetails.deadline) newErrors.deadline = "Deadline is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleJobSubmit(
-      Boolean(initialJobDetails?.id),
-      jobDetails,
-      initialJobDetails?.id
-    );
-    onClose();
+    if (validateForm()) {
+      await handleJobSubmit(
+        Boolean(initialJobDetails?.id),
+        jobDetails,
+        initialJobDetails?.id
+      );
+      onClose();
+    }
+  };
+
+  const handleFocus = (fieldName: string) => {
+    setErrors((prev) => ({
+      ...prev,
+      [fieldName]: "",
+    }));
   };
 
   return (
@@ -37,6 +59,9 @@ const JobForm: React.FC<JobFormProps> = ({
         value={jobDetails.title}
         onChange={handleChange}
         placeholder="Enter job title"
+        required
+        error={errors.title}
+        onFocus={() => handleFocus("title")}
       />
       <div>
         <label
@@ -53,7 +78,12 @@ const JobForm: React.FC<JobFormProps> = ({
           placeholder="Enter job description"
           rows={5}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          required
+          onFocus={() => handleFocus("description")}
         />
+        {errors.description && (
+          <p className="text-red-500 text-sm">{errors.description}</p>
+        )}
       </div>
       <Input
         label="Budget"
@@ -62,6 +92,9 @@ const JobForm: React.FC<JobFormProps> = ({
         onChange={handleChange}
         type="number"
         placeholder="Enter budget"
+        required
+        error={errors.budget}
+        onFocus={() => handleFocus("budget")}
       />
       <Input
         label="Deadline"
@@ -69,6 +102,9 @@ const JobForm: React.FC<JobFormProps> = ({
         value={jobDetails.deadline}
         onChange={handleChange}
         type="date"
+        required
+        error={errors.deadline}
+        onFocus={() => handleFocus("deadline")}
       />
       <button
         type="submit"

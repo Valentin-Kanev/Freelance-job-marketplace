@@ -18,11 +18,9 @@ const express_1 = require("express");
 const drizzle_orm_1 = require("drizzle-orm");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const applicationsRouter = (0, express_1.Router)();
-// Type guard to ensure `req.user` has an `id`
 function isAuthenticatedUser(user) {
     return !!user && typeof user !== "string" && "id" in user;
 }
-// POST route to apply for a job
 applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: job_id } = req.params;
     const { freelancer_id, cover_letter } = req.body;
@@ -58,10 +56,8 @@ applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, re
         res.status(500).json({ message: "Error applying for the job", error });
     }
 }));
-// GET route to fetch all applications for a job (only accessible by the job creator)
 applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: job_id } = req.params;
-    // Type assertion for `req.user` after the type guard check
     if (!isAuthenticatedUser(req.user)) {
         return res
             .status(401)
@@ -69,7 +65,6 @@ applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (r
     }
     const userId = req.user.id;
     try {
-        // Verify that the job was created by the authenticated user
         const job = yield db_1.db
             .select()
             .from(schema_1.Job)
@@ -80,13 +75,12 @@ applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (r
                 .status(403)
                 .json({ message: "Unauthorized to view applications" });
         }
-        // Retrieve all applications for the job
         const applications = yield db_1.db
             .select({
             id: schema_1.Application.id,
             cover_letter: schema_1.Application.cover_letter,
             freelancer_id: schema_1.Application.freelancer_id,
-            username: schema_1.User.username, // Select username from the User table
+            username: schema_1.User.username,
         })
             .from(schema_1.Application)
             .innerJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, schema_1.User.id))
@@ -98,8 +92,7 @@ applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (r
         res.status(500).json({ message: "Error retrieving applications" });
     }
 }));
-applicationsRouter.get("/applications/my-applications", // Corrected route
-authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+applicationsRouter.get("/applications/my-applications", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || typeof req.user === "string") {
         return res.status(401).json({ message: "Unauthorized" });
     }

@@ -29,14 +29,13 @@ const AppRoutes: React.FC = () => {
   const { userId } = useAuth();
   const safeUserId = userId ?? null;
 
-  // Fetch jobs and loading/error state
   const { data: jobs, isLoading, isError, error } = useJobs();
 
   return (
     <Routes>
-      {/* Authentication */}
       <Route path="/auth" element={<AuthMode />} />
-      {/* Jobs */}
+      <Route path="/auth/login" element={<AuthMode />} />
+      <Route path="/auth/register" element={<AuthMode />} />
       <Route path="/jobs" element={<JobManagement />} />
       <Route
         path="/jobs/:id"
@@ -63,9 +62,7 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      {/* Default redirect */}
       <Route path="/" element={<Navigate to="/jobs" replace />} />
-      {/* Fallback for unmatched routes */}
       <Route path="*" element={<div>Page not found</div>} />
     </Routes>
   );

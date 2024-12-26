@@ -31,7 +31,6 @@ export function ProfilePresentation({
         {profile.username || "User"}'s Profile
       </h1>
 
-      {/* Profile Details */}
       <div className="space-y-4">
         <div>
           <strong className="font-medium">Skills:</strong>
@@ -55,7 +54,6 @@ export function ProfilePresentation({
         )}
       </div>
 
-      {/* Edit Button for Profile Owner */}
       {isOwner && (
         <div className="mt-6 flex justify-left">
           <Button
@@ -66,7 +64,6 @@ export function ProfilePresentation({
         </div>
       )}
 
-      {/* Tab Navigation */}
       <div className="mt-8 flex space-x-4 border-b pb-2">
         {isFreelancer && (
           <button
@@ -125,7 +122,6 @@ export function ProfilePresentation({
         )}
       </div>
 
-      {/* Tab Content */}
       <div className="mt-6">
         {activeTab === "reviews" && (
           <ReviewList freelancerId={profile.profileId} />

@@ -13,7 +13,7 @@ const JobDashboard: React.FC<{
   const navigate = useNavigate();
   const { id: jobId } = useParams<{ id: string }>();
   const [selectedJob, setSelectedJob] = useState<any>(null);
-  const [jobUpdated, setJobUpdated] = useState(false); // new state
+  const [jobUpdated, setJobUpdated] = useState(false);
   const userId = localStorage.getItem("userId") || "";
   const userType = localStorage.getItem("userType") || "";
 
@@ -28,7 +28,7 @@ const JobDashboard: React.FC<{
   };
 
   const handleJobUpdate = () => {
-    setJobUpdated((prev) => !prev); // toggle jobUpdated state
+    setJobUpdated((prev) => !prev);
   };
 
   if (isLoading) return <p className="text-gray-500">Loading jobs...</p>;
@@ -37,7 +37,6 @@ const JobDashboard: React.FC<{
   return (
     <div className="pt-12 flex justify-center min-h-screen bg-gray-50">
       <div className="flex w-[1100px] h-full bg-white shadow-lg rounded-lg">
-        {/* Job List */}
         <div className="w-[300px] max-h-screen overflow-y-auto p-4">
           <JobList
             jobs={jobs}
@@ -46,7 +45,6 @@ const JobDashboard: React.FC<{
           />
         </div>
 
-        {/* Job Details */}
         <div className="flex-1 p-6 h-full">
           <JobDetails
             job={selectedJob}

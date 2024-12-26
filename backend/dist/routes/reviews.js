@@ -12,14 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// routes/reviews.ts
 const express_1 = require("express");
 const db_1 = require("../drizzle/db");
 const drizzle_orm_1 = require("drizzle-orm");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const schema_1 = require("../drizzle/schema");
 const reviewsRouter = (0, express_1.Router)();
-// Route to create a new review
 reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: freelancer_id } = req.params;
     const { client_id, rating, review_text } = req.body;
@@ -32,7 +30,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         return res.status(400).json({ message: "Rating must be between 1 and 5" });
     }
     try {
-        // Check if the freelancer profile exists
         const profile = yield db_1.db
             .select()
             .from(schema_1.Profile)
@@ -41,7 +38,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
         if (profile.length === 0) {
             return res.status(404).json({ message: "Freelancer not found" });
         }
-        // Check if the client has already submitted a review for this freelancer
         const existingReview = yield db_1.db
             .select()
             .from(schema_1.Review)
@@ -52,7 +48,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
                 message: "You have already submitted a review for this freelancer.",
             });
         }
-        // Insert the new review
         yield db_1.db.insert(schema_1.Review).values({
             freelancer_id,
             client_id,
@@ -69,12 +64,9 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
             .json({ message: "Error posting review", error: errorMessage });
     }
 }));
-// Route to fetch all reviews for a freelancer
-// Route to fetch all reviews for a freelancer, including the client's username
 reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: profile_id } = req.params;
     try {
-        // Fetch the user_id associated with this profile_id
         const profile = yield db_1.db
             .select()
             .from(schema_1.Profile)
@@ -84,7 +76,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __a
             return res.status(404).json({ message: "Freelancer profile not found" });
         }
         const user_id = profile[0].user_id;
-        // Fetch reviews along with the client's username
         const reviews = yield db_1.db
             .select({
             id: schema_1.Review.id,
@@ -105,7 +96,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __a
         res.status(500).json({ message: "Error retrieving reviews" });
     }
 }));
-// Route to fetch all reviews written by a client
 reviewsRouter.get("/client/:clientId", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { clientId } = req.params;
     try {

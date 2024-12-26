@@ -18,7 +18,6 @@ const db_1 = require("../drizzle/db");
 const schema_1 = require("../drizzle/schema");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const router = (0, express_1.Router)();
-// Route to retrieve all freelancer profiles
 router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profiles = yield db_1.db
@@ -36,13 +35,12 @@ router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json(profiles);
     }
     catch (error) {
-        console.error(error); // Log the error for debugging
+        console.error(error);
         res.status(500).json({ error: "Failed to retrieve profiles" });
     }
 }));
-// Route to retrieve a specific user profile by userId
 router.get("/profiles/user/:user_id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user_id: userId } = req.params; // Use user_id directly from params
+    const { user_id: userId } = req.params;
     if (!userId) {
         return res.status(400).json({ message: "User ID not provided" });
     }
@@ -58,18 +56,17 @@ router.get("/profiles/user/:user_id", authenticateToken_1.default, (req, res) =>
         })
             .from(schema_1.Profile)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, userId)); // Compare by user_id
+            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, userId));
         if (profile.length === 0) {
             return res.status(404).json({ message: "Profile not found" });
         }
-        res.status(200).json(profile[0]); // Send only the first item
+        res.status(200).json(profile[0]);
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 }));
-// Route to create a new freelancer profile
 router.post("/profiles", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user_id, skills, description, hourly_rate } = req.body;
     try {
@@ -94,7 +91,6 @@ router.post("/profiles", authenticateToken_1.default, (req, res) => __awaiter(vo
         res.status(500).json({ error: "Failed to create profile" });
     }
 }));
-// Route to update a freelancer’s profile by ID
 router.put("/profiles/user/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { skills, description, hourly_rate } = req.body;
@@ -106,7 +102,7 @@ router.put("/profiles/user/:id", authenticateToken_1.default, (req, res) => __aw
             description,
             hourly_rate,
         })
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, id)) // Ensure this matches Profile.id
+            .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, id))
             .returning({
             id: schema_1.Profile.id,
             userId: schema_1.Profile.user_id,

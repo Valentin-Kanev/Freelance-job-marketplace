@@ -4,7 +4,7 @@ import JobApplicationItem from "./JobApplicationItem";
 
 interface JobApplicationsListProps {
   jobId: string;
-  creatorId: string; // ID of the job creator
+  creatorId: string;
 }
 
 const JobApplicationsList: React.FC<JobApplicationsListProps> = ({

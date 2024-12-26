@@ -11,7 +11,7 @@ import { useQueryClient } from "react-query";
 interface AuthContextType {
   isLoggedIn: boolean;
   userId: string | null;
-  userType: string | null; // Add userType here
+  userType: string | null;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -23,13 +23,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userType, setUserType] = useState<string | null>(null); // Add state for userType
+  const [userType, setUserType] = useState<string | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const isTokenExpired = (token: string): boolean => {
     const { exp } = jwtDecode<{ exp: number }>(token);
-    return Date.now() >= exp * 1000; // Convert exp to milliseconds
+    return Date.now() >= exp * 1000;
   };
 
   const login = (token: string) => {
@@ -39,15 +39,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     localStorage.setItem("token", token);
-    const decodedToken = jwtDecode<{ id: string; user_type: string }>(token); // Add user_type
+    const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
     const newUserId = decodedToken.id;
-    const newUserType = decodedToken.user_type; // Extract user_type
-
+    const newUserType = decodedToken.user_type;
     localStorage.setItem("userId", newUserId);
-    localStorage.setItem("userType", newUserType); // Store userType in localStorage
+    localStorage.setItem("userType", newUserType);
 
     setUserId(newUserId);
-    setUserType(newUserType); // Update state
+    setUserType(newUserType);
     setIsLoggedIn(true);
 
     queryClient.invalidateQueries(["profile", newUserId]);
@@ -56,10 +55,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    localStorage.removeItem("userType"); // Remove userType from localStorage
+    localStorage.removeItem("userType");
 
     setUserId(null);
-    setUserType(null); // Clear userType state
+    setUserType(null);
     setIsLoggedIn(false);
 
     queryClient.invalidateQueries("userProfile");
@@ -69,9 +68,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const token = localStorage.getItem("token");
 
     if (token && !isTokenExpired(token)) {
-      const decodedToken = jwtDecode<{ id: string; user_type: string }>(token); // Decode user_type
+      const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
       setUserId(decodedToken.id);
-      setUserType(decodedToken.user_type); // Set userType
+      setUserType(decodedToken.user_type);
       setIsLoggedIn(true);
     } else {
       logout();

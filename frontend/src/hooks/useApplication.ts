@@ -1,4 +1,3 @@
-// src/hooks/useApplications.ts
 import { useQuery, useMutation } from "react-query";
 import {
   applyForJob,
@@ -6,18 +5,16 @@ import {
   Application,
   MyApplication,
   fetchMyApplications,
-} from "../api/ApplicationApi"; // Make sure to import from the correct path
-
-// Apply for a job
+} from "../api/ApplicationApi";
 export const useApplyForJob = () => {
   return useMutation(
     ({
       jobId,
       data,
     }: {
-      jobId: string; // Change to string to match the new Application interface
-      data: { freelancer_id: string; cover_letter: string }; // Change to string
-    }) => applyForJob(jobId, data), // Pass the file to the API function
+      jobId: string;
+      data: { freelancer_id: string; cover_letter: string };
+    }) => applyForJob(jobId, data),
     {
       onSuccess: () => {
         console.log("Application submitted successfully");
@@ -29,15 +26,13 @@ export const useApplyForJob = () => {
   );
 };
 
-// Fetch all applications for a specific job
 export const useJobApplications = (jobId: string) => {
-  // Change jobId to string
   return useQuery<Application[], Error>(
     ["jobApplications", jobId],
     () => fetchJobApplications(jobId),
     {
-      staleTime: 5 * 60 * 1000, // Cache applications for 5 minutes
-      retry: 2, // Retry failed requests twice
+      staleTime: 5 * 60 * 1000,
+      retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching applications:", error.message);
       },
@@ -50,8 +45,8 @@ export const useMyApplications = () => {
     "myApplications",
     fetchMyApplications,
     {
-      staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
-      retry: 2, // Retry failed requests twice
+      staleTime: 5 * 60 * 1000,
+      retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching my applications:", error.message);
       },

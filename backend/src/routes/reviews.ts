@@ -1,4 +1,3 @@
-// routes/reviews.ts
 import { Router } from "express";
 import { db } from "../drizzle/db";
 import { and, eq } from "drizzle-orm";
@@ -7,7 +6,6 @@ import { Profile, Review, User } from "../drizzle/schema";
 
 const reviewsRouter = Router();
 
-// Route to create a new review
 reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
   const { id: freelancer_id } = req.params;
   const { client_id, rating, review_text } = req.body;
@@ -23,7 +21,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
   }
 
   try {
-    // Check if the freelancer profile exists
     const profile = await db
       .select()
       .from(Profile)
@@ -34,7 +31,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "Freelancer not found" });
     }
 
-    // Check if the client has already submitted a review for this freelancer
     const existingReview = await db
       .select()
       .from(Review)
@@ -52,7 +48,6 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
       });
     }
 
-    // Insert the new review
     await db.insert(Review).values({
       freelancer_id,
       client_id,
@@ -71,13 +66,10 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
   }
 });
 
-// Route to fetch all reviews for a freelancer
-// Route to fetch all reviews for a freelancer, including the client's username
 reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
   const { id: profile_id } = req.params;
 
   try {
-    // Fetch the user_id associated with this profile_id
     const profile = await db
       .select()
       .from(Profile)
@@ -90,7 +82,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
 
     const user_id = profile[0].user_id;
 
-    // Fetch reviews along with the client's username
     const reviews = await db
       .select({
         id: Review.id,
@@ -112,7 +103,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
   }
 });
 
-// Route to fetch all reviews written by a client
 reviewsRouter.get("/client/:clientId", authenticateToken, async (req, res) => {
   const { clientId } = req.params;
 

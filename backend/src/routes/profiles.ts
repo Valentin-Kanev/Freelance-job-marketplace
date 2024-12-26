@@ -6,7 +6,6 @@ import authenticateToken from "../middleware/Authentication/authenticateToken";
 
 const router = Router();
 
-// Route to retrieve all freelancer profiles
 router.get("/profiles", async (req: Request, res: Response) => {
   try {
     const profiles = await db
@@ -24,14 +23,13 @@ router.get("/profiles", async (req: Request, res: Response) => {
 
     res.status(200).json(profiles);
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     res.status(500).json({ error: "Failed to retrieve profiles" });
   }
 });
 
-// Route to retrieve a specific user profile by userId
 router.get("/profiles/user/:user_id", authenticateToken, async (req, res) => {
-  const { user_id: userId } = req.params; // Use user_id directly from params
+  const { user_id: userId } = req.params;
 
   if (!userId) {
     return res.status(400).json({ message: "User ID not provided" });
@@ -49,20 +47,19 @@ router.get("/profiles/user/:user_id", authenticateToken, async (req, res) => {
       })
       .from(Profile)
       .leftJoin(User, eq(Profile.user_id, User.id))
-      .where(eq(Profile.user_id, userId)); // Compare by user_id
+      .where(eq(Profile.user_id, userId));
 
     if (profile.length === 0) {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    res.status(200).json(profile[0]); // Send only the first item
+    res.status(200).json(profile[0]);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Route to create a new freelancer profile
 router.post(
   "/profiles",
   authenticateToken,
@@ -93,7 +90,6 @@ router.post(
   }
 );
 
-// Route to update a freelancer’s profile by ID
 router.put(
   "/profiles/user/:id",
   authenticateToken,
@@ -109,7 +105,7 @@ router.put(
           description,
           hourly_rate,
         })
-        .where(eq(Profile.id, id)) // Ensure this matches Profile.id
+        .where(eq(Profile.id, id))
         .returning({
           id: Profile.id,
           userId: Profile.user_id,

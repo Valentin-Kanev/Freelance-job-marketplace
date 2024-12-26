@@ -49,7 +49,6 @@ const fetchClient = async <T>(
   return data;
 };
 
-// Submit a review for a freelancer
 export const submitReview = async (
   freelancerId: string,
   data: SubmitReviewData
@@ -60,7 +59,6 @@ export const submitReview = async (
   });
 };
 
-// Fetch all reviews for a freelancer
 export const fetchFreelancerReviews = async (
   freelancerId: string
 ): Promise<Review[]> => {
@@ -68,7 +66,6 @@ export const fetchFreelancerReviews = async (
   return fetchClient<Review[]>(`/profiles/${freelancerId}/reviews`);
 };
 
-// Fetch all reviews written by a client
 export const fetchClientReviews = async (
   clientId: string
 ): Promise<Review[]> => {

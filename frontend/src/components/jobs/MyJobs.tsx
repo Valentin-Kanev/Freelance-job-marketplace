@@ -7,11 +7,9 @@ const MyJobs = ({ clientId }: { clientId: string }) => {
     data: jobs,
     isLoading,
     error,
-  } = useQuery(
-    ["jobsByClient", clientId],
-    () => fetchJobsByClient(clientId),
-    { enabled: !!clientId } // Only fetch if clientId is provided
-  );
+  } = useQuery(["jobsByClient", clientId], () => fetchJobsByClient(clientId), {
+    enabled: !!clientId,
+  });
 
   if (isLoading) return <p>Loading jobs...</p>;
   if (error instanceof Error) return <p>Error: {error.message}</p>;

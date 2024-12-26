@@ -11,7 +11,7 @@ interface JobApplicationProps {
 
 const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
   const [coverLetter, setCoverLetter] = useState("");
-  const freelancerId = localStorage.getItem("userId"); // Retrieve logged-in user ID
+  const freelancerId = localStorage.getItem("userId");
   const { addToast } = useToast();
 
   const {

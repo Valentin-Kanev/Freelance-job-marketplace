@@ -13,7 +13,7 @@ module.exports = {
         error: "#E63946",
       },
       fontFamily: {
-        sans: ["Roboto", "sans-serif"], // Apply Roboto as the default sans-serif font
+        sans: ["Roboto", "sans-serif"],
       },
     },
   },

@@ -39,7 +39,6 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: "Error retrieving jobs" });
     }
 }));
-// Add the PUT route to update an existing job by ID
 jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { title, description, budget, deadline } = req.body;
@@ -47,7 +46,6 @@ jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter
     if (userType !== "client") {
         return res.status(403).json({ message: "Only clients can edit jobs" });
     }
-    // Validate and parse deadline
     let parsedDeadline;
     if (deadline) {
         parsedDeadline = new Date(deadline);
@@ -71,7 +69,6 @@ jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter
         res.status(500).json({ message: "Error updating job" });
     }
 }));
-// Add this route to your `jobsRouter` in the backend to fetch a job by ID.
 jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
@@ -99,7 +96,6 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).json({ message: "Error retrieving job" });
     }
 }));
-// Add route for creating a new job
 jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.id;
@@ -110,7 +106,6 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
     if (!title || !description || !budget || !deadline) {
         return res.status(400).json({ message: "All fields are required" });
     }
-    // Validate and parse deadline
     const parsedDeadline = new Date(deadline);
     if (isNaN(parsedDeadline.getTime())) {
         return res
@@ -135,12 +130,10 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
 jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { id: userId, user_type } = req.user;
-    // Check if the user is a client
     if (user_type !== "client") {
         return res.status(403).json({ message: "Only clients can delete jobs" });
     }
     try {
-        // Check if the job exists and belongs to the logged-in client
         const job = yield db_1.db.select().from(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id)).limit(1);
         if (!job.length) {
             return res.status(404).json({ message: "Job not found" });
@@ -150,7 +143,6 @@ jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awai
                 .status(403)
                 .json({ message: "You are not authorized to delete this job" });
         }
-        // Delete the job
         yield db_1.db.delete(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
         res.json({ message: "Job deleted successfully" });
     }

@@ -29,7 +29,6 @@ jobsRouter.get("/jobs", async (req, res) => {
   }
 });
 
-// Add the PUT route to update an existing job by ID
 jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { title, description, budget, deadline } = req.body;
@@ -39,7 +38,6 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
     return res.status(403).json({ message: "Only clients can edit jobs" });
   }
 
-  // Validate and parse deadline
   let parsedDeadline;
   if (deadline) {
     parsedDeadline = new Date(deadline);
@@ -57,7 +55,7 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
         title,
         description,
         budget,
-        ...(parsedDeadline && { deadline: parsedDeadline }), // Only update if deadline is valid
+        ...(parsedDeadline && { deadline: parsedDeadline }),
       })
       .where(eq(Job.id, id));
 
@@ -68,7 +66,6 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Add this route to your `jobsRouter` in the backend to fetch a job by ID.
 jobsRouter.get("/jobs/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -98,7 +95,6 @@ jobsRouter.get("/jobs/:id", async (req, res) => {
   }
 });
 
-// Add route for creating a new job
 jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
   const { title, description, budget, deadline } = req.body;
   const userId = (req.user as JwtPayload).id;
@@ -112,7 +108,6 @@ jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Validate and parse deadline
   const parsedDeadline = new Date(deadline);
   if (isNaN(parsedDeadline.getTime())) {
     return res
@@ -139,13 +134,11 @@ jobsRouter.delete("/jobs/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { id: userId, user_type } = req.user as JwtPayload;
 
-  // Check if the user is a client
   if (user_type !== "client") {
     return res.status(403).json({ message: "Only clients can delete jobs" });
   }
 
   try {
-    // Check if the job exists and belongs to the logged-in client
     const job = await db.select().from(Job).where(eq(Job.id, id)).limit(1);
 
     if (!job.length) {
@@ -158,7 +151,6 @@ jobsRouter.delete("/jobs/:id", authenticateToken, async (req, res) => {
         .json({ message: "You are not authorized to delete this job" });
     }
 
-    // Delete the job
     await db.delete(Job).where(eq(Job.id, id));
     res.json({ message: "Job deleted successfully" });
   } catch (error) {

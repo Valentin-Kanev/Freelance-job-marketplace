@@ -16,7 +16,7 @@ const MyApplications: React.FC = () => {
     <ul className="space-y-2">
       {applications.map((application, index) => (
         <li
-          key={`${application.jobId}-${index}`} // Combine jobId with the index for uniqueness
+          key={`${application.jobId}-${index}`}
           className="p-4 border rounded-lg"
         >
           <h3 className="text-lg font-semibold">

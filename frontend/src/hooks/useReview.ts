@@ -1,8 +1,6 @@
-// src/hooks/useReviews.ts
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { submitReview, fetchFreelancerReviews, Review } from "../api/ReviewApi";
 
-// Submit a review for a freelancer
 export const useSubmitReview = () => {
   const queryClient = useQueryClient();
 
@@ -31,7 +29,6 @@ export const useSubmitReview = () => {
   );
 };
 
-// Fetch all reviews for a freelancer
 export const useFreelancerReviews = (freelancerId: string) => {
   return useQuery<Review[], Error>(
     ["freelancerReviews", freelancerId],

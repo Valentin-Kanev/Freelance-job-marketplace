@@ -2,14 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = exports.Application = exports.Job = exports.Profile = exports.User = exports.UserRole = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
-// Enum for user roles
-exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["freelancer", "client"]); // lowercase
+exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["freelancer", "client"]);
 const bytea = (0, pg_core_1.customType)({
     dataType() {
         return "bytea";
     },
 });
-// Users table
 exports.User = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     username: (0, pg_core_1.varchar)("username", { length: 100 }).notNull().unique(),
@@ -17,7 +15,6 @@ exports.User = (0, pg_core_1.pgTable)("users", {
     email: (0, pg_core_1.varchar)("email", { length: 255 }).notNull().unique(),
     user_type: (0, exports.UserRole)("user_type").notNull(),
 });
-// Profiles table
 exports.Profile = (0, pg_core_1.pgTable)("profiles", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     user_id: (0, pg_core_1.uuid)("user_id")
@@ -27,7 +24,6 @@ exports.Profile = (0, pg_core_1.pgTable)("profiles", {
     description: (0, pg_core_1.text)("description").notNull(),
     hourly_rate: (0, pg_core_1.numeric)("hourly_rate", { precision: 10, scale: 2 }).notNull(),
 });
-// Jobs table
 exports.Job = (0, pg_core_1.pgTable)("jobs", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     client_id: (0, pg_core_1.uuid)("client_id")
@@ -38,11 +34,10 @@ exports.Job = (0, pg_core_1.pgTable)("jobs", {
     budget: (0, pg_core_1.numeric)("budget", { precision: 12, scale: 2 }).notNull(),
     deadline: (0, pg_core_1.timestamp)("deadline").notNull(),
 });
-// Applications table
 exports.Application = (0, pg_core_1.pgTable)("applications", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     job_id: (0, pg_core_1.uuid)("job_id")
-        .references(() => exports.Job.id, { onDelete: "cascade" }) // Add onDelete: "cascade"
+        .references(() => exports.Job.id, { onDelete: "cascade" })
         .notNull(),
     freelancer_id: (0, pg_core_1.uuid)("freelancer_id")
         .references(() => exports.User.id)
@@ -50,7 +45,6 @@ exports.Application = (0, pg_core_1.pgTable)("applications", {
     cover_letter: (0, pg_core_1.text)("cover_letter").notNull(),
     timestamp: (0, pg_core_1.timestamp)("timestamp").defaultNow().notNull(),
 });
-// Reviews table
 exports.Review = (0, pg_core_1.pgTable)("reviews", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     freelancer_id: (0, pg_core_1.uuid)("freelancer_id")

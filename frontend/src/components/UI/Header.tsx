@@ -14,14 +14,12 @@ const Header: React.FC = () => {
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-800 p-3 shadow-md z-50">
       <nav className="container mx-auto flex justify-between items-center">
-        {/* Logo or Brand */}
         <div className="text-white text-lg font-semibold">
           <Link to="/" className="hover:text-gray-400">
             Job Portal
           </Link>
         </div>
 
-        {/* Navigation Links */}
         <div className="flex space-x-4 items-center">
           <Link
             to="/jobs"

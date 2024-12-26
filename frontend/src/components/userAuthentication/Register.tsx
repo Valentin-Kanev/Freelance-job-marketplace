@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useRegisterUser } from "../../hooks/useAuth";
-import Input from "../UI/Input"; // Premade Input component
+import Input from "../UI/Input";
 
-const Register: React.FC = () => {
+interface RegisterProps {
+  onRegistrationSuccess: () => void;
+}
+
+const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -38,6 +42,7 @@ const Register: React.FC = () => {
             password: "",
             userType: "client",
           });
+          onRegistrationSuccess();
         },
       }
     );

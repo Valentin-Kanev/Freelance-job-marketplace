@@ -24,13 +24,13 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
       onSuccess: () => {
         addToast("Job deleted successfully!");
         if (onSuccess) onSuccess();
-        onClose(); // Close modal after success
+        onClose();
       },
       onError: (err) => console.error("Error deleting job:", err.message),
     });
   };
 
-  if (!isOpen) return null; // Prevent rendering when not open
+  if (!isOpen) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion">

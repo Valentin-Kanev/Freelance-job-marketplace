@@ -11,7 +11,7 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
     ["clientReviews", clientId],
     () => fetchClientReviews(clientId),
     {
-      enabled: !!clientId, // Only fetch if clientId is provided
+      enabled: !!clientId,
     }
   );
 

@@ -10,7 +10,7 @@ interface JobDetailsProps {
   userId: string;
   userType: string;
   isInModal?: boolean;
-  currentModal?: string | null; // Track which modal is open
+  currentModal?: string | null;
   onJobUpdate?: () => void;
 }
 
@@ -19,7 +19,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   userId,
   userType,
   isInModal = false,
-  currentModal = null, // Default to no modal being open
+  currentModal = null,
   onJobUpdate,
 }) => {
   const [activeModal, setActiveModal] = useState<
@@ -27,7 +27,6 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   >(null);
 
   useEffect(() => {
-    // Reset local modal state if a parent modal is active
     if (currentModal !== null) {
       setActiveModal(null);
     }
@@ -48,7 +47,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
 
   const showEditDeleteButtons =
     !isInModal &&
-    currentModal === null && // Ensure no modal is open
+    currentModal === null &&
     userType === "client" &&
     userId === job.client_id;
 
@@ -59,9 +58,9 @@ const JobDetails: React.FC<JobDetailsProps> = ({
     <div
       className="w-full overflow-y-auto p-4"
       style={{
-        maxHeight: "85vh", // Set the maximum height to 80% of the viewport height
-        scrollbarWidth: "thin", // Optional, for thin scrollbar
-        scrollbarColor: "#4A5568 #E2E8F0", // Optional, custom scrollbar color
+        maxHeight: "85vh",
+        scrollbarWidth: "thin",
+        scrollbarColor: "#4A5568 #E2E8F0",
       }}
     >
       <h2 className="text-4xl font-bold mb-4">{job.title}</h2>
@@ -112,7 +111,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       {activeModal === "delete" && (
         <DeleteJob
           jobId={job.id}
-          isOpen={activeModal === "delete"} // Explicitly control visibility
+          isOpen={activeModal === "delete"}
           onSuccess={onJobUpdate}
           onClose={() => setActiveModal(null)}
         />
