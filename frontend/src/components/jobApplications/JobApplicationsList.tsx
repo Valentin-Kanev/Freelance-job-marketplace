@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { fetchJobApplications } from "../../api/ApplicationApi";
 import JobApplicationItem from "./JobApplicationItem";
+import StatusMessage from "../UI/StatusMessage";
 
 interface JobApplicationsListProps {
   jobId: string;
@@ -21,11 +22,10 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
     enabled: userId === creatorId,
   });
 
-  if (isLoading)
-    return <p className="text-gray-500">Loading applications...</p>;
-  if (error) return <p className="text-red-500">Error loading applications</p>;
+  if (isLoading) return <StatusMessage message="Loading applications..." />;
+  if (error) return <StatusMessage message="Error loading applications" />;
   if (userId !== creatorId)
-    return <p className="text-gray-500">Unauthorized to view applications</p>;
+    return <StatusMessage message="Unauthorized to view applications" />;
 
   return (
     <div>
@@ -39,7 +39,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
           ))}
         </ul>
       ) : (
-        <p className="text-gray-600">No applications for this job yet.</p>
+        <StatusMessage message="No applications for this job yet." />
       )}
     </div>
   );

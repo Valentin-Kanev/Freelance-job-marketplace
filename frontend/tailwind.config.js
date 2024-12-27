@@ -23,7 +23,7 @@ module.exports = {
     require("@tailwindcss/aspect-ratio"),
     plugin(function ({ addBase }) {
       addBase({
-        /* Global dark and rounded scrollbars */
+        /* Global dark and rounded scrollbars without arrow boxes */
         "*": {
           scrollbarWidth: "thin" /* Firefox */,
         },
@@ -41,6 +41,9 @@ module.exports = {
         "*::-webkit-scrollbar-track": {
           backgroundColor: "#2A2A2A" /* Subtle dark background */,
           borderRadius: "10px",
+        },
+        "*::-webkit-scrollbar-button": {
+          display: "none" /* Remove arrow boxes */,
         },
       });
     }),

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import JobList from "./JobList";
 import JobDetails from "./JobDetails";
 import { useNavigate } from "react-router-dom";
+import StatusMessage from "../UI/StatusMessage";
 
 const JobDashboard: React.FC<{
   jobs: any[];
@@ -31,8 +32,8 @@ const JobDashboard: React.FC<{
     setJobUpdated((prev) => !prev);
   };
 
-  if (isLoading) return <p className="text-gray-500">Loading jobs...</p>;
-  if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
+  if (isLoading) return <StatusMessage message="Loading jobs..." />;
+  if (isError) return <StatusMessage message={`Error: ${error?.message}`} />;
 
   return (
     <div className="pt-12 flex justify-center min-h-screen bg-gray-50">

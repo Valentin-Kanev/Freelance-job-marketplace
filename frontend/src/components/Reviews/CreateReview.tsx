@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";
 import Modal from "../UI/Modal";
 import { useToast } from "../ToastManager";
+import { FaStar } from "react-icons/fa";
 
 interface CreateReviewProps {
   freelancerId: string;
@@ -19,6 +20,7 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   const { userId } = useAuth();
   const submitReviewMutation = useSubmitReview();
   const [rating, setRating] = useState<number>(0);
+  const [hover, setHover] = useState<number>(0);
   const [reviewText, setReviewText] = useState<string>("");
   const { addToast } = useToast();
 
@@ -56,17 +58,24 @@ const CreateReview: React.FC<CreateReviewProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-medium mb-2">
-              Rating (1-5)
+              Rating
             </label>
-            <input
-              type="number"
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-              min="1"
-              max="5"
-              required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
-            />
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar
+                  key={star}
+                  size={30}
+                  className={`cursor-pointer ${
+                    star <= (hover || rating)
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  }`}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHover(star)}
+                  onMouseLeave={() => setHover(0)}
+                />
+              ))}
+            </div>
           </div>
           <div>
             <label className="block text-gray-700 font-medium mb-2">

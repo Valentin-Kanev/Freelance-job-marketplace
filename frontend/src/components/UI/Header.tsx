@@ -54,11 +54,11 @@ const Header: React.FC = () => {
                 View Profile
               </Link>
 
-              <div className="pb-1 ">
-                {userType === "client" && (
+              {userType === "client" && (
+                <div className="pb-1">
                   <CreateJob userId={userId || ""} isLoggedIn={isLoggedIn} />
-                )}
-              </div>
+                </div>
+              )}
               <button
                 onClick={logout}
                 className="text-white hover:text-gray-300 pb-1"

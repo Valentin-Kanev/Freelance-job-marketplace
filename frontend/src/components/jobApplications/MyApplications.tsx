@@ -1,15 +1,14 @@
 import React from "react";
 import { useMyApplications } from "../../hooks/useApplication";
+import StatusMessage from "../UI/StatusMessage";
 
 const MyApplications: React.FC = () => {
   const { data: applications, isLoading, isError, error } = useMyApplications();
 
-  if (isLoading) return <div>Loading applications...</div>;
-
-  if (isError) return <div>Error: {error?.message}</div>;
-
+  if (isLoading) return <StatusMessage message="Loading applications..." />;
+  if (isError) return <StatusMessage message={`Error: ${error?.message}`} />;
   if (!applications || applications.length === 0) {
-    return <div className="text-gray-500">No applications found</div>;
+    return <StatusMessage message="No applications found" />;
   }
 
   return (

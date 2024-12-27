@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { fetchJobsByClient } from "../../api/jobApi";
 import { Link } from "react-router-dom";
+import StatusMessage from "../UI/StatusMessage";
 
 const MyJobs = ({ clientId }: { clientId: string }) => {
   const {
@@ -11,8 +12,9 @@ const MyJobs = ({ clientId }: { clientId: string }) => {
     enabled: !!clientId,
   });
 
-  if (isLoading) return <p>Loading jobs...</p>;
-  if (error instanceof Error) return <p>Error: {error.message}</p>;
+  if (isLoading) return <StatusMessage message="Loading jobs..." />;
+  if (error instanceof Error)
+    return <StatusMessage message={`Error: ${error.message}`} />;
 
   return (
     <div>
@@ -31,7 +33,7 @@ const MyJobs = ({ clientId }: { clientId: string }) => {
           ))}
         </ul>
       ) : (
-        <p className="text-gray-600">You have not created any jobs yet.</p>
+        <StatusMessage message="You have not created any jobs yet." />
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import { useUpdateProfile } from "../../hooks/useProfiles";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import EditProfileForm from "./EditProfileForm";
+import StatusMessage from "../UI/StatusMessage";
 
 interface ProfileContainerProps {
   userId?: string | null;
@@ -25,13 +26,9 @@ export function ProfileContainer({
     if (userId) refetch();
   }, [userId, refetch]);
 
-  if (isLoading) return <div className="text-center">Loading profile...</div>;
-  if (isError)
-    return (
-      <div className="text-center text-red-500">Error loading profile.</div>
-    );
-  if (!profile)
-    return <div className="text-center">No profile data available.</div>;
+  if (isLoading) return <StatusMessage message="Loading profile..." />;
+  if (isError) return <StatusMessage message="Error loading profile." />;
+  if (!profile) return <StatusMessage message="No profile data available." />;
 
   const isOwner = loggedInUserId === profile.userId;
 

@@ -3,6 +3,7 @@ import { useMutation } from "react-query";
 import Button from "../UI/Button";
 import { applyForJob } from "../../api/ApplicationApi";
 import { useToast } from "../ToastManager";
+import StatusMessage from "../UI/StatusMessage";
 
 interface JobApplicationProps {
   jobId: string;
@@ -56,7 +57,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
         onChange={(e) => setCoverLetter(e.target.value)}
       />
       {isError && (
-        <p className="text-red-500">Error: {(error as any)?.message}</p>
+        <StatusMessage message={`Error: ${(error as any)?.message}`} />
       )}
       <div className="flex justify-center gap-3">
         <Button

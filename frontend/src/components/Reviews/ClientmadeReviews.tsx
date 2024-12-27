@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { fetchClientReviews } from "../../api/ReviewApi";
 import { Link } from "react-router-dom";
+import StatusMessage from "../UI/StatusMessage";
 
 const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
   const {
@@ -15,14 +16,15 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
     }
   );
 
-  if (isLoading) return <p>Loading reviews...</p>;
-  if (error instanceof Error) return <p>Error: {error.message}</p>;
+  if (isLoading) return <StatusMessage message="Loading reviews..." />;
+  if (error instanceof Error)
+    return <StatusMessage message={`Error: ${error.message}`} />;
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">My Reviews</h1>
       {reviews?.length ? (
-        <ul className="  space-y-3">
+        <ul className="space-y-3">
           {reviews.map((review) => (
             <li key={review.id}>
               <div className="border rounded p-4 shadow-sm hover:shadow-md transition-shadow">
@@ -45,7 +47,7 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
           ))}
         </ul>
       ) : (
-        <p className="text-gray-600">You have not written any reviews yet.</p>
+        <StatusMessage message="You have not written any reviews yet." />
       )}
     </div>
   );
