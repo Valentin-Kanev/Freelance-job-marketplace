@@ -1,11 +1,46 @@
 import { Router } from "express";
 import { db } from "../drizzle/db";
 import { Job, User } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, like, ilike } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { JwtPayload } from "jsonwebtoken";
 
 const jobsRouter = Router();
+
+jobsRouter.get("/jobs/search", async (req, res) => {
+  const { title } = req.query;
+
+  // Ensure the title is provided
+  if (!title) {
+    return res
+      .status(400)
+      .json({ message: "Title query parameter is required" });
+  }
+
+  try {
+    console.log("Searching for title:", title); // Debugging line
+
+    const titleSearch = title as string; // Correctly reference the title from query parameters
+
+    // Perform the search based on the title (with case-insensitive matching)
+    const jobs = await db
+      .select({
+        id: Job.id,
+        title: Job.title,
+      })
+      .from(Job)
+      .where(ilike(Job.title, `%${titleSearch}%`)); // Case-insensitive search
+
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error("Error searching jobs:", error); // Log the error
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    res
+      .status(500)
+      .json({ message: "Error searching jobs", error: errorMessage });
+  }
+});
 
 jobsRouter.get("/jobs", async (req, res) => {
   try {

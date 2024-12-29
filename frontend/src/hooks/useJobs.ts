@@ -7,6 +7,7 @@ import {
   Job,
   UpdateJobData,
   fetchJob,
+  searchJobsByTitle,
 } from "../api/jobApi";
 
 export const useJobs = () => {
@@ -72,6 +73,21 @@ export const useJob = (id: string) => {
       console.error("Error fetching job:", error.message);
     },
   });
+};
+
+export const useSearchJobsByTitle = (title: string) => {
+  return useQuery<Job[], Error>(
+    ["jobs", title],
+    () => searchJobsByTitle(title),
+    {
+      enabled: !!title, // Only run the query if there's a title
+      staleTime: 5 * 60 * 1000, // Keep the data fresh for 5 minutes
+      retry: 2,
+      onError: (error: Error) => {
+        console.error("Error searching jobs:", error.message);
+      },
+    }
+  );
 };
 
 export const useJobMutations = (

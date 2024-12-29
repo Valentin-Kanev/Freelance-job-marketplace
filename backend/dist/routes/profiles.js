@@ -120,4 +120,29 @@ router.put("/profiles/user/:id", authenticateToken_1.default, (req, res) => __aw
         res.status(500).json({ error: "Failed to update profile" });
     }
 }));
+router.get("/profiles/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { query } = req.query;
+    if (!query) {
+        return res.status(400).json({ message: "Query parameter is required" });
+    }
+    try {
+        const profiles = yield db_1.db
+            .select({
+            profileId: schema_1.Profile.id,
+            userId: schema_1.Profile.user_id,
+            skills: schema_1.Profile.skills,
+            description: schema_1.Profile.description,
+            hourlyRate: schema_1.Profile.hourly_rate,
+            username: schema_1.User.username,
+        })
+            .from(schema_1.Profile)
+            .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.User.user_type, "freelancer"), (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(schema_1.User.username, `%${query}%`), (0, drizzle_orm_1.like)(schema_1.Profile.skills, `%${query}%`), (0, drizzle_orm_1.like)(schema_1.Profile.description, `%${query}%`))));
+        res.status(200).json(profiles);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to search profiles" });
+    }
+}));
 exports.default = router;

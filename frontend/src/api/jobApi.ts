@@ -121,3 +121,17 @@ export const fetchJob = async (id: string): Promise<Job> => {
 export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {
   return fetchClient<Job[]>(`/jobs/created-by/${clientId}`);
 };
+
+export const searchJobsByTitle = async (title: string): Promise<Job[]> => {
+  try {
+    // Ensure that the query string is properly encoded
+    const response = await fetchClient<Job[]>(
+      `/jobs/search?title=${encodeURIComponent(title)}`
+    );
+
+    return response; // fetchClient already handles error checking
+  } catch (error) {
+    console.error("Error searching jobs by title:", error);
+    throw error;
+  }
+};

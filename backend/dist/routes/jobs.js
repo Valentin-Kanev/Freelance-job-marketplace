@@ -18,6 +18,35 @@ const schema_1 = require("../drizzle/schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const jobsRouter = (0, express_1.Router)();
+jobsRouter.get("/jobs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title } = req.query;
+    // Ensure the title is provided
+    if (!title) {
+        return res
+            .status(400)
+            .json({ message: "Title query parameter is required" });
+    }
+    try {
+        console.log("Searching for title:", title); // Debugging line
+        const titleSearch = title; // Correctly reference the title from query parameters
+        // Perform the search based on the title (with case-insensitive matching)
+        const jobs = yield db_1.db
+            .select({
+            id: schema_1.Job.id,
+            title: schema_1.Job.title,
+        })
+            .from(schema_1.Job)
+            .where((0, drizzle_orm_1.ilike)(schema_1.Job.title, `%${titleSearch}%`)); // Case-insensitive search
+        res.status(200).json(jobs);
+    }
+    catch (error) {
+        console.error("Error searching jobs:", error); // Log the error
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res
+            .status(500)
+            .json({ message: "Error searching jobs", error: errorMessage });
+    }
+}));
 jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const jobs = yield db_1.db

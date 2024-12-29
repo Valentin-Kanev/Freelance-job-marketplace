@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { eq } from "drizzle-orm";
+import { eq, like, and, or } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import { Profile, User } from "../drizzle/schema";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
@@ -125,5 +125,42 @@ router.put(
     }
   }
 );
+
+router.get("/profiles/search", async (req: Request, res: Response) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ message: "Query parameter is required" });
+  }
+
+  try {
+    const profiles = await db
+      .select({
+        profileId: Profile.id,
+        userId: Profile.user_id,
+        skills: Profile.skills,
+        description: Profile.description,
+        hourlyRate: Profile.hourly_rate,
+        username: User.username,
+      })
+      .from(Profile)
+      .leftJoin(User, eq(Profile.user_id, User.id))
+      .where(
+        and(
+          eq(User.user_type, "freelancer"),
+          or(
+            like(User.username, `%${query}%`),
+            like(Profile.skills, `%${query}%`),
+            like(Profile.description, `%${query}%`)
+          )
+        )
+      );
+
+    res.status(200).json(profiles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to search profiles" });
+  }
+});
 
 export default router;

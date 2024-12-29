@@ -5,7 +5,7 @@ export interface Profile {
   skills: string;
   description: string;
   hourlyRate: number;
-  username?: string;
+  username: string;
 }
 
 interface CreateProfileData {
@@ -104,4 +104,8 @@ export const updateProfile = async (
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+export const searchProfiles = async (query: string): Promise<Profile[]> => {
+  return fetchClient<Profile[]>(`/profiles/search?query=${query}`);
 };
