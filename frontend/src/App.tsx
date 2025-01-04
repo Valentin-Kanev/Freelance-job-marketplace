@@ -11,14 +11,48 @@ import { ToastProvider } from "./components/ToastManager";
 import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/ProfilesList";
 import ProfileDetails from "./components/profile/ProfileDetails";
+import { SocketProvider } from "./hooks/useSocket";
+import ChatContainer from "./components/chat/ChatContainer"; // Import ChatContainer
+import FloatingChatButton from "./components/chat/FloatingChatButton"; // Import FloatingChatButton
+
+// Layout Component
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <div className="flex-grow flex flex-col">
+        <Header />
+        <main className="flex-grow p-4">{children}</main>
+      </div>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
+  React.useEffect(() => {
+    const token = localStorage.getItem("authToken"); // Use consistent key
+    if (!token) {
+      // Set a valid token for testing purposes
+      localStorage.setItem("authToken", "your-valid-jwt-token");
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>
         <ToastProvider>
-          <Header />
-          <AppRoutes />
+          <SocketProvider>
+            <Routes>
+              <Route
+                path="*"
+                element={
+                  <Layout>
+                    <AppRoutes />
+                    <FloatingChatButton /> {/* Add FloatingChatButton */}
+                  </Layout>
+                }
+              />
+            </Routes>
+          </SocketProvider>
         </ToastProvider>
       </BrowserRouter>
     </AuthProvider>
@@ -27,7 +61,7 @@ const App: React.FC = () => {
 
 const AppRoutes: React.FC = () => {
   const { userId } = useAuth();
-  const safeUserId = userId ?? null;
+  const safeUserId = userId ?? "";
 
   const { data: jobs, isLoading, isError, error } = useJobs();
 
@@ -59,6 +93,15 @@ const AppRoutes: React.FC = () => {
             ) : (
               <div>Please log in to view your profile.</div>
             )}
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chat"
+        element={
+          // Replace individual chat routes with ChatContainer
+          <ProtectedRoute>
+            <ChatContainer />
           </ProtectedRoute>
         }
       />

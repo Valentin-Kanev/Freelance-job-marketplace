@@ -46,7 +46,7 @@ const SearchBar: React.FC = () => {
           <button
             onClick={handleToggle}
             type="button"
-            className="w-32 text-xs font-medium text-white bg-indigo-600 rounded-l-full hover:bg-indigo-500 transition whitespace-nowrap h-full flex items-center justify-center"
+            className="w-32 text-xs font-medium text-white bg-blue-600 rounded-l-full hover:bg-blue-700 transition whitespace-nowrap h-full flex items-center justify-center"
           >
             {searchType === "jobs" ? "Search Freelancers" : "Search Jobs"}
           </button>
@@ -57,7 +57,7 @@ const SearchBar: React.FC = () => {
             placeholder={`Search ${searchType} by ${
               searchType === "jobs" ? "title" : "username"
             }`}
-            className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-r-full focus:outline-none focus:ring-2 focus:ring-indigo-500 h-full"
+            className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-r-full focus:outline-none focus:ring-1 focus:ring-blue-500 h-full"
           />
         </form>
       </div>

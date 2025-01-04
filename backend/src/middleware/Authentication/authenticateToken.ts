@@ -11,6 +11,7 @@ const authenticateToken = async (
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
+  console.log("Token received in authorization header:", token);
 
   const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -19,11 +20,13 @@ const authenticateToken = async (
   }
 
   if (!token) {
+    console.error("No token provided");
     return res.status(401).json({ message: "No token provided" });
   }
 
   jwt.verify(token, SECRET_KEY, async (err: any, decoded: any) => {
     if (err) {
+      console.error("Invalid or expired token:", err.message);
       return res.status(403).json({ message: "Invalid or expired token" });
     }
 
@@ -35,13 +38,15 @@ const authenticateToken = async (
         .execute();
 
       if (!user || user.length === 0) {
+        console.error("User not found");
         return res.status(404).json({ message: "User not found" });
       }
 
       req.user = user[0];
+      console.log("Token verified successfully:", decoded);
       next();
     } catch (dbError) {
-      console.error(dbError);
+      console.error("Error fetching user data:", dbError);
       return res.status(500).json({ message: "Error fetching user data" });
     }
   });

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Review = exports.Application = exports.Job = exports.Profile = exports.User = exports.UserRole = void 0;
+exports.Message = exports.ChatRoom = exports.Review = exports.Application = exports.Job = exports.Profile = exports.User = exports.UserRole = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.UserRole = (0, pg_core_1.pgEnum)("userRole", ["freelancer", "client"]);
 const bytea = (0, pg_core_1.customType)({
@@ -56,4 +56,28 @@ exports.Review = (0, pg_core_1.pgTable)("reviews", {
     rating: (0, pg_core_1.integer)("rating").notNull(),
     review_text: (0, pg_core_1.text)("review_text").notNull(),
     timestamp: (0, pg_core_1.timestamp)("timestamp").defaultNow().notNull(),
+});
+exports.ChatRoom = (0, pg_core_1.pgTable)("chat_rooms", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    user_1_id: (0, pg_core_1.uuid)("user_1_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    user_2_id: (0, pg_core_1.uuid)("user_2_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    created_at: (0, pg_core_1.timestamp)("created_at").defaultNow().notNull(),
+}, (room) => ({
+    uniqueUsers: (0, pg_core_1.unique)("unique_users").on(room.user_1_id, room.user_2_id),
+}));
+// Messages Schema
+exports.Message = (0, pg_core_1.pgTable)("messages", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
+    chat_room_id: (0, pg_core_1.uuid)("chat_room_id")
+        .references(() => exports.ChatRoom.id, { onDelete: "cascade" })
+        .notNull(),
+    sender_id: (0, pg_core_1.uuid)("sender_id")
+        .references(() => exports.User.id)
+        .notNull(),
+    content: (0, pg_core_1.text)("content").notNull(),
+    created_at: (0, pg_core_1.timestamp)("created_at").defaultNow().notNull(),
 });

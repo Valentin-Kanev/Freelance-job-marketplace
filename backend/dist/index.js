@@ -4,15 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const http_1 = __importDefault(require("http")); // Required for integrating Socket.IO with Express
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
+const cors_1 = __importDefault(require("cors"));
 const userManagment_1 = __importDefault(require("./routes/userManagment"));
 const profiles_1 = __importDefault(require("./routes/profiles"));
 const jobs_1 = __importDefault(require("./routes/jobs"));
 const applications_1 = __importDefault(require("./routes/applications"));
 const reviews_1 = __importDefault(require("./routes/reviews"));
-const cors_1 = __importDefault(require("cors"));
+const chat_1 = __importDefault(require("./routes/chat"));
+const socket_1 = require("./socket.io/socket");
 const app = (0, express_1.default)();
+const server = http_1.default.createServer(app); // Create a server instance for Socket.IO
 const corsOptions = {
     origin: "http://localhost:3001",
     credentials: true,
@@ -27,8 +31,11 @@ app.use(profiles_1.default);
 app.use("/reviews", reviews_1.default);
 app.use("/profiles", reviews_1.default);
 app.use(jobs_1.default);
+app.use(chat_1.default);
+// Initialize Socket.IO
+const io = (0, socket_1.initializeSocket)(server);
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 exports.default = app;

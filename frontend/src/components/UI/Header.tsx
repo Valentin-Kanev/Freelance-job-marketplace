@@ -22,7 +22,7 @@ const Header: React.FC = () => {
               Job Portal
             </Link>
           </div>
-          <div className="flex-1 mx-4 ">
+          <div className="flex-1 mx-4 ml-44">
             <SearchBar />
           </div>
           <div className="flex items-center space-x-4">

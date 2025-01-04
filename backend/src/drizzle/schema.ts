@@ -8,6 +8,8 @@ import {
   numeric,
   timestamp,
   customType,
+  index,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
@@ -70,4 +72,34 @@ export const Review = pgTable("reviews", {
   rating: integer("rating").notNull(),
   review_text: text("review_text").notNull(),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
+});
+
+export const ChatRoom = pgTable(
+  "chat_rooms",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_1_id: uuid("user_1_id")
+      .references(() => User.id)
+      .notNull(),
+    user_2_id: uuid("user_2_id")
+      .references(() => User.id)
+      .notNull(),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+  },
+  (room) => ({
+    uniqueUsers: unique("unique_users").on(room.user_1_id, room.user_2_id),
+  })
+);
+
+// Messages Schema
+export const Message = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  chat_room_id: uuid("chat_room_id")
+    .references(() => ChatRoom.id, { onDelete: "cascade" })
+    .notNull(),
+  sender_id: uuid("sender_id")
+    .references(() => User.id)
+    .notNull(),
+  content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });

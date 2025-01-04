@@ -28,8 +28,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const queryClient = useQueryClient();
 
   const isTokenExpired = (token: string): boolean => {
-    const { exp } = jwtDecode<{ exp: number }>(token);
-    return Date.now() >= exp * 1000;
+    try {
+      const { exp } = jwtDecode<{ exp: number }>(token);
+      return Date.now() >= exp * 1000;
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return true;
+    }
   };
 
   const login = (token: string) => {
@@ -38,22 +43,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    localStorage.setItem("token", token);
-    const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
-    const newUserId = decodedToken.id;
-    const newUserType = decodedToken.user_type;
-    localStorage.setItem("userId", newUserId);
-    localStorage.setItem("userType", newUserType);
+    localStorage.setItem("authToken", token); // Use consistent key
+    try {
+      const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
+      const newUserId = decodedToken.id;
+      const newUserType = decodedToken.user_type;
+      localStorage.setItem("userId", newUserId);
+      localStorage.setItem("userType", newUserType);
 
-    setUserId(newUserId);
-    setUserType(newUserType);
-    setIsLoggedIn(true);
+      setUserId(newUserId);
+      setUserType(newUserType);
+      setIsLoggedIn(true);
 
-    queryClient.invalidateQueries(["profile", newUserId]);
+      queryClient.invalidateQueries(["profile", newUserId]);
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+      logout();
+    }
   };
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("authToken"); // Use consistent key
     localStorage.removeItem("userId");
     localStorage.removeItem("userType");
 
@@ -65,13 +75,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [queryClient]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken"); // Use consistent key
 
     if (token && !isTokenExpired(token)) {
-      const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
-      setUserId(decodedToken.id);
-      setUserType(decodedToken.user_type);
-      setIsLoggedIn(true);
+      try {
+        const decodedToken = jwtDecode<{ id: string; user_type: string }>(
+          token
+        );
+        setUserId(decodedToken.id);
+        setUserType(decodedToken.user_type);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        logout();
+      }
     } else {
       logout();
     }

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Profile } from "../../api/profileApi";
 import ReviewList from "../Reviews/ReviewsList";
 import MyJobs from "../jobs/MyJobs";
 import MyReviews from "../Reviews/ClientmadeReviews";
 import MyApplications from "../jobApplications/MyApplications";
 import Button from "../UI/Button";
+import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
+// import ChatRoom from "../chat/ChatRoom"; // Import ChatRoom component
 
 interface ProfilePresentationProps {
   profile: Profile;
@@ -18,12 +20,20 @@ export function ProfilePresentation({
   isOwner,
   onEdit,
 }: ProfilePresentationProps) {
-  const { userId, userType } = useAuth();
+  const { userId, userType, isLoggedIn } = useAuth();
   const isFreelancer = userType === "freelancer";
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
   const isProfileOwner = String(userId) === String(profile.userId);
+  // const [showChat, setShowChat] = useState(false); // Add state for chat visibility
+  // const [chatRoomId, setChatRoomId] = useState<string | null>(null); // Add state for chat room ID
+
+  const handleStartChat = (roomId: string) => {
+    console.log("Chat room ID:", roomId); // Log the chat room ID
+    // setChatRoomId(roomId);
+    // setShowChat(true);
+  };
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-16 border border-gray-200 mt-4 h-screen overflow-y-auto">
@@ -53,6 +63,15 @@ export function ProfilePresentation({
           </div>
         )}
       </div>
+
+      {!isProfileOwner && isLoggedIn && (
+        <div className="mt-6">
+          <StartChat
+            targetUserId={profile.userId}
+            onStartChat={handleStartChat}
+          />
+        </div>
+      )}
 
       {isOwner && (
         <div className="mt-6 flex justify-left">
