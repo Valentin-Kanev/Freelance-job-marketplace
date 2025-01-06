@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatRoomList from "./ChatList";
 import ChatRoom from "./ChatRoom";
 
-const ChatContainer: React.FC = () => {
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+interface ChatContainerProps {
+  initialRoomId?: string | null; // Add initialRoomId prop
+}
+
+const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
+    initialRoomId || null
+  );
+
+  useEffect(() => {
+    if (initialRoomId) {
+      setSelectedRoomId(initialRoomId);
+    }
+  }, [initialRoomId]);
 
   return (
     <div className="flex h-full bg-gray-50 rounded-lg shadow-lg overflow-hidden w-full">
       {/* Chat Room List */}
       <div className="w-1/4 border-r overflow-y-auto">
-        <ChatRoomList onSelectRoom={setSelectedRoomId} />
+        <ChatRoomList
+          onSelectRoom={setSelectedRoomId}
+          selectedRoomId={selectedRoomId}
+        />
       </div>
 
       {/* Chat Room */}

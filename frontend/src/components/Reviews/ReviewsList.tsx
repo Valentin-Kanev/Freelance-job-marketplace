@@ -2,10 +2,18 @@ import { useFreelancerReviews } from "../../hooks/useReview";
 
 interface ReviewListProps {
   freelancerId: string;
+  isFreelancer: boolean;
 }
 
-export default function ReviewList({ freelancerId }: ReviewListProps) {
+export default function ReviewList({
+  freelancerId,
+  isFreelancer,
+}: ReviewListProps) {
   const { data: reviews, error, isError } = useFreelancerReviews(freelancerId);
+
+  if (!isFreelancer) {
+    return null;
+  }
 
   if (isError) {
     return (

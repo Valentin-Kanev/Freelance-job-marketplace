@@ -4,6 +4,7 @@ import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJobModal from "./jobActions/EditJob";
 import DeleteJob from "./jobActions/DeleteJob";
 import ApplyForJob from "./jobActions/ApplyForJob";
+import { Link } from "react-router-dom";
 
 interface JobDetailsProps {
   job: any | null;
@@ -64,9 +65,12 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       }}
     >
       <h2 className="text-4xl font-bold mb-4">{job.title}</h2>
-      <p className="text-lg text-gray-700 mb-4">
-        Posted by: {job.client_username}
-      </p>
+      <Link
+        to={`/profiles/${job.client_id}`}
+        className="text-blue-600 hover:text-blue-800 underline"
+      >
+        {job.client_username}
+      </Link>
       <p className="text-lg font-semibold text-green-600 mb-4">
         💵 Budget: ${job.budget}
       </p>

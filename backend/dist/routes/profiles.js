@@ -28,6 +28,7 @@ router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function
             description: schema_1.Profile.description,
             hourlyRate: schema_1.Profile.hourly_rate,
             username: schema_1.User.username,
+            userType: schema_1.User.user_type,
         })
             .from(schema_1.Profile)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
@@ -53,6 +54,7 @@ router.get("/profiles/user/:user_id", authenticateToken_1.default, (req, res) =>
             description: schema_1.Profile.description,
             hourlyRate: schema_1.Profile.hourly_rate,
             username: schema_1.User.username,
+            userType: schema_1.User.user_type,
         })
             .from(schema_1.Profile)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))
@@ -134,6 +136,7 @@ router.get("/profiles/search", (req, res) => __awaiter(void 0, void 0, void 0, f
             description: schema_1.Profile.description,
             hourlyRate: schema_1.Profile.hourly_rate,
             username: schema_1.User.username,
+            userType: schema_1.User.user_type,
         })
             .from(schema_1.Profile)
             .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.Profile.user_id, schema_1.User.id))

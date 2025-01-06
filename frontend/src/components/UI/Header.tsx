@@ -44,7 +44,7 @@ const Header: React.FC = () => {
                   : "border-transparent"
               }`}
             >
-              Freelancers
+              Profiles
             </Link>
             {isLoggedIn ? (
               <>
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
                       : "border-transparent"
                   }`}
                 >
-                  Profile
+                  My Profile
                 </Link>
                 {userType === "client" && (
                   <div className="pb-1">

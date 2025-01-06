@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useChatRooms } from "../../hooks/useChat";
 
 interface ChatRoomListProps {
   onSelectRoom: (roomId: string) => void;
+  selectedRoomId?: string | null; // Add selectedRoomId prop
 }
 
-const ChatRoomList: React.FC<ChatRoomListProps> = ({ onSelectRoom }) => {
+const ChatRoomList: React.FC<ChatRoomListProps> = ({
+  onSelectRoom,
+  selectedRoomId,
+}) => {
   const { data: chatRooms, isLoading } = useChatRooms();
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [localSelectedRoomId, setLocalSelectedRoomId] = useState<string | null>(
+    selectedRoomId || null
+  );
+
+  useEffect(() => {
+    if (selectedRoomId) {
+      setLocalSelectedRoomId(selectedRoomId);
+    }
+  }, [selectedRoomId]);
 
   const handleSelectRoom = (roomId: string) => {
-    setSelectedRoomId(roomId);
+    setLocalSelectedRoomId(roomId);
     onSelectRoom(roomId);
   };
 
@@ -23,12 +35,12 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({ onSelectRoom }) => {
         <ul className="space-y-2">
           {chatRooms?.map((room: any) => {
             const otherUser = room.otherUser;
-            const isSelected = room.id === selectedRoomId;
+            const isSelected = room.id === localSelectedRoomId;
             return (
               <li
                 key={room.id}
                 className={`p-2 rounded-full cursor-pointer ${
-                  isSelected ? "bg-gray-300" : "bg-gray-100 hover:bg-gray-200"
+                  isSelected ? "bg-blue-300" : "bg-gray-100 hover:bg-gray-200"
                 }`}
                 onClick={() => handleSelectRoom(room.id)}
               >

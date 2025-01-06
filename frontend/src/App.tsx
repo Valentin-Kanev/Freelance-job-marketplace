@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import JobManagement from "./components/jobs/JobsManagment";
 import JobDashboard from "./components/jobs/JobDashboard";
@@ -14,6 +14,7 @@ import ProfileDetails from "./components/profile/ProfileDetails";
 import { SocketProvider } from "./hooks/useSocket";
 import ChatContainer from "./components/chat/ChatContainer"; // Import ChatContainer
 import FloatingChatButton from "./components/chat/FloatingChatButton"; // Import FloatingChatButton
+import { ChatProvider, useChat } from "./contexts/ChatContext"; // Import ChatProvider and useChat
 
 // Layout Component
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -28,34 +29,46 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const App: React.FC = () => {
-  React.useEffect(() => {
-    const token = localStorage.getItem("authToken"); // Use consistent key
-    if (!token) {
-      // Set a valid token for testing purposes
-      localStorage.setItem("authToken", "your-valid-jwt-token");
-    }
-  }, []);
-
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <ToastProvider>
-          <SocketProvider>
-            <Routes>
-              <Route
-                path="*"
-                element={
-                  <Layout>
-                    <AppRoutes />
-                    <FloatingChatButton /> {/* Add FloatingChatButton */}
-                  </Layout>
-                }
-              />
-            </Routes>
-          </SocketProvider>
-        </ToastProvider>
-      </BrowserRouter>
+      <ChatProvider>
+        <BrowserRouter>
+          <ToastProvider>
+            <SocketProvider>
+              <Routes>
+                <Route
+                  path="*"
+                  element={
+                    <Layout>
+                      <AppRoutes />
+                      <ChatButtonWrapper />
+                    </Layout>
+                  }
+                />
+              </Routes>
+            </SocketProvider>
+          </ToastProvider>
+        </BrowserRouter>
+      </ChatProvider>
     </AuthProvider>
+  );
+};
+
+const ChatButtonWrapper: React.FC = () => {
+  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
+  const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
+    useState(true);
+
+  return (
+    <FloatingChatButton
+      isOpen={isChatOpen}
+      setIsOpen={(isOpen) => {
+        if (!isOpen) setIsFloatingChatButtonVisible(true);
+        isOpen ? openChat(chatRoomId!) : closeChat();
+      }}
+      chatRoomId={chatRoomId}
+      isVisible={isFloatingChatButtonVisible}
+    />
   );
 };
 

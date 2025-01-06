@@ -1,12 +1,22 @@
-import React, { useState } from "react";
 import ChatContainer from "./ChatContainer";
 import { useAuth } from "../../contexts/AuthContext";
 
-const FloatingChatButton: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface FloatingChatButtonProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  chatRoomId?: string | null;
+  isVisible: boolean; // New prop to control visibility
+}
+
+const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
+  isOpen,
+  setIsOpen,
+  chatRoomId,
+  isVisible,
+}) => {
   const { userId } = useAuth();
 
-  if (!userId) return null; // Only show the chat button if the user is logged in
+  if (!userId || !isVisible) return null; // Ensure the button is visible and user is authenticated
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -18,7 +28,7 @@ const FloatingChatButton: React.FC = () => {
               ✕
             </button>
           </div>
-          <ChatContainer />
+          <ChatContainer initialRoomId={chatRoomId} />
         </div>
       ) : (
         <button

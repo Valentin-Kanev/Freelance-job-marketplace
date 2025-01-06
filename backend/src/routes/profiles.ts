@@ -16,6 +16,7 @@ router.get("/profiles", async (req: Request, res: Response) => {
         description: Profile.description,
         hourlyRate: Profile.hourly_rate,
         username: User.username,
+        userType: User.user_type,
       })
       .from(Profile)
       .leftJoin(User, eq(Profile.user_id, User.id))
@@ -44,6 +45,7 @@ router.get("/profiles/user/:user_id", authenticateToken, async (req, res) => {
         description: Profile.description,
         hourlyRate: Profile.hourly_rate,
         username: User.username,
+        userType: User.user_type,
       })
       .from(Profile)
       .leftJoin(User, eq(Profile.user_id, User.id))
@@ -142,6 +144,7 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
         description: Profile.description,
         hourlyRate: Profile.hourly_rate,
         username: User.username,
+        userType: User.user_type,
       })
       .from(Profile)
       .leftJoin(User, eq(Profile.user_id, User.id))

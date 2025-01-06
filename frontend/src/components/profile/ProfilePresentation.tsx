@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Profile } from "../../api/profileApi";
 import ReviewList from "../Reviews/ReviewsList";
 import MyJobs from "../jobs/MyJobs";
@@ -7,7 +7,8 @@ import MyApplications from "../jobApplications/MyApplications";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
-// import ChatRoom from "../chat/ChatRoom"; // Import ChatRoom component
+import FloatingChatButton from "../chat/FloatingChatButton";
+import { useChat } from "../../contexts/ChatContext";
 
 interface ProfilePresentationProps {
   profile: Profile;
@@ -20,27 +21,26 @@ export function ProfilePresentation({
   isOwner,
   onEdit,
 }: ProfilePresentationProps) {
-  const { userId, userType, isLoggedIn } = useAuth();
-  const isFreelancer = userType === "freelancer";
+  const { userId, isLoggedIn } = useAuth();
+  const isFreelancer = profile.userType === "freelancer";
+  const isProfileOwner = String(userId) === String(profile.userId);
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
-  const isProfileOwner = String(userId) === String(profile.userId);
-  // const [showChat, setShowChat] = useState(false); // Add state for chat visibility
-  // const [chatRoomId, setChatRoomId] = useState<string | null>(null); // Add state for chat room ID
+  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
+  const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
+    useState(true);
 
   const handleStartChat = (roomId: string) => {
-    console.log("Chat room ID:", roomId); // Log the chat room ID
-    // setChatRoomId(roomId);
-    // setShowChat(true);
+    openChat(roomId);
+    setIsFloatingChatButtonVisible(false);
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-16 border border-gray-200 mt-4 h-screen overflow-y-auto">
+    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-20 border border-gray-200 mt-4 h-screen overflow-y-auto">
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">
         {profile.username || "User"}'s Profile
       </h1>
-
       <div className="space-y-4">
         <div>
           <strong className="font-medium">Skills:</strong>
@@ -54,7 +54,7 @@ export function ProfilePresentation({
             {profile.description || "No description provided."}
           </p>
         </div>
-        {!isFreelancer && isProfileOwner ? null : (
+        {isFreelancer && (
           <div>
             <strong className="font-medium">Hourly Rate:</strong>
             <p className="text-lg text-gray-600">
@@ -62,8 +62,13 @@ export function ProfilePresentation({
             </p>
           </div>
         )}
+        <div>
+          <strong className="font-medium">Role:</strong>
+          <p className="text-lg text-gray-600">
+            {isFreelancer ? "Freelancer" : "Client"}
+          </p>
+        </div>
       </div>
-
       {!isProfileOwner && isLoggedIn && (
         <div className="mt-6">
           <StartChat
@@ -72,7 +77,6 @@ export function ProfilePresentation({
           />
         </div>
       )}
-
       {isOwner && (
         <div className="mt-6 flex justify-left">
           <Button
@@ -82,7 +86,6 @@ export function ProfilePresentation({
           />
         </div>
       )}
-
       <div className="mt-8 flex space-x-4 border-b pb-2">
         {isFreelancer && (
           <button
@@ -96,54 +99,49 @@ export function ProfilePresentation({
             Reviews
           </button>
         )}
-
-        {isFreelancer && isOwner ? (
+        {isFreelancer && isOwner && (
+          <button
+            onClick={() => setActiveTab("applications")}
+            className={`${
+              activeTab === "applications"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-500"
+            } px-4 py-2`}
+          >
+            My Applications
+          </button>
+        )}
+        {!isFreelancer && isOwner && (
           <>
             <button
-              onClick={() => setActiveTab("applications")}
+              onClick={() => setActiveTab("jobs")}
               className={`${
-                activeTab === "applications"
+                activeTab === "jobs"
                   ? "border-b-2 border-blue-600 text-blue-600"
                   : "text-gray-500"
               } px-4 py-2`}
             >
-              My Applications
+              My Jobs
             </button>
-          </>
-        ) : (
-          <>
-            {!isFreelancer && isOwner && (
-              <button
-                onClick={() => setActiveTab("jobs")}
-                className={`${
-                  activeTab === "jobs"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-500"
-                } px-4 py-2`}
-              >
-                My Jobs
-              </button>
-            )}
-
-            {!isFreelancer && isOwner && (
-              <button
-                onClick={() => setActiveTab("myReviews")}
-                className={`${
-                  activeTab === "myReviews"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-500"
-                } px-4 py-2`}
-              >
-                Reviews I've left
-              </button>
-            )}
+            <button
+              onClick={() => setActiveTab("myReviews")}
+              className={`${
+                activeTab === "myReviews"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-500"
+              } px-4 py-2`}
+            >
+              Reviews I've Left
+            </button>
           </>
         )}
       </div>
-
       <div className="mt-6">
         {activeTab === "reviews" && (
-          <ReviewList freelancerId={profile.profileId} />
+          <ReviewList
+            freelancerId={profile.profileId}
+            isFreelancer={isFreelancer}
+          />
         )}
         {activeTab === "applications" && isFreelancer && <MyApplications />}
         {activeTab === "jobs" && !isFreelancer && (
@@ -153,6 +151,15 @@ export function ProfilePresentation({
           <MyReviews clientId={profile.userId} />
         )}
       </div>
+      <FloatingChatButton
+        isOpen={isChatOpen}
+        setIsOpen={(isOpen) => {
+          if (!isOpen) setIsFloatingChatButtonVisible(true);
+          isOpen ? openChat(chatRoomId!) : closeChat();
+        }}
+        chatRoomId={chatRoomId}
+        isVisible={isFloatingChatButtonVisible}
+      />
     </div>
   );
 }
