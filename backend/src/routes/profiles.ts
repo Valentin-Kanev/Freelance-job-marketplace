@@ -29,7 +29,7 @@ router.get("/profiles", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/profiles/user/:user_id", authenticateToken, async (req, res) => {
+router.get("/profiles/user/:user_id", async (req, res) => {
   const { user_id: userId } = req.params;
 
   if (!userId) {

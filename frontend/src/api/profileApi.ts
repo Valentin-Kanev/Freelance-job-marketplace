@@ -58,15 +58,8 @@ export const fetchProfiles = async (): Promise<Profile[]> => {
 };
 
 export const fetchUserProfile = async (userId: string): Promise<Profile> => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("No token provided. Please log in.");
-  }
-
   const response = await fetch(`${BASE_URL}/profiles/user/${userId}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   });

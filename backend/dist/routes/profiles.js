@@ -40,7 +40,7 @@ router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ error: "Failed to retrieve profiles" });
     }
 }));
-router.get("/profiles/user/:user_id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/profiles/user/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user_id: userId } = req.params;
     if (!userId) {
         return res.status(400).json({ message: "User ID not provided" });

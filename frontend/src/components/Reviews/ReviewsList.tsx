@@ -1,4 +1,5 @@
 import { useFreelancerReviews } from "../../hooks/useReview";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ReviewListProps {
   freelancerId: string;
@@ -9,10 +10,19 @@ export default function ReviewList({
   freelancerId,
   isFreelancer,
 }: ReviewListProps) {
+  const { isLoggedIn } = useAuth();
   const { data: reviews, error, isError } = useFreelancerReviews(freelancerId);
 
   if (!isFreelancer) {
     return null;
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="text-gray-500">
+        Please log in or register to view reviews.
+      </div>
+    );
   }
 
   if (isError) {
