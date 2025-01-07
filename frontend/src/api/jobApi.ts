@@ -50,10 +50,6 @@ const fetchClient = async <T>(
       errorMessage = `Error ${response.status}: ${response.statusText}`;
     }
 
-    console.error(`Fetch error: ${errorMessage}`, {
-      status: response.status,
-      url,
-    });
     throw new Error(errorMessage);
   }
 
@@ -88,24 +84,16 @@ export const updateJob = async (
   id: string,
   data: UpdateJobData
 ): Promise<Job> => {
-  try {
-    if (data.deadline) {
-      data.deadline = new Date(data.deadline).toISOString();
-    }
-    const response = await fetchClient<Job>(`/jobs/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log("Updated job:", response);
-    return response;
-  } catch (error) {
-    console.error("Error updating job:", error);
-    throw error;
+  if (data.deadline) {
+    data.deadline = new Date(data.deadline).toISOString();
   }
+  return fetchClient<Job>(`/jobs/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 export const deleteJob = async (id: string): Promise<void> => {
@@ -123,15 +111,5 @@ export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {
 };
 
 export const searchJobsByTitle = async (title: string): Promise<Job[]> => {
-  try {
-    // Ensure that the query string is properly encoded
-    const response = await fetchClient<Job[]>(
-      `/jobs/search?title=${encodeURIComponent(title)}`
-    );
-
-    return response; // fetchClient already handles error checking
-  } catch (error) {
-    console.error("Error searching jobs by title:", error);
-    throw error;
-  }
+  return fetchClient<Job[]>(`/jobs/search?title=${encodeURIComponent(title)}`);
 };

@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import http from "http"; // Required for integrating Socket.IO with Express
+import http from "http";
 import dotenv from "dotenv";
 import path from "path";
 import cors from "cors";
@@ -12,7 +12,7 @@ import chatRouter from "./routes/chat";
 import { initializeSocket } from "./socket.io/socket";
 
 const app: Application = express();
-const server = http.createServer(app); // Create a server instance for Socket.IO
+const server = http.createServer(app);
 
 const corsOptions = {
   origin: "http://localhost:3001",
@@ -33,7 +33,6 @@ app.use("/profiles", reviewsRouter);
 app.use(jobsRouter);
 app.use(chatRouter);
 
-// Initialize Socket.IO
 const io = initializeSocket(server);
 
 const PORT: string | number = process.env.PORT || 3000;

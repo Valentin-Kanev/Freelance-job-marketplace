@@ -8,7 +8,6 @@ import {
   numeric,
   timestamp,
   customType,
-  index,
   unique,
 } from "drizzle-orm/pg-core";
 
@@ -91,7 +90,6 @@ export const ChatRoom = pgTable(
   })
 );
 
-// Messages Schema
 export const Message = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),
   chat_room_id: uuid("chat_room_id")

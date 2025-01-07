@@ -31,9 +31,6 @@ export const useRegisterUser = () => {
   return useMutation<User, Error, Parameters<typeof registerUser>[0]>(
     registerUser,
     {
-      onSuccess: (data) => {
-        console.log("User registered successfully:", data);
-      },
       onError: (error: Error) => {
         console.error("Error registering user:", error.message);
       },
@@ -51,7 +48,6 @@ export const useLoginUser = () => {
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
-        console.log("Login successful:", data.token, data.userId);
       } else {
         console.error("No token returned from login");
       }

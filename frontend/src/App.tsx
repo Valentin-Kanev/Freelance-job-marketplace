@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import JobManagement from "./components/jobs/JobsManagment";
 import JobDashboard from "./components/jobs/JobDashboard";
@@ -12,11 +12,10 @@ import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/ProfilesList";
 import ProfileDetails from "./components/profile/ProfileDetails";
 import { SocketProvider } from "./hooks/useSocket";
-import ChatContainer from "./components/chat/ChatContainer"; // Import ChatContainer
-import FloatingChatButton from "./components/chat/FloatingChatButton"; // Import FloatingChatButton
-import { ChatProvider, useChat } from "./contexts/ChatContext"; // Import ChatProvider and useChat
+import ChatContainer from "./components/chat/ChatContainer";
+import FloatingChatButton from "./components/chat/FloatingChatButton";
+import { ChatProvider, useChat } from "./contexts/ChatContext";
 
-// Layout Component
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex h-screen bg-gray-100">
@@ -112,7 +111,6 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/chat"
         element={
-          // Replace individual chat routes with ChatContainer
           <ProtectedRoute>
             <ChatContainer />
           </ProtectedRoute>

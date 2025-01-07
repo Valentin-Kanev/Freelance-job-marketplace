@@ -20,27 +20,20 @@ const authenticateToken_1 = __importDefault(require("../middleware/Authenticatio
 const jobsRouter = (0, express_1.Router)();
 jobsRouter.get("/jobs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.query;
-    // Ensure the title is provided
     if (!title) {
         return res
             .status(400)
             .json({ message: "Title query parameter is required" });
     }
     try {
-        console.log("Searching for title:", title); // Debugging line
-        const titleSearch = title; // Correctly reference the title from query parameters
-        // Perform the search based on the title (with case-insensitive matching)
+        const titleSearch = title;
         const jobs = yield db_1.db
-            .select({
-            id: schema_1.Job.id,
-            title: schema_1.Job.title,
-        })
+            .select({ id: schema_1.Job.id, title: schema_1.Job.title })
             .from(schema_1.Job)
-            .where((0, drizzle_orm_1.ilike)(schema_1.Job.title, `%${titleSearch}%`)); // Case-insensitive search
+            .where((0, drizzle_orm_1.ilike)(schema_1.Job.title, `%${titleSearch}%`));
         res.status(200).json(jobs);
     }
     catch (error) {
-        console.error("Error searching jobs:", error); // Log the error
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         res
             .status(500)
@@ -64,7 +57,6 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.json(jobs);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Error retrieving jobs" });
     }
 }));
@@ -85,7 +77,7 @@ jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter
         }
     }
     try {
-        const updatedJob = yield db_1.db
+        yield db_1.db
             .update(schema_1.Job)
             .set(Object.assign({ title,
             description,
@@ -94,7 +86,6 @@ jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter
         res.json({ message: "Job updated successfully" });
     }
     catch (error) {
-        console.error("Error updating job:", error);
         res.status(500).json({ message: "Error updating job" });
     }
 }));
@@ -121,7 +112,6 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.json(job[0]);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Error retrieving job" });
     }
 }));
@@ -152,7 +142,6 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
         res.status(201).json(newJob);
     }
     catch (error) {
-        console.error("Error creating job:", error);
         res.status(500).json({ message: "Error creating job" });
     }
 }));
@@ -176,7 +165,6 @@ jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awai
         res.json({ message: "Job deleted successfully" });
     }
     catch (error) {
-        console.error("Error deleting job:", error);
         res.status(500).json({ message: "Error deleting job" });
     }
 }));
@@ -203,7 +191,6 @@ jobsRouter.get("/jobs/created-by/:clientId", authenticateToken_1.default, (req, 
         res.json(jobs);
     }
     catch (error) {
-        console.error("Error fetching jobs:", error);
         res.status(500).json({ message: "Failed to fetch jobs" });
     }
 }));

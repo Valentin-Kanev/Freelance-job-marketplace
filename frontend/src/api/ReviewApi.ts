@@ -25,8 +25,6 @@ const fetchClient = async <T>(
     throw new Error("User is not authenticated");
   }
 
-  console.log(`Making request to: ${url} with options:`, options);
-
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers: {
@@ -40,13 +38,10 @@ const fetchClient = async <T>(
     const errorData = await response
       .json()
       .catch(() => ({ message: response.statusText }));
-    console.error(`Error ${response.status}:`, errorData);
     throw new Error(errorData?.message || "Something went wrong");
   }
 
-  const data = await response.json();
-  console.log("Response data:", data);
-  return data;
+  return response.json();
 };
 
 export const submitReview = async (
@@ -62,18 +57,11 @@ export const submitReview = async (
 export const fetchFreelancerReviews = async (
   freelancerId: string
 ): Promise<Review[]> => {
-  console.log(`Fetching reviews for freelancer_id: ${freelancerId}`);
   return fetchClient<Review[]>(`/profiles/${freelancerId}/reviews`);
 };
 
 export const fetchClientReviews = async (
   clientId: string
 ): Promise<Review[]> => {
-  console.log(`Fetching reviews for client_id: ${clientId}`);
-  try {
-    return await fetchClient<Review[]>(`/reviews/client/${clientId}`);
-  } catch (error) {
-    console.error("Error fetching client reviews:", error);
-    throw error;
-  }
+  return fetchClient<Review[]>(`/reviews/client/${clientId}`);
 };

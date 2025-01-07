@@ -3,7 +3,7 @@ import { useChatRooms } from "../../hooks/useChat";
 
 interface ChatRoomListProps {
   onSelectRoom: (roomId: string) => void;
-  selectedRoomId?: string | null; // Add selectedRoomId prop
+  selectedRoomId?: string | null;
 }
 
 const ChatRoomList: React.FC<ChatRoomListProps> = ({

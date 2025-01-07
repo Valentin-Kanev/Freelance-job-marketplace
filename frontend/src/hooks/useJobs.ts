@@ -80,8 +80,8 @@ export const useSearchJobsByTitle = (title: string) => {
     ["jobs", title],
     () => searchJobsByTitle(title),
     {
-      enabled: !!title, // Only run the query if there's a title
-      staleTime: 5 * 60 * 1000, // Keep the data fresh for 5 minutes
+      enabled: !!title,
+      staleTime: 5 * 60 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error searching jobs:", error.message);

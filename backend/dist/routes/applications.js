@@ -30,7 +30,6 @@ applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, re
         });
     }
     try {
-        console.log("Job ID:", job_id, "Freelancer ID:", freelancer_id);
         const existingApplication = yield db_1.db
             .select()
             .from(schema_1.Application)
@@ -108,7 +107,6 @@ applicationsRouter.get("/applications/my-applications", authenticateToken_1.defa
             .from(schema_1.Application)
             .innerJoin(schema_1.Job, (0, drizzle_orm_1.eq)(schema_1.Application.job_id, schema_1.Job.id))
             .where((0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancerId));
-        console.log("Fetched applications:", applications);
         res.json(applications);
     }
     catch (error) {

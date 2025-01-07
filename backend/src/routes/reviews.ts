@@ -43,21 +43,19 @@ reviewsRouter.post("/:id/reviews", authenticateToken, async (req, res) => {
       .limit(1);
 
     if (existingReview.length > 0) {
-      return res.status(400).json({
-        message: "You have already submitted a review for this freelancer.",
-      });
+      return res
+        .status(400)
+        .json({
+          message: "You have already submitted a review for this freelancer.",
+        });
     }
 
-    await db.insert(Review).values({
-      freelancer_id,
-      client_id,
-      rating,
-      review_text,
-    });
+    await db
+      .insert(Review)
+      .values({ freelancer_id, client_id, rating, review_text });
 
     res.status(201).json({ message: "Review posted successfully" });
   } catch (error) {
-    console.error("Error posting review:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     res
@@ -98,7 +96,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken, async (req, res) => {
 
     res.json(reviews);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Error retrieving reviews" });
   }
 });
@@ -123,7 +120,6 @@ reviewsRouter.get("/client/:clientId", authenticateToken, async (req, res) => {
 
     res.json(reviews);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Error retrieving client reviews" });
   }
 });

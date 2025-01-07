@@ -36,7 +36,6 @@ router.get("/profiles", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json(profiles);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ error: "Failed to retrieve profiles" });
     }
 }));
@@ -65,7 +64,6 @@ router.get("/profiles/user/:user_id", (req, res) => __awaiter(void 0, void 0, vo
         res.status(200).json(profile[0]);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 }));
@@ -74,12 +72,7 @@ router.post("/profiles", authenticateToken_1.default, (req, res) => __awaiter(vo
     try {
         const newProfile = yield db_1.db
             .insert(schema_1.Profile)
-            .values({
-            user_id,
-            skills,
-            description,
-            hourly_rate,
-        })
+            .values({ user_id, skills, description, hourly_rate })
             .returning({
             id: schema_1.Profile.id,
             userId: schema_1.Profile.user_id,
@@ -99,11 +92,7 @@ router.put("/profiles/user/:id", authenticateToken_1.default, (req, res) => __aw
     try {
         const updatedProfile = yield db_1.db
             .update(schema_1.Profile)
-            .set({
-            skills,
-            description,
-            hourly_rate,
-        })
+            .set({ skills, description, hourly_rate })
             .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, id))
             .returning({
             id: schema_1.Profile.id,
@@ -118,7 +107,6 @@ router.put("/profiles/user/:id", authenticateToken_1.default, (req, res) => __aw
         res.status(200).json(updatedProfile);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ error: "Failed to update profile" });
     }
 }));
@@ -144,7 +132,6 @@ router.get("/profiles/search", (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(200).json(profiles);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ error: "Failed to search profiles" });
     }
 }));

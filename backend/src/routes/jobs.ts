@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "../drizzle/db";
 import { Job, User } from "../drizzle/schema";
-import { eq, like, ilike } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -10,7 +10,6 @@ const jobsRouter = Router();
 jobsRouter.get("/jobs/search", async (req, res) => {
   const { title } = req.query;
 
-  // Ensure the title is provided
   if (!title) {
     return res
       .status(400)
@@ -18,22 +17,15 @@ jobsRouter.get("/jobs/search", async (req, res) => {
   }
 
   try {
-    console.log("Searching for title:", title); // Debugging line
+    const titleSearch = title as string;
 
-    const titleSearch = title as string; // Correctly reference the title from query parameters
-
-    // Perform the search based on the title (with case-insensitive matching)
     const jobs = await db
-      .select({
-        id: Job.id,
-        title: Job.title,
-      })
+      .select({ id: Job.id, title: Job.title })
       .from(Job)
-      .where(ilike(Job.title, `%${titleSearch}%`)); // Case-insensitive search
+      .where(ilike(Job.title, `%${titleSearch}%`));
 
     res.status(200).json(jobs);
   } catch (error) {
-    console.error("Error searching jobs:", error); // Log the error
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     res
@@ -59,7 +51,6 @@ jobsRouter.get("/jobs", async (req, res) => {
 
     res.json(jobs);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Error retrieving jobs" });
   }
 });
@@ -84,7 +75,7 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
   }
 
   try {
-    const updatedJob = await db
+    await db
       .update(Job)
       .set({
         title,
@@ -96,7 +87,6 @@ jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
 
     res.json({ message: "Job updated successfully" });
   } catch (error) {
-    console.error("Error updating job:", error);
     res.status(500).json({ message: "Error updating job" });
   }
 });
@@ -125,7 +115,6 @@ jobsRouter.get("/jobs/:id", async (req, res) => {
 
     res.json(job[0]);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Error retrieving job" });
   }
 });
@@ -160,7 +149,6 @@ jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
     });
     res.status(201).json(newJob);
   } catch (error) {
-    console.error("Error creating job:", error);
     res.status(500).json({ message: "Error creating job" });
   }
 });
@@ -189,7 +177,6 @@ jobsRouter.delete("/jobs/:id", authenticateToken, async (req, res) => {
     await db.delete(Job).where(eq(Job.id, id));
     res.json({ message: "Job deleted successfully" });
   } catch (error) {
-    console.error("Error deleting job:", error);
     res.status(500).json({ message: "Error deleting job" });
   }
 });
@@ -222,7 +209,6 @@ jobsRouter.get(
 
       res.json(jobs);
     } catch (error) {
-      console.error("Error fetching jobs:", error);
       res.status(500).json({ message: "Failed to fetch jobs" });
     }
   }

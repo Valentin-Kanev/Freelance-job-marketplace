@@ -8,7 +8,7 @@ interface MessagesListProps {
 
 const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
   const { data: messages, isLoading, error } = useMessages(roomId);
-  const { userId } = useAuth(); // Get logged-in user ID
+  const { userId } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,9 +45,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
                   <p>{message.content}</p>
                   <p
                     className={`text-xs mt-1 self-end ${
-                      isLoggedUser
-                        ? "text-white/70" // Semi-transparent white for blue background
-                        : "text-gray-500"
+                      isLoggedUser ? "text-white/70" : "text-gray-500"
                     }`}
                   >
                     {new Date(message.timestamp).toLocaleString("en-US", {

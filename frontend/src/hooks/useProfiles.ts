@@ -60,8 +60,7 @@ export const useUpdateProfile = () => {
   return useMutation<Profile, Error, UpdateProfileVariables>(
     ({ id, data }) => updateProfile(id, data),
     {
-      onSuccess: (updatedProfile) => {
-        console.log("Profile updated successfully:", updatedProfile);
+      onSuccess: () => {
         queryClient.invalidateQueries("profile");
       },
       onError: (error: Error) => {

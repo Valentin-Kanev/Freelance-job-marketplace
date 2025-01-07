@@ -5,7 +5,7 @@ interface FloatingChatButtonProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   chatRoomId?: string | null;
-  isVisible: boolean; // New prop to control visibility
+  isVisible: boolean;
 }
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
@@ -16,8 +16,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
 }) => {
   const { userId } = useAuth();
 
-  if (!userId || !isVisible) return null; // Ensure the button is visible and user is authenticated
-
+  if (!userId || !isVisible) return null;
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (

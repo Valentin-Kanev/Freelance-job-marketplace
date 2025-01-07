@@ -69,7 +69,6 @@ exports.ChatRoom = (0, pg_core_1.pgTable)("chat_rooms", {
 }, (room) => ({
     uniqueUsers: (0, pg_core_1.unique)("unique_users").on(room.user_1_id, room.user_2_id),
 }));
-// Messages Schema
 exports.Message = (0, pg_core_1.pgTable)("messages", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     chat_room_id: (0, pg_core_1.uuid)("chat_room_id")

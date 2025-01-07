@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    localStorage.setItem("authToken", token); // Use consistent key
+    localStorage.setItem("authToken", token);
     try {
       const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
       const newUserId = decodedToken.id;
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = useCallback(() => {
-    localStorage.removeItem("authToken"); // Use consistent key
+    localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("userType");
 
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [queryClient]);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken"); // Use consistent key
+    const token = localStorage.getItem("authToken");
 
     if (token && !isTokenExpired(token)) {
       try {

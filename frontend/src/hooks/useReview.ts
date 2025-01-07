@@ -15,7 +15,6 @@ export const useSubmitReview = () => {
     {
       onSuccess: (_, { freelancerId }) => {
         queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
-        console.log("Review submitted successfully");
       },
       onError: (error: Error) => {
         if (error.message.includes("already submitted")) {

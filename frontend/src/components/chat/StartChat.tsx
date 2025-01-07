@@ -4,8 +4,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";
 
 interface StartChatProps {
-  targetUserId: string; // The user to start a chat with
-  onStartChat: (roomId: string) => void; // Callback to notify parent of chat start
+  targetUserId: string;
+  onStartChat: (roomId: string) => void;
 }
 
 const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
@@ -23,7 +23,7 @@ const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
         user_1_id: userId,
         user_2_id: targetUserId,
       });
-      onStartChat(chatRoom.chat_room_id); // Ensure correct property is passed
+      onStartChat(chatRoom.chat_room_id);
     } catch (error) {
       console.error("Error creating chat room:", error);
       alert("Failed to create chat room. Please try again.");

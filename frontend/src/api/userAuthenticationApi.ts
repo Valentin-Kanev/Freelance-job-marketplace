@@ -49,16 +49,13 @@ export const registerUser = async (data: RegisterUserData): Promise<User> => {
 export const loginUser = async (
   data: LoginUserData
 ): Promise<{ token: string; userId: string; userType: string }> => {
-  const response = await fetchClient<{
-    token: string;
-    userId: string;
-    userType: string;
-  }>("/login", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-
-  return response;
+  return fetchClient<{ token: string; userId: string; userType: string }>(
+    "/login",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };
 
 export const logoutUser = (): void => {

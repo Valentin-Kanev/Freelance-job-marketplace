@@ -44,20 +44,18 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, freelancer_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)))
             .limit(1);
         if (existingReview.length > 0) {
-            return res.status(400).json({
+            return res
+                .status(400)
+                .json({
                 message: "You have already submitted a review for this freelancer.",
             });
         }
-        yield db_1.db.insert(schema_1.Review).values({
-            freelancer_id,
-            client_id,
-            rating,
-            review_text,
-        });
+        yield db_1.db
+            .insert(schema_1.Review)
+            .values({ freelancer_id, client_id, rating, review_text });
         res.status(201).json({ message: "Review posted successfully" });
     }
     catch (error) {
-        console.error("Error posting review:", error);
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         res
             .status(500)
@@ -92,7 +90,6 @@ reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __a
         res.json(reviews);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Error retrieving reviews" });
     }
 }));
@@ -115,7 +112,6 @@ reviewsRouter.get("/client/:clientId", authenticateToken_1.default, (req, res) =
         res.json(reviews);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Error retrieving client reviews" });
     }
 }));

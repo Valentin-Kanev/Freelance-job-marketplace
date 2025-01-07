@@ -16,9 +16,6 @@ export const useApplyForJob = () => {
       data: { freelancer_id: string; cover_letter: string };
     }) => applyForJob(jobId, data),
     {
-      onSuccess: () => {
-        console.log("Application submitted successfully");
-      },
       onError: (error: Error) => {
         console.error("Error applying for job:", error.message);
       },

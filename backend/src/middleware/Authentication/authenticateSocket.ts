@@ -3,15 +3,14 @@ import { ExtendedError } from "socket.io/dist/namespace";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 interface AuthenticatedSocket extends Socket {
-  user?: JwtPayload; // Extend the socket object to include user info
+  user?: JwtPayload;
 }
 
 const authenticateSocket = (
   socket: AuthenticatedSocket,
   next: (err?: ExtendedError) => void
 ): void => {
-  const token = socket.handshake.auth?.token; // Extract token from handshake auth
-  console.log("Token received in handshake:", token);
+  const token = socket.handshake.auth?.token;
 
   if (!token) {
     const error = new Error("Authentication token is required.");
@@ -23,10 +22,9 @@ const authenticateSocket = (
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || ""
-    ) as JwtPayload; // Verify token
-    socket.user = decoded; // Attach user info to the socket object
-    console.log("Token verified successfully:", decoded);
-    next(); // Continue to the next middleware or connection
+    ) as JwtPayload;
+    socket.user = decoded;
+    next();
   } catch (error) {
     if (error instanceof Error) {
       console.error("Socket authentication failed:", error.message);

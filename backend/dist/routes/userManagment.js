@@ -48,9 +48,7 @@ const router = express_1.default.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv_1.default.config({ path: envPath });
 const SECRET_KEY = process.env.SECRET_KEY || "secret";
-const pool = new pg_1.Pool({
-    connectionString: process.env.DATABASE_URL,
-});
+const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
 const db = (0, node_postgres_1.drizzle)(pool);
 router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email, user_type } = req.body;
@@ -70,12 +68,7 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         const newUser = yield db
             .insert(schema_1.User)
-            .values({
-            username,
-            password,
-            email,
-            user_type,
-        })
+            .values({ username, password, email, user_type })
             .returning();
         yield db.insert(schema_1.Profile).values({
             user_id: newUser[0].id,
@@ -89,7 +82,6 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
-        console.error("Error registering user:", error);
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }));

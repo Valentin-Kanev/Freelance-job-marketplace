@@ -24,7 +24,6 @@ router.get("/profiles", async (req: Request, res: Response) => {
 
     res.status(200).json(profiles);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Failed to retrieve profiles" });
   }
 });
@@ -57,7 +56,6 @@ router.get("/profiles/user/:user_id", async (req, res) => {
 
     res.status(200).json(profile[0]);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -71,12 +69,7 @@ router.post(
     try {
       const newProfile = await db
         .insert(Profile)
-        .values({
-          user_id,
-          skills,
-          description,
-          hourly_rate,
-        })
+        .values({ user_id, skills, description, hourly_rate })
         .returning({
           id: Profile.id,
           userId: Profile.user_id,
@@ -102,11 +95,7 @@ router.put(
     try {
       const updatedProfile = await db
         .update(Profile)
-        .set({
-          skills,
-          description,
-          hourly_rate,
-        })
+        .set({ skills, description, hourly_rate })
         .where(eq(Profile.id, id))
         .returning({
           id: Profile.id,
@@ -122,7 +111,6 @@ router.put(
 
       res.status(200).json(updatedProfile);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ error: "Failed to update profile" });
     }
   }
@@ -161,7 +149,6 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
 
     res.status(200).json(profiles);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Failed to search profiles" });
   }
 });

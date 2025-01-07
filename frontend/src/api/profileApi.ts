@@ -49,8 +49,7 @@ const fetchClient = async <T>(
     throw new Error(errorMessage);
   }
 
-  const data = await response.json();
-  return data;
+  return response.json();
 };
 
 export const fetchProfiles = async (): Promise<Profile[]> => {

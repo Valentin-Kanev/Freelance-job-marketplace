@@ -11,16 +11,15 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const socket = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken"); // Use consistent key
+    const token = localStorage.getItem("authToken");
     if (!token) {
       console.error("No auth token found in localStorage");
       return;
     }
-    console.log("Initializing WebSocket connection with token:", token);
 
     socket.current = io("http://localhost:3000", {
       auth: {
-        token, // Ensure the token is provided
+        token,
       },
     });
 

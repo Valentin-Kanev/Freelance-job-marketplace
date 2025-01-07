@@ -11,7 +11,6 @@ const authenticateToken = async (
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("Token received in authorization header:", token);
 
   const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -43,7 +42,6 @@ const authenticateToken = async (
       }
 
       req.user = user[0];
-      console.log("Token verified successfully:", decoded);
       next();
     } catch (dbError) {
       console.error("Error fetching user data:", dbError);

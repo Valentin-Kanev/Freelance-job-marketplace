@@ -31,8 +31,6 @@ applicationsRouter.post(
     }
 
     try {
-      console.log("Job ID:", job_id, "Freelancer ID:", freelancer_id);
-
       const existingApplication = await db
         .select()
         .from(Application)
@@ -133,8 +131,6 @@ applicationsRouter.get(
         .from(Application)
         .innerJoin(Job, eq(Application.job_id, Job.id))
         .where(eq(Application.freelancer_id, freelancerId));
-
-      console.log("Fetched applications:", applications);
 
       res.json(applications);
     } catch (error) {

@@ -3,7 +3,7 @@ import ChatRoomList from "./ChatList";
 import ChatRoom from "./ChatRoom";
 
 interface ChatContainerProps {
-  initialRoomId?: string | null; // Add initialRoomId prop
+  initialRoomId?: string | null;
 }
 
 const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
@@ -19,7 +19,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
 
   return (
     <div className="flex h-full bg-gray-50 rounded-lg shadow-lg overflow-hidden w-full">
-      {/* Chat Room List */}
       <div className="w-1/4 border-r overflow-y-auto">
         <ChatRoomList
           onSelectRoom={setSelectedRoomId}
@@ -27,7 +26,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
         />
       </div>
 
-      {/* Chat Room */}
       <div className="w-3/4 flex flex-col">
         {selectedRoomId ? (
           <ChatRoom roomId={selectedRoomId} />

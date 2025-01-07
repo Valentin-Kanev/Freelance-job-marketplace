@@ -9,16 +9,11 @@ import dotenv from "dotenv";
 import { Pool } from "pg";
 
 const router = express.Router();
-
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv.config({ path: envPath });
 
 const SECRET_KEY = process.env.SECRET_KEY || "secret";
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool);
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -43,12 +38,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
     const newUser = await db
       .insert(User)
-      .values({
-        username,
-        password,
-        email,
-        user_type,
-      })
+      .values({ username, password, email, user_type })
       .returning();
 
     await db.insert(Profile).values({
@@ -63,7 +53,6 @@ router.post("/register", async (req: Request, res: Response) => {
       user: newUser,
     });
   } catch (error: any) {
-    console.error("Error registering user:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
