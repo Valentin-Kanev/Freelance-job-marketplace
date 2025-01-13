@@ -3,7 +3,7 @@ import { useSubmitReview } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";
 import Modal from "../UI/Modal";
-import { useToast } from "../ToastManager";
+import { useToast } from "../../contexts/ToastManager";
 import { FaStar } from "react-icons/fa";
 
 interface CreateReviewProps {
@@ -18,11 +18,22 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   onClose,
 }) => {
   const { userId } = useAuth();
-  const submitReviewMutation = useSubmitReview();
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [reviewText, setReviewText] = useState<string>("");
   const { addToast } = useToast();
+
+  const submitReviewMutation = useSubmitReview(
+    () => {
+      setRating(0);
+      setReviewText("");
+      onClose();
+      addToast("Review submitted successfully!");
+    },
+    (error: Error) => {
+      console.error("Error submitting review:", error.message);
+    }
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,24 +43,14 @@ const CreateReview: React.FC<CreateReviewProps> = ({
       return;
     }
 
-    submitReviewMutation.mutate(
-      {
-        freelancerId,
-        data: {
-          client_id: userId,
-          rating,
-          review_text: reviewText,
-        },
+    submitReviewMutation.mutate({
+      freelancerId,
+      data: {
+        client_id: userId,
+        rating,
+        review_text: reviewText,
       },
-      {
-        onSuccess: () => {
-          setRating(0);
-          setReviewText("");
-          onClose();
-          addToast("Review submitted successfully!");
-        },
-      }
-    );
+    });
   };
 
   return (

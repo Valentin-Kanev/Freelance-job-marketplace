@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ChatRoomList from "./ChatList";
-import ChatRoom from "./ChatRoom";
+import MessagesList from "./MessagesList";
+import ChatForm from "./ChatForm";
 
 interface ChatContainerProps {
   initialRoomId?: string | null;
@@ -28,7 +29,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
 
       <div className="w-3/4 flex flex-col">
         {selectedRoomId ? (
-          <ChatRoom roomId={selectedRoomId} />
+          <div className="flex-grow p-6 bg-white shadow-lg rounded-lg h-full flex flex-col">
+            <div className="flex-grow overflow-y-auto mb-4">
+              <MessagesList roomId={selectedRoomId} />
+            </div>
+            <div className="mt-auto">
+              <ChatForm roomId={selectedRoomId} />
+            </div>
+          </div>
         ) : (
           <p className="m-auto text-gray-500">
             Select a chat room to view messages.

@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { submitReview, fetchFreelancerReviews, Review } from "../api/ReviewApi";
 
-export const useSubmitReview = () => {
+export const useSubmitReview = (
+  onSuccess?: () => void,
+  onError?: (error: Error) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -15,6 +18,7 @@ export const useSubmitReview = () => {
     {
       onSuccess: (_, { freelancerId }) => {
         queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
+        if (onSuccess) onSuccess();
       },
       onError: (error: Error) => {
         if (error.message.includes("already submitted")) {
@@ -23,6 +27,7 @@ export const useSubmitReview = () => {
           console.error("Error submitting review:", error.message);
           alert("An error occurred while submitting the review.");
         }
+        if (onError) onError(error);
       },
     }
   );

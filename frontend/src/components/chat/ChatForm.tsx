@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSendMessage } from "../../hooks/useChat";
 import { useAuth } from "../../contexts/AuthContext";
 

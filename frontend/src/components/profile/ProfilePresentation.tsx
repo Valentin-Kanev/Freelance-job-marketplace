@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Profile } from "../../api/profileApi";
-import ReviewList from "../Reviews/ReviewsList";
-import MyJobs from "../jobs/MyJobs";
-import MyReviews from "../Reviews/ClientmadeReviews";
-import MyApplications from "../jobApplications/MyApplications";
+import ReviewList from "../Reviews/FreelancerReviewsList";
+import MyJobs from "../jobs/MyJobsList";
+import MyReviews from "../Reviews/ClientReviewsList";
+import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
@@ -35,6 +35,10 @@ export function ProfilePresentation({
     openChat(roomId);
     setIsFloatingChatButtonVisible(false);
   };
+
+  useEffect(() => {
+    // Trigger refetch in child components when activeTab changes
+  }, [activeTab]);
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-20 border border-gray-200 mt-4 h-screen overflow-y-auto">

@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../UI/Modal";
 import Button from "../../UI/Button";
 import { useDeleteJob } from "../../../hooks/useJobs";
-import { useToast } from "../../ToastManager";
+import { useToast } from "../../../contexts/ToastManager";
 
 interface DeleteJobModalProps {
   jobId: string;

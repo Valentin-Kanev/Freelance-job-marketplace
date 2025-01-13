@@ -23,27 +23,26 @@ module.exports = {
     require("@tailwindcss/aspect-ratio"),
     plugin(function ({ addBase }) {
       addBase({
-        /* Global dark and rounded scrollbars without arrow boxes */
         "*": {
-          scrollbarWidth: "thin" /* Firefox */,
+          scrollbarWidth: "thin",
         },
         "*::-webkit-scrollbar": {
-          width: "8px" /* Narrow scrollbar */,
+          width: "8px",
           height: "8px",
         },
         "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "#1D3557" /* Dark thumb */,
-          borderRadius: "5px" /* Fully rounded corners */,
+          backgroundColor: "#1D3557",
+          borderRadius: "5px",
         },
         "*::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#E63946" /* Reddish hover effect */,
+          backgroundColor: "#E63946",
         },
         "*::-webkit-scrollbar-track": {
-          backgroundColor: "#2A2A2A" /* Subtle dark background */,
+          backgroundColor: "#2A2A2A",
           borderRadius: "10px",
         },
         "*::-webkit-scrollbar-button": {
-          display: "none" /* Remove arrow boxes */,
+          display: "none",
         },
       });
     }),

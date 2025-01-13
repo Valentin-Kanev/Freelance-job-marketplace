@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRegisterUser } from "../../hooks/useAuth";
 import Input from "../UI/Input";
 
@@ -80,16 +80,32 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
         <label className="block text-gray-600 font-medium mb-2">
           User Type
         </label>
-        <select
-          name="userType"
-          value={formData.userType}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="freelancer">Freelancer</option>
-          <option value="client">Client</option>
-        </select>
+        <div className="flex space-x-4">
+          <label className="flex items-center p-2 rounded">
+            <input
+              type="radio"
+              name="userType"
+              value="freelancer"
+              checked={formData.userType === "freelancer"}
+              onChange={handleChange}
+              required
+              className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
+            />
+            <span className="ml-2">Freelancer</span>
+          </label>
+          <label className="flex items-center p-2 rounded">
+            <input
+              type="radio"
+              name="userType"
+              value="client"
+              checked={formData.userType === "client"}
+              onChange={handleChange}
+              required
+              className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
+            />
+            <span className="ml-2">Client</span>
+          </label>
+        </div>
       </div>
       <button
         type="submit"

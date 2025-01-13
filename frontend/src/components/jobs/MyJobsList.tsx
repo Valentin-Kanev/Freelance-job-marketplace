@@ -2,15 +2,21 @@ import { useQuery } from "react-query";
 import { fetchJobsByClient } from "../../api/jobApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
+import { useEffect } from "react";
 
 const MyJobs = ({ clientId }: { clientId: string }) => {
   const {
     data: jobs,
     isLoading,
     error,
+    refetch,
   } = useQuery(["jobsByClient", clientId], () => fetchJobsByClient(clientId), {
     enabled: !!clientId,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [clientId, refetch]);
 
   if (isLoading) return <StatusMessage message="Loading jobs..." />;
   if (error instanceof Error)

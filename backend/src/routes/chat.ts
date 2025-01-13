@@ -51,8 +51,6 @@ chatRouter.get(
   authenticateToken,
   async (req, res) => {
     const { id: chat_room_id } = req.params;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
 
     try {
       const messages = await db

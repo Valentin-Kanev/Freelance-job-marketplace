@@ -1,5 +1,3 @@
-import React from "react";
-
 interface JobListProps {
   jobs: any[];
   selectedJobId: string | null;

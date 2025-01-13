@@ -2,12 +2,14 @@ import { useQuery } from "react-query";
 import { fetchClientReviews } from "../../api/ReviewApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
+import { useEffect } from "react";
 
 const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
   const {
     data: reviews,
     isLoading,
     error,
+    refetch,
   } = useQuery(
     ["clientReviews", clientId],
     () => fetchClientReviews(clientId),
@@ -15,6 +17,10 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
       enabled: !!clientId,
     }
   );
+
+  useEffect(() => {
+    refetch();
+  }, [clientId, refetch]);
 
   if (isLoading) return <StatusMessage message="Loading reviews..." />;
   if (error instanceof Error)

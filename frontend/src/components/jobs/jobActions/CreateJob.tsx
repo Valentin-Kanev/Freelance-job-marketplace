@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
-import { useToast } from "../../ToastManager";
+import { useToast } from "../../../contexts/ToastManager";
 
 interface CreateJobProps {
   userId: string;

@@ -1,5 +1,6 @@
 import { useFreelancerReviews } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
+import { useEffect } from "react";
 
 interface ReviewListProps {
   freelancerId: string;
@@ -11,7 +12,16 @@ export default function ReviewList({
   isFreelancer,
 }: ReviewListProps) {
   const { isLoggedIn } = useAuth();
-  const { data: reviews, error, isError } = useFreelancerReviews(freelancerId);
+  const {
+    data: reviews,
+    error,
+    isError,
+    refetch,
+  } = useFreelancerReviews(freelancerId);
+
+  useEffect(() => {
+    refetch();
+  }, [freelancerId, refetch]);
 
   if (!isFreelancer) {
     return null;

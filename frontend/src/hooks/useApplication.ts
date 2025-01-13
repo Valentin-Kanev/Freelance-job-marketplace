@@ -6,7 +6,11 @@ import {
   MyApplication,
   fetchMyApplications,
 } from "../api/ApplicationApi";
-export const useApplyForJob = () => {
+
+export const useApplyForJob = (
+  onSuccess?: () => void,
+  onError?: (error: Error) => void
+) => {
   return useMutation(
     ({
       jobId,
@@ -16,8 +20,10 @@ export const useApplyForJob = () => {
       data: { freelancer_id: string; cover_letter: string };
     }) => applyForJob(jobId, data),
     {
+      onSuccess,
       onError: (error: Error) => {
         console.error("Error applying for job:", error.message);
+        if (onError) onError(error);
       },
     }
   );

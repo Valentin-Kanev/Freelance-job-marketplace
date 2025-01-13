@@ -14,8 +14,8 @@ interface ApplicationItemProps {
 
 const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
   const [showMore, setShowMore] = useState(false);
-  const isLongText = application.cover_letter.length > 200;
   const [isReviewing, setIsReviewing] = useState(false);
+  const isLongText = application.cover_letter.length > 200;
 
   const handleOpenReview = () => {
     setIsReviewing(true);

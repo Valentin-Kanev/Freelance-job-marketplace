@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { useMutation } from "react-query";
+import { useState } from "react";
+import { useApplyForJob } from "../../hooks/useApplication";
 import Button from "../UI/Button";
-import { applyForJob } from "../../api/ApplicationApi";
-import { useToast } from "../ToastManager";
+import { useToast } from "../../contexts/ToastManager";
 import StatusMessage from "../UI/StatusMessage";
 
 interface JobApplicationProps {
@@ -20,20 +19,13 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
     isLoading,
     isError,
     error,
-  } = useMutation(
-    () =>
-      applyForJob(jobId, {
-        freelancer_id: freelancerId!,
-        cover_letter: coverLetter,
-      }),
-    {
-      onSuccess: () => {
-        addToast("Application submitted successfully!");
-        onClose();
-      },
-      onError: (error: any) => {
-        console.error("Error applying for job:", error.message);
-      },
+  } = useApplyForJob(
+    () => {
+      addToast("Application submitted successfully!");
+      onClose();
+    },
+    (error: any) => {
+      console.error("Error applying for job:", error.message);
     }
   );
 
@@ -45,7 +37,13 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
       return;
     }
 
-    submitApplication();
+    submitApplication({
+      jobId,
+      data: {
+        freelancer_id: freelancerId!,
+        cover_letter: coverLetter,
+      },
+    });
   };
 
   return (

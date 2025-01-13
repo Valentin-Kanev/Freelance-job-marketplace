@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchJobsByTitle } from "../../hooks/useJobs";
 import { useSearchProfiles } from "../../hooks/useProfiles";
@@ -38,11 +38,9 @@ const SearchBar: React.FC = () => {
 
   return (
     <div className="relative max-w-lg mx-auto">
-      {/* Search bar and toggle button */}
       <div className="flex items-center space-x-2">
         <form className="flex-1 flex items-center bg-gray-700 rounded-full h-8">
           {" "}
-          {/* Set a fixed height for the form */}
           <button
             onClick={handleToggle}
             type="button"
@@ -62,7 +60,6 @@ const SearchBar: React.FC = () => {
         </form>
       </div>
 
-      {/* Dropdown suggestions */}
       {title && (
         <div className="relative mt-2">
           {searchType === "jobs" && jobsLoading && (

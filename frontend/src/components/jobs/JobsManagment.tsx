@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useJobs } from "../../hooks/useJobs";
+import { useAuth } from "../../contexts/AuthContext";
+import JobDashboard from "./JobDashboard";
 import Modal from "../UI/Modal";
 import JobForm from "./JobForm";
-import JobDashboard from "./JobDashboard";
-import { useAuth } from "../../contexts/AuthContext";
 
 export const initialJobDetails = {
   id: "",

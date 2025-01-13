@@ -1,4 +1,3 @@
-import React from "react";
 import { useCreateChatRoom } from "../../hooks/useChat";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";

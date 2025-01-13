@@ -1,20 +1,19 @@
-import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import JobManagement from "./components/jobs/JobsManagment";
 import JobDashboard from "./components/jobs/JobDashboard";
-import ProtectedRoute from "./components/Protectedroute";
+import ProtectedRoute from "./components/userAuthentication/Protectedroute";
 import Header from "./components/UI/Header";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProfileContainer } from "./components/profile/ProfileContainer";
 import AuthMode from "./components/userAuthentication/AuthMode";
-import { ToastProvider } from "./components/ToastManager";
+import { ToastProvider } from "./contexts/ToastManager";
 import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/ProfilesList";
 import ProfileDetails from "./components/profile/ProfileDetails";
 import { SocketProvider } from "./hooks/useSocket";
 import ChatContainer from "./components/chat/ChatContainer";
-import FloatingChatButton from "./components/chat/FloatingChatButton";
-import { ChatProvider, useChat } from "./contexts/ChatContext";
+import { ChatProvider } from "./contexts/ChatContext";
+import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -50,24 +49,6 @@ const App: React.FC = () => {
         </BrowserRouter>
       </ChatProvider>
     </AuthProvider>
-  );
-};
-
-const ChatButtonWrapper: React.FC = () => {
-  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
-  const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
-    useState(true);
-
-  return (
-    <FloatingChatButton
-      isOpen={isChatOpen}
-      setIsOpen={(isOpen) => {
-        if (!isOpen) setIsFloatingChatButtonVisible(true);
-        isOpen ? openChat(chatRoomId!) : closeChat();
-      }}
-      chatRoomId={chatRoomId}
-      isVisible={isFloatingChatButtonVisible}
-    />
   );
 };
 

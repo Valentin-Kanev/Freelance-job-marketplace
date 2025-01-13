@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Modal from "../UI/Modal";
 import Toast from "../UI/Toast";
 import Input from "../UI/Input";

@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useUpdateJob } from "../../../hooks/useJobs";
-import { useToast } from "../../ToastManager";
+import { useToast } from "../../../contexts/ToastManager";
 
 interface EditJobModalProps {
   job: any;
