@@ -14,7 +14,6 @@ const jobs_1 = __importDefault(require("./routes/jobs"));
 const applications_1 = __importDefault(require("./routes/applications"));
 const reviews_1 = __importDefault(require("./routes/reviews"));
 const chat_1 = __importDefault(require("./routes/chat"));
-const socket_1 = require("./socket.io/socket");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const corsOptions = {
@@ -32,7 +31,6 @@ app.use("/reviews", reviews_1.default);
 app.use("/profiles", reviews_1.default);
 app.use(jobs_1.default);
 app.use(chat_1.default);
-const io = (0, socket_1.initializeSocket)(server);
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

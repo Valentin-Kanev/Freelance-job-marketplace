@@ -5,6 +5,7 @@ import EditJobModal from "./jobActions/EditJob";
 import DeleteJob from "./jobActions/DeleteJob";
 import ApplyForJob from "./jobActions/ApplyForJob";
 import { Link } from "react-router-dom";
+import { formatBudget } from "../../utils/formatBudget";
 
 interface JobDetailsProps {
   job: any | null;
@@ -72,7 +73,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
         {job.client_username}
       </Link>
       <p className="text-lg font-semibold text-green-600 mb-4">
-        💵 Budget: ${job.budget}
+        💵 Budget: {formatBudget(job.budget)}
       </p>
       <p className="text-md text-gray-600 mb-4">
         📅 Deadline: {new Date(job.deadline).toLocaleDateString()}

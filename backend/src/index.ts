@@ -9,7 +9,6 @@ import jobsRouter from "./routes/jobs";
 import applicationsRouter from "./routes/applications";
 import reviewsRouter from "./routes/reviews";
 import chatRouter from "./routes/chat";
-import { initializeSocket } from "./socket.io/socket";
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -32,8 +31,6 @@ app.use("/reviews", reviewsRouter);
 app.use("/profiles", reviewsRouter);
 app.use(jobsRouter);
 app.use(chatRouter);
-
-const io = initializeSocket(server);
 
 const PORT: string | number = process.env.PORT || 3000;
 server.listen(PORT, () => {

@@ -1,6 +1,6 @@
 import { Application, Job, User } from "../drizzle/schema";
 import { db } from "../drizzle/db";
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { and, eq } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { JwtPayload } from "jsonwebtoken";
@@ -20,7 +20,7 @@ function isAuthenticatedUser(
 applicationsRouter.post(
   "/jobs/:id/apply",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { id: job_id } = req.params;
     const { freelancer_id, cover_letter } = req.body;
 
@@ -68,7 +68,7 @@ applicationsRouter.post(
 applicationsRouter.get(
   "/jobs/:id/applications",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { id: job_id } = req.params;
 
     if (!isAuthenticatedUser(req.user)) {
@@ -113,7 +113,7 @@ applicationsRouter.get(
 applicationsRouter.get(
   "/applications/my-applications",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     if (!req.user || typeof req.user === "string") {
       return res.status(401).json({ message: "Unauthorized" });
     }

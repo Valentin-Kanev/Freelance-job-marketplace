@@ -3,6 +3,14 @@ import Button from "../UI/Button";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 
+const truncateDescription = (
+  description: string,
+  maxLength: number
+): string => {
+  if (description.length <= maxLength) return description;
+  return description.slice(0, maxLength) + "...";
+};
+
 const FreelancerProfilesList = () => {
   const { data: profiles, isLoading, isError, error } = useProfiles();
 
@@ -36,8 +44,11 @@ const FreelancerProfilesList = () => {
               <h2 className="text-lg font-bold text-gray-800 text-center">
                 {profile.username}
               </h2>
-              <p className="text-sm text-gray-600 mt-2 text-center truncate">
-                {profile.description || "No description provided"}
+              <p className="text-sm text-gray-600 mt-2 text-center">
+                {truncateDescription(
+                  profile.description || "No description provided",
+                  100
+                )}
               </p>
               <p className="text-sm text-gray-600 mt-2 text-center">
                 <span className="font-medium">Skills:</span>{" "}

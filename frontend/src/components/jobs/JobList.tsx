@@ -1,3 +1,5 @@
+import { formatBudget } from "../../utils/formatBudget";
+
 interface JobListProps {
   jobs: any[];
   selectedJobId: string | null;
@@ -32,7 +34,7 @@ const JobList: React.FC<JobListProps> = ({
               Offered by: {job.client_username || "Unknown"}
             </p>
             <p className="text-lg font-medium text-green-600">
-              💵 Budget: ${job.budget}
+              💵 Budget: {formatBudget(job.budget)}
             </p>
             <p className="text-sm text-gray-500">
               📅 Deadline: {new Date(job.deadline).toLocaleDateString()}

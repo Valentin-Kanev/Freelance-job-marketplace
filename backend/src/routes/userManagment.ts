@@ -16,7 +16,7 @@ const SECRET_KEY = process.env.SECRET_KEY || "secret";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool);
 
-router.post("/register", async (req: Request, res: Response) => {
+router.post("/register", async (req, res) => {
   const { username, password, email, user_type } = req.body;
 
   if (!username || !password || !email || !user_type) {
@@ -57,7 +57,7 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {

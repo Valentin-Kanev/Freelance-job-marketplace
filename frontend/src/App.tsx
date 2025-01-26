@@ -9,7 +9,7 @@ import AuthMode from "./components/userAuthentication/AuthMode";
 import { ToastProvider } from "./contexts/ToastManager";
 import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/ProfilesList";
-import ProfileDetails from "./components/profile/ProfileDetails";
+import ProfileLoader from "./components/profile/ProfileLoader";
 import { SocketProvider } from "./hooks/useSocket";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
@@ -76,7 +76,7 @@ const AppRoutes: React.FC = () => {
         }
       />
       <Route path="/profiles" element={<FreelancerProfilesList />} />
-      <Route path="/profiles/:user_id" element={<ProfileDetails />} />
+      <Route path="/profiles/:user_id" element={<ProfileLoader />} />
       <Route
         path="/profile-management"
         element={

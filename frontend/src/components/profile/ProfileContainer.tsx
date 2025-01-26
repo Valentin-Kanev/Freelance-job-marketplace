@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserProfile } from "../../hooks/useProfiles";
-import { ProfilePresentation } from "./ProfilePresentation";
+import { ProfileDetails } from "./ProfileDetails";
 import { useUpdateProfile } from "../../hooks/useProfiles";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -39,7 +39,7 @@ export function ProfileContainer({
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <ProfilePresentation
+      <ProfileDetails
         profile={profile}
         onEdit={() => setIsModalOpen(true)}
         isOwner={isOwner}

@@ -84,10 +84,6 @@ chatRouter.get(
 
 chatRouter.post("/chat-rooms", authenticateToken, async (req, res) => {
   const { user_1_id, user_2_id } = req.body;
-  console.log("Creating/fetching chat room for users:", {
-    user_1_id,
-    user_2_id,
-  });
 
   try {
     if (!user_1_id || !user_2_id || user_1_id === user_2_id) {
