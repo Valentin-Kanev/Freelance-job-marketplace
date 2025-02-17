@@ -7,23 +7,16 @@ import {
   integer,
   numeric,
   timestamp,
-  customType,
   unique,
 } from "drizzle-orm/pg-core";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
 
-const bytea = customType<{ data: Buffer | null }>({
-  dataType() {
-    return "bytea";
-  },
-});
-
 export const User = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  username: varchar("username", { length: 100 }).notNull().unique(),
-  password: varchar("password", { length: 150 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  username: varchar("username", { length: 20 }).notNull().unique(),
+  password: varchar("password", { length: 20 }).notNull().unique(),
+  email: varchar("email", { length: 25 }).notNull().unique(),
   user_type: UserRole("user_type").notNull(),
 });
 
@@ -32,8 +25,8 @@ export const Profile = pgTable("profiles", {
   user_id: uuid("user_id")
     .references(() => User.id)
     .notNull(),
-  skills: varchar("skills", { length: 255 }).notNull(),
-  description: text("description").notNull(),
+  skills: varchar("skills", { length: 30 }).notNull(),
+  description: varchar("description", { length: 800 }).notNull(),
   hourly_rate: numeric("hourly_rate", { precision: 10, scale: 2 }).notNull(),
 });
 
@@ -42,8 +35,8 @@ export const Job = pgTable("jobs", {
   client_id: uuid("client_id")
     .references(() => User.id)
     .notNull(),
-  title: varchar("title", { length: 150 }).notNull(),
-  description: text("description").notNull(),
+  title: varchar("title", { length: 90 }).notNull().unique(),
+  description: text("description").notNull().unique(),
   budget: numeric("budget", { precision: 12, scale: 2 }).notNull(),
   deadline: timestamp("deadline").notNull(),
 });

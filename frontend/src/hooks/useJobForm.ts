@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 
-const useJobForm = (initialDetails: any) => {
-  const [jobDetails, setJobDetails] = useState({
+type JobDetails = {
+  title: string;
+  description: string;
+  budget: number;
+  deadline: string;
+};
+
+const useJobForm = (initialDetails: JobDetails) => {
+  const [jobDetails, setJobDetails] = useState<JobDetails>({
     title: "",
     description: "",
     budget: 0,
@@ -18,7 +25,7 @@ const useJobForm = (initialDetails: any) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setJobDetails((prevDetails: any) => ({
+    setJobDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));

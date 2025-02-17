@@ -1,36 +1,34 @@
 import express, { Request, Response } from "express";
-import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, or } from "drizzle-orm/expressions";
 import { Profile, User } from "../drizzle/schema";
+import { db } from "../drizzle/db";
 import { sql } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import * as path from "path";
 import dotenv from "dotenv";
-import { Pool } from "pg";
 
 const router = express.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv.config({ path: envPath });
 
-const SECRET_KEY = process.env.SECRET_KEY || "secret";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool);
+const SECRET_KEY = process.env.SECRET_KEY as string;
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
   const { username, password, email, user_type } = req.body;
+
+  //use zod to validate the data
 
   if (!username || !password || !email || !user_type) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const existingUsers = await db
-      .select()
-      .from(User)
-      .where(or(eq(User.username, username), eq(User.email, email)))
-      .execute();
+    //This is fixed
+    const existingUser = await db.query.User.findFirst({
+      where: or(eq(User.username, username), eq(User.email, email)),
+    });
 
-    if (existingUsers.length > 0) {
+    if (existingUser) {
       return res
         .status(400)
         .json({ message: "Username or email already exists" });
@@ -52,12 +50,16 @@ router.post("/register", async (req, res) => {
       message: "User registered and profile created successfully",
       user: newUser,
     });
-  } catch (error: any) {
-    res.status(500).json({ message: "Server error", error: error.message });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    } else {
+      res.status(500).json({ message: "Server error", error: String(error) });
+    }
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {

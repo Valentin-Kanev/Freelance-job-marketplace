@@ -21,7 +21,7 @@ const authenticateSocket = (
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || ""
+      process.env.JWT_SECRET as string
     ) as JwtPayload;
     socket.user = decoded;
     next();

@@ -21,13 +21,16 @@ const reviewsRouter = (0, express_1.Router)();
 reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: freelancer_id } = req.params;
     const { client_id, rating, review_text } = req.body;
+    //Zod validation
     if (!client_id || !rating || !review_text) {
         return res
             .status(400)
             .json({ message: "Client ID, rating, and review text are required" });
     }
     if (rating < 1 || rating > 5) {
-        return res.status(400).json({ message: "Rating must be between 1 and 5" });
+        return res
+            .status(400)
+            .json({ message: "Rating must be between 1 and 5" });
     }
     try {
         const profile = yield db_1.db
@@ -44,9 +47,7 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, freelancer_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)))
             .limit(1);
         if (existingReview.length > 0) {
-            return res
-                .status(400)
-                .json({
+            return res.status(400).json({
                 message: "You have already submitted a review for this freelancer.",
             });
         }
@@ -71,7 +72,9 @@ reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __a
             .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, profile_id))
             .limit(1);
         if (profile.length === 0) {
-            return res.status(404).json({ message: "Freelancer profile not found" });
+            return res
+                .status(404)
+                .json({ message: "Freelancer profile not found" });
         }
         const user_id = profile[0].user_id;
         const reviews = yield db_1.db

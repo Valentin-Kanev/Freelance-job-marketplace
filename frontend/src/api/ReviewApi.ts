@@ -8,11 +8,12 @@ export interface Review {
   freelancer_username: string;
 }
 
-interface SubmitReviewData {
-  client_id: string;
-  rating: number;
-  review_text: string;
-}
+export type SubmitReviewData = Required<
+  Omit<
+    Review,
+    "id" | "freelancer_id" | "client_username" | "freelancer_username"
+  >
+>;
 
 const BASE_URL = "http://localhost:3001";
 

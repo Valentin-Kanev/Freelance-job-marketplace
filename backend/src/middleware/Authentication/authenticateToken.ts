@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { VerifyErrors, JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { db } from "../../drizzle/db";
 import { eq } from "drizzle-orm";
@@ -10,7 +10,11 @@ const authenticateToken = async (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
+
+  const token =
+    authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
 
   const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -23,31 +27,41 @@ const authenticateToken = async (
     return res.status(401).json({ message: "No token provided" });
   }
 
-  jwt.verify(token, SECRET_KEY, async (err: any, decoded: any) => {
-    if (err) {
-      console.error("Invalid or expired token:", err.message);
-      return res.status(403).json({ message: "Invalid or expired token" });
-    }
-
-    try {
-      const user = await db
-        .select()
-        .from(User)
-        .where(eq(User.id, decoded.id))
-        .execute();
-
-      if (!user || user.length === 0) {
-        console.error("User not found");
-        return res.status(404).json({ message: "User not found" });
+  jwt.verify(
+    token,
+    SECRET_KEY,
+    async (
+      err: VerifyErrors | null,
+      decoded: string | JwtPayload | undefined
+    ) => {
+      if (err) {
+        console.error("Invalid or expired token:", err.message);
+        return res.status(403).json({ message: "Invalid or expired token" });
       }
 
-      req.user = user[0];
-      next();
-    } catch (dbError) {
-      console.error("Error fetching user data:", dbError);
-      return res.status(500).json({ message: "Error fetching user data" });
+      if (typeof decoded !== "object" || !decoded || !("id" in decoded)) {
+        console.error("Decoded token is invalid");
+        return res.status(400).json({ message: "Invalid token payload" });
+      }
+
+      try {
+        const user = await db.query.User.findFirst({
+          where: eq(User.id, (decoded as JwtPayload).id),
+        });
+
+        if (!user) {
+          console.error("User not found");
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        req.user = user;
+        next();
+      } catch (dbError) {
+        console.error("Error fetching user data:", dbError);
+        return res.status(500).json({ message: "Error fetching user data" });
+      }
     }
-  });
+  );
 };
 
 export default authenticateToken;

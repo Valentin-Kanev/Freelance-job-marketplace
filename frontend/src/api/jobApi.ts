@@ -8,20 +8,10 @@ export interface Job {
   clientUsername: string;
 }
 
-export interface CreateJobData {
-  client_id: string;
-  title: string;
-  description: string;
-  budget: number;
-  deadline: string;
-}
-
-export interface UpdateJobData {
-  title?: string;
-  description?: string;
-  budget?: number;
-  deadline?: string;
-}
+export type CreateJobData = Required<Omit<Job, "id" | "clientUsername">>;
+export type UpdateJobData = Partial<
+  Omit<Job, "id" | "clientUsername" | "client_id">
+>;
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
 

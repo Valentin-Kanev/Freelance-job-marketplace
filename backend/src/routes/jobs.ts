@@ -1,20 +1,22 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "../drizzle/db";
 import { Job, User } from "../drizzle/schema";
 import { eq, ilike } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { JwtPayload } from "jsonwebtoken";
+import { validate } from "../middleware/validate";
+import {
+  SearchJobValidation,
+  CreateJobValidation,
+  UpdateJobValidation,
+  jobSchema,
+  jobUpdateSchema,
+} from "../schemas/jobValidationSchema";
 
 const jobsRouter = Router();
 
-jobsRouter.get("/jobs/search", async (req, res) => {
-  const { title } = req.query;
-
-  if (!title) {
-    return res
-      .status(400)
-      .json({ message: "Title query parameter is required" });
-  }
+jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
+  const { title } = req.query as SearchJobValidation;
 
   try {
     const titleSearch = title as string;
@@ -34,7 +36,7 @@ jobsRouter.get("/jobs/search", async (req, res) => {
   }
 });
 
-jobsRouter.get("/jobs", async (req, res) => {
+jobsRouter.get("/jobs", async (req: Request, res: Response) => {
   try {
     const jobs = await db
       .select({
@@ -55,136 +57,133 @@ jobsRouter.get("/jobs", async (req, res) => {
   }
 });
 
-jobsRouter.put("/jobs/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const { title, description, budget, deadline } = req.body;
-  const userType = (req.user as JwtPayload).user_type;
+jobsRouter.put(
+  "/jobs/:id",
+  authenticateToken,
+  validate(jobUpdateSchema),
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { title, description, budget, deadline } =
+      req.body as UpdateJobValidation;
+    const userType = (req.user as JwtPayload).user_type;
 
-  if (userType !== "client") {
-    return res.status(403).json({ message: "Only clients can edit jobs" });
-  }
+    if (userType !== "client") {
+      return res.status(403).json({ message: "Only clients can edit jobs" });
+    }
 
-  let parsedDeadline;
-  if (deadline) {
-    parsedDeadline = new Date(deadline);
-    if (isNaN(parsedDeadline.getTime())) {
-      return res
-        .status(400)
-        .json({ message: "Invalid date format for deadline" });
+    try {
+      await db
+        .update(Job)
+        .set({
+          title,
+          description,
+          budget,
+          deadline,
+        })
+        .where(eq(Job.id, id));
+
+      res.json({ message: "Job updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error updating job" });
     }
   }
+);
 
-  try {
-    await db
-      .update(Job)
-      .set({
-        title,
-        description,
-        budget,
-        ...(parsedDeadline && { deadline: parsedDeadline }),
-      })
-      .where(eq(Job.id, id));
-
-    res.json({ message: "Job updated successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error updating job" });
-  }
-});
-
-jobsRouter.get("/jobs/:id", async (req, res) => {
+jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const job = await db
-      .select({
-        id: Job.id,
-        title: Job.title,
-        description: Job.description,
-        budget: Job.budget,
-        deadline: Job.deadline,
-        client_id: Job.client_id,
-        clientUsername: User.username,
-      })
-      .from(Job)
-      .leftJoin(User, eq(User.id, Job.client_id))
-      .where(eq(Job.id, id))
-      .limit(1);
+    const job = await db.query.Job.findFirst({
+      where: eq(Job.id, id),
+    });
 
-    if (!job.length) {
+    if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    res.json(job[0]);
+    const client = await db.query.User.findFirst({
+      where: eq(User.id, job.client_id),
+      columns: { username: true },
+    });
+
+    const jobWithUsername = {
+      ...job,
+      clientUsername: client?.username || null,
+    };
+
+    res.json(jobWithUsername);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving job" });
   }
 });
 
-jobsRouter.post("/jobs", authenticateToken, async (req, res) => {
-  const { title, description, budget, deadline } = req.body;
-  const userId = (req.user as JwtPayload).id;
-  const userType = (req.user as JwtPayload).user_type;
+jobsRouter.post(
+  "/jobs",
+  authenticateToken,
+  validate(jobSchema),
+  async (req: Request, res: Response) => {
+    const { title, description, budget, deadline } =
+      req.body as CreateJobValidation;
 
-  if (userType !== "client") {
-    return res.status(403).json({ message: "Only clients can create jobs" });
-  }
+    const userId = (req.user as JwtPayload).id;
+    const userType = (req.user as JwtPayload).user_type;
 
-  if (!title || !description || !budget || !deadline) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  const parsedDeadline = new Date(deadline);
-  if (isNaN(parsedDeadline.getTime())) {
-    return res
-      .status(400)
-      .json({ message: "Invalid date format for deadline" });
-  }
-
-  try {
-    const newJob = await db.insert(Job).values({
-      client_id: userId,
-      title,
-      description,
-      budget,
-      deadline: parsedDeadline,
-    });
-    res.status(201).json(newJob);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating job" });
-  }
-});
-
-jobsRouter.delete("/jobs/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const { id: userId, user_type } = req.user as JwtPayload;
-
-  if (user_type !== "client") {
-    return res.status(403).json({ message: "Only clients can delete jobs" });
-  }
-
-  try {
-    const job = await db.select().from(Job).where(eq(Job.id, id)).limit(1);
-
-    if (!job.length) {
-      return res.status(404).json({ message: "Job not found" });
+    if (userType !== "client") {
+      return res.status(403).json({ message: "Only clients can create jobs" });
     }
 
-    if (job[0].client_id !== userId) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to delete this job" });
+    try {
+      const newJob = await db.insert(Job).values({
+        client_id: userId,
+        title,
+        description,
+        budget,
+        deadline,
+      });
+      res.status(201).json(newJob);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating job" });
+    }
+  }
+);
+
+jobsRouter.delete(
+  "/jobs/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { id: userId, user_type } = req.user as JwtPayload;
+
+    if (user_type !== "client") {
+      return res.status(403).json({ message: "Only clients can delete jobs" });
     }
 
-    await db.delete(Job).where(eq(Job.id, id));
-    res.json({ message: "Job deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting job" });
+    try {
+      const job = await db.query.Job.findFirst({
+        where: eq(Job.id, id),
+      });
+
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      if (job.client_id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "You are not authorized to delete this job" });
+      }
+
+      await db.delete(Job).where(eq(Job.id, id));
+      res.json({ message: "Job deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting job" });
+    }
   }
-});
+);
 
 jobsRouter.get(
   "/jobs/created-by/:clientId",
   authenticateToken,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { clientId } = req.params;
     const { id: loggedInUserId, user_type } = req.user as JwtPayload;
 

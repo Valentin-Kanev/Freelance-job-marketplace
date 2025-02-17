@@ -37,7 +37,7 @@ const JobForm: React.FC<JobFormProps> = ({
     if (validateForm()) {
       await handleJobSubmit(
         Boolean(initialJobDetails?.id),
-        jobDetails,
+        // jobDetails,
         initialJobDetails?.id
       );
       onClose();

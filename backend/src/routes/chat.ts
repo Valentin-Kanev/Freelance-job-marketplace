@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "../drizzle/db";
 import { ChatRoom, Message, User } from "../drizzle/schema";
 import { eq, and, or, asc } from "drizzle-orm";
@@ -7,49 +7,48 @@ import authenticateToken from "../middleware/Authentication/authenticateToken";
 
 const chatRouter = Router();
 
-chatRouter.get("/chat-rooms", authenticateToken, async (req, res) => {
-  const userId = (req.user as JwtPayload)?.id;
+chatRouter.get(
+  "/chat-rooms",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const userId = (req.user as JwtPayload)?.id;
 
-  if (!userId) {
-    console.error("Unauthorized access");
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+    try {
+      const chatRooms = await db
+        .select()
+        .from(ChatRoom)
+        .where(
+          or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
+        );
 
-  try {
-    const chatRooms = await db
-      .select()
-      .from(ChatRoom)
-      .where(
-        or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
+      const chatRoomsWithDetails = await Promise.all(
+        chatRooms.map(async (room) => {
+          const otherUserId =
+            room.user_1_id === userId ? room.user_2_id : room.user_1_id;
+
+          const otherUser = await db.query.User.findFirst({
+            where: eq(User.id, otherUserId),
+          });
+
+          return {
+            ...room,
+            otherUser: { id: otherUser?.id, username: otherUser?.username },
+          };
+        })
       );
 
-    const chatRoomsWithDetails = await Promise.all(
-      chatRooms.map(async (room) => {
-        const otherUserId =
-          room.user_1_id === userId ? room.user_2_id : room.user_1_id;
-        const otherUser = await db
-          .select()
-          .from(User)
-          .where(eq(User.id, otherUserId))
-          .then((users) => users[0]);
-        return {
-          ...room,
-          otherUser: { id: otherUser.id, username: otherUser.username },
-        };
-      })
-    );
-
-    res.json(chatRoomsWithDetails);
-  } catch (error) {
-    console.error("Error fetching chat rooms:", error);
-    res.status(500).json({ error: "Failed to fetch chat rooms." });
+      res.json(chatRoomsWithDetails);
+    } catch (error) {
+      console.error("Error fetching chat rooms:", error);
+      res.status(500).json({ error: "Failed to fetch chat rooms." });
+    }
   }
-});
+);
 
 chatRouter.get(
   "/chat-rooms/:id/messages",
   authenticateToken,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { id: chat_room_id } = req.params;
 
     try {
@@ -61,14 +60,13 @@ chatRouter.get(
 
       const messagesWithUsernames = await Promise.all(
         messages.map(async (message) => {
-          const sender = await db
-            .select()
-            .from(User)
-            .where(eq(User.id, message.sender_id))
-            .then((users) => users[0]);
+          const sender = await db.query.User.findFirst({
+            where: eq(User.id, message.sender_id),
+          });
+
           return {
             ...message,
-            sender_username: sender.username,
+            sender_username: sender?.username,
             timestamp: message.created_at.toISOString(),
           };
         })
@@ -82,20 +80,21 @@ chatRouter.get(
   }
 );
 
-chatRouter.post("/chat-rooms", authenticateToken, async (req, res) => {
-  const { user_1_id, user_2_id } = req.body;
+chatRouter.post(
+  "/chat-rooms",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const { user_1_id, user_2_id } = req.body;
 
-  try {
-    if (!user_1_id || !user_2_id || user_1_id === user_2_id) {
-      console.error("Invalid user IDs");
-      return res.status(400).json({ error: "Invalid user IDs provided." });
-    }
+    try {
+      if (!user_1_id || !user_2_id || user_1_id === user_2_id) {
+        console.error("Invalid user IDs");
+        return res.status(400).json({ error: "Invalid user IDs provided." });
+      }
 
-    const existingRoom = await db
-      .select()
-      .from(ChatRoom)
-      .where(
-        or(
+      //remove if needed
+      const existingRoom = await db.query.ChatRoom.findFirst({
+        where: or(
           and(
             eq(ChatRoom.user_1_id, user_1_id),
             eq(ChatRoom.user_2_id, user_2_id)
@@ -104,34 +103,33 @@ chatRouter.post("/chat-rooms", authenticateToken, async (req, res) => {
             eq(ChatRoom.user_1_id, user_2_id),
             eq(ChatRoom.user_2_id, user_1_id)
           )
-        )
-      )
-      .then((rooms) => rooms[0]);
+        ),
+      });
 
-    if (existingRoom) {
-      return res.json({ chat_room_id: existingRoom.id });
+      if (existingRoom) {
+        return res.json({ chat_room_id: existingRoom.id });
+      }
+
+      const newRoom = await db
+        .insert(ChatRoom)
+        .values({ user_1_id, user_2_id })
+        .returning()
+        .then((rooms) => rooms[0]);
+
+      res.json({ chat_room_id: newRoom.id });
+    } catch (error) {
+      console.error("Error creating chat room:", error);
+      res
+        .status(500)
+        .json({ error: "Failed to create or retrieve chat room." });
     }
-
-    const newRoom = await db
-      .insert(ChatRoom)
-      .values({ user_1_id, user_2_id })
-      .returning()
-      .then((rooms) => rooms[0]);
-
-    res.json({ chat_room_id: newRoom.id });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    const errorStack = error instanceof Error ? error.stack : "";
-    console.error("Error creating chat room:", errorMessage, errorStack);
-    res.status(500).json({ error: "Failed to create or retrieve chat room." });
   }
-});
+);
 
 chatRouter.post(
   "/chat-rooms/:id/messages",
   authenticateToken,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { id: chat_room_id } = req.params;
     const { sender_id, content } = req.body;
     const userId = (req.user as JwtPayload)?.id;
@@ -144,16 +142,15 @@ chatRouter.post(
           .json({ error: "Message content cannot be empty." });
       }
 
-      const chatRoom = await db
-        .select()
-        .from(ChatRoom)
-        .where(eq(ChatRoom.id, chat_room_id))
-        .then((rooms) => rooms[0]);
+      //check this code
+      const chatRoom = await db.query.ChatRoom.findFirst({
+        where: and(
+          eq(ChatRoom.id, chat_room_id),
+          eq(ChatRoom.user_1_id, userId)
+        ),
+      });
 
-      if (
-        !chatRoom ||
-        (chatRoom.user_1_id !== userId && chatRoom.user_2_id !== userId)
-      ) {
+      if (!chatRoom) {
         console.error("User not authorized to send messages in this chat room");
         return res.status(403).json({
           error: "User not authorized to send messages in this chat room.",

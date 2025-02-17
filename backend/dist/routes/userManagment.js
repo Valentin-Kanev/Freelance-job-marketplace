@@ -36,41 +36,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const node_postgres_1 = require("drizzle-orm/node-postgres");
 const expressions_1 = require("drizzle-orm/expressions");
 const schema_1 = require("../drizzle/schema");
+const db_1 = require("../drizzle/db");
 const drizzle_orm_1 = require("drizzle-orm");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path = __importStar(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const pg_1 = require("pg");
 const router = express_1.default.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv_1.default.config({ path: envPath });
-const SECRET_KEY = process.env.SECRET_KEY || "secret";
-const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
-const db = (0, node_postgres_1.drizzle)(pool);
+const SECRET_KEY = process.env.SECRET_KEY;
 router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email, user_type } = req.body;
+    //use zod to validate the data
     if (!username || !password || !email || !user_type) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
-        const existingUsers = yield db
-            .select()
-            .from(schema_1.User)
-            .where((0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.username, username), (0, expressions_1.eq)(schema_1.User.email, email)))
-            .execute();
-        if (existingUsers.length > 0) {
+        //This is fixed
+        const existingUser = yield db_1.db.query.User.findFirst({
+            where: (0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.username, username), (0, expressions_1.eq)(schema_1.User.email, email)),
+        });
+        if (existingUser) {
             return res
                 .status(400)
                 .json({ message: "Username or email already exists" });
         }
-        const newUser = yield db
+        const newUser = yield db_1.db
             .insert(schema_1.User)
             .values({ username, password, email, user_type })
             .returning();
-        yield db.insert(schema_1.Profile).values({
+        yield db_1.db.insert(schema_1.Profile).values({
             user_id: newUser[0].id,
             skills: "",
             description: "",
@@ -82,7 +79,12 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        if (error instanceof Error) {
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
+        else {
+            res.status(500).json({ message: "Server error", error: String(error) });
+        }
     }
 }));
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,7 +94,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(400).json({ message: "Email and password are required" });
     }
     try {
-        const users = yield db
+        const users = yield db_1.db
             .select()
             .from(schema_1.User)
             .where((0, expressions_1.eq)(schema_1.User.email, email))
@@ -101,7 +103,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        const isValidPassword = yield db
+        const isValidPassword = yield db_1.db
             .select({
             isValid: (0, drizzle_orm_1.sql) `crypt(${password}, ${user.password}) = ${user.password}`,
         })
@@ -111,13 +113,13 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!((_a = isValidPassword[0]) === null || _a === void 0 ? void 0 : _a.isValid)) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        const existingProfile = yield db
+        const existingProfile = yield db_1.db
             .select()
             .from(schema_1.Profile)
             .where((0, expressions_1.eq)(schema_1.Profile.user_id, user.id))
             .execute();
         if (existingProfile.length === 0) {
-            yield db.insert(schema_1.Profile).values({
+            yield db_1.db.insert(schema_1.Profile).values({
                 user_id: user.id,
                 skills: "",
                 description: "",

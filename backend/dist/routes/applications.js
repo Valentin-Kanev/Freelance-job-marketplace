@@ -12,34 +12,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const schema_1 = require("../drizzle/schema");
-const db_1 = require("../drizzle/db");
 const express_1 = require("express");
 const drizzle_orm_1 = require("drizzle-orm");
-const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
+const db_1 = require("../drizzle/db");
+const zod_1 = require("zod");
 const applicationsRouter = (0, express_1.Router)();
-function isAuthenticatedUser(user) {
-    return !!user && typeof user !== "string" && "id" in user;
-}
+const bodySchema = zod_1.z.object({
+    freelancer_id: zod_1.z.string().uuid({ message: "Invalid freelancer ID format" }),
+    cover_letter: zod_1.z
+        .string()
+        .min(20, { message: "Cover letter must be at least 20 characters" })
+        .max(500, { message: "Cover letter must not exceed 500 characters" }),
+});
 applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: job_id } = req.params;
-    const { freelancer_id, cover_letter } = req.body;
-    if (!freelancer_id || !cover_letter) {
+    const validationResult = bodySchema.safeParse(req.body);
+    if (!validationResult.success) {
         return res.status(400).json({
-            message: "Freelancer ID and cover letter are required",
+            message: "Invalid request body",
+            errors: validationResult.error.errors,
         });
     }
+    const { freelancer_id, cover_letter } = validationResult.data;
     try {
-        const existingApplication = yield db_1.db
-            .select()
-            .from(schema_1.Application)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Application.job_id, job_id), (0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancer_id)))
-            .limit(1);
-        if (existingApplication.length > 0) {
+        const existingApplication = yield db_1.db.query.Application.findFirst({
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Application.job_id, job_id), (0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancer_id)),
+        });
+        if (existingApplication) {
             return res
                 .status(400)
                 .json({ message: "You have already applied to this job" });
         }
+        // explain this code
         yield db_1.db.transaction((trx) => __awaiter(void 0, void 0, void 0, function* () {
             yield trx.insert(schema_1.Application).values({
                 job_id,
@@ -57,7 +63,8 @@ applicationsRouter.post("/jobs/:id/apply", authenticateToken_1.default, (req, re
 }));
 applicationsRouter.get("/jobs/:id/applications", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: job_id } = req.params;
-    if (!isAuthenticatedUser(req.user)) {
+    //use ZOD to validate the request body
+    if (!req.user || typeof req.user === "string") {
         return res
             .status(401)
             .json({ message: "Unauthorized: User not authenticated" });

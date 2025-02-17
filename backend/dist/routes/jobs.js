@@ -17,14 +17,11 @@ const db_1 = require("../drizzle/db");
 const schema_1 = require("../drizzle/schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
+const validate_1 = require("../middleware/validate");
+const jobValidationSchema_1 = require("../schemas/jobValidationSchema");
 const jobsRouter = (0, express_1.Router)();
 jobsRouter.get("/jobs/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.query;
-    if (!title) {
-        return res
-            .status(400)
-            .json({ message: "Title query parameter is required" });
-    }
     try {
         const titleSearch = title;
         const jobs = yield db_1.db
@@ -60,28 +57,22 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: "Error retrieving jobs" });
     }
 }));
-jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+jobsRouter.put("/jobs/:id", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.jobUpdateSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { title, description, budget, deadline } = req.body;
     const userType = req.user.user_type;
     if (userType !== "client") {
         return res.status(403).json({ message: "Only clients can edit jobs" });
     }
-    let parsedDeadline;
-    if (deadline) {
-        parsedDeadline = new Date(deadline);
-        if (isNaN(parsedDeadline.getTime())) {
-            return res
-                .status(400)
-                .json({ message: "Invalid date format for deadline" });
-        }
-    }
     try {
         yield db_1.db
             .update(schema_1.Job)
-            .set(Object.assign({ title,
+            .set({
+            title,
             description,
-            budget }, (parsedDeadline && { deadline: parsedDeadline })))
+            budget,
+            deadline,
+        })
             .where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
         res.json({ message: "Job updated successfully" });
     }
@@ -92,44 +83,29 @@ jobsRouter.put("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter
 jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const job = yield db_1.db
-            .select({
-            id: schema_1.Job.id,
-            title: schema_1.Job.title,
-            description: schema_1.Job.description,
-            budget: schema_1.Job.budget,
-            deadline: schema_1.Job.deadline,
-            client_id: schema_1.Job.client_id,
-            clientUsername: schema_1.User.username,
-        })
-            .from(schema_1.Job)
-            .leftJoin(schema_1.User, (0, drizzle_orm_1.eq)(schema_1.User.id, schema_1.Job.client_id))
-            .where((0, drizzle_orm_1.eq)(schema_1.Job.id, id))
-            .limit(1);
-        if (!job.length) {
+        const job = yield db_1.db.query.Job.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.Job.id, id),
+        });
+        if (!job) {
             return res.status(404).json({ message: "Job not found" });
         }
-        res.json(job[0]);
+        const client = yield db_1.db.query.User.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.User.id, job.client_id),
+            columns: { username: true },
+        });
+        const jobWithUsername = Object.assign(Object.assign({}, job), { clientUsername: (client === null || client === void 0 ? void 0 : client.username) || null });
+        res.json(jobWithUsername);
     }
     catch (error) {
         res.status(500).json({ message: "Error retrieving job" });
     }
 }));
-jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+jobsRouter.post("/jobs", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.jobSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.id;
     const userType = req.user.user_type;
     if (userType !== "client") {
         return res.status(403).json({ message: "Only clients can create jobs" });
-    }
-    if (!title || !description || !budget || !deadline) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
-    const parsedDeadline = new Date(deadline);
-    if (isNaN(parsedDeadline.getTime())) {
-        return res
-            .status(400)
-            .json({ message: "Invalid date format for deadline" });
     }
     try {
         const newJob = yield db_1.db.insert(schema_1.Job).values({
@@ -137,7 +113,7 @@ jobsRouter.post("/jobs", authenticateToken_1.default, (req, res) => __awaiter(vo
             title,
             description,
             budget,
-            deadline: parsedDeadline,
+            deadline,
         });
         res.status(201).json(newJob);
     }
@@ -152,11 +128,13 @@ jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awai
         return res.status(403).json({ message: "Only clients can delete jobs" });
     }
     try {
-        const job = yield db_1.db.select().from(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id)).limit(1);
-        if (!job.length) {
+        const job = yield db_1.db.query.Job.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.Job.id, id),
+        });
+        if (!job) {
             return res.status(404).json({ message: "Job not found" });
         }
-        if (job[0].client_id !== userId) {
+        if (job.client_id !== userId) {
             return res
                 .status(403)
                 .json({ message: "You are not authorized to delete this job" });

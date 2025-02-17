@@ -8,18 +8,14 @@ export interface Profile {
   username: string;
 }
 
-interface CreateProfileData {
-  userId: string;
-  skills: string;
-  description: string;
-  hourlyRate: number;
-}
+export type CreateProfileData = Omit<
+  Profile,
+  "userType" | "profileId" | "username"
+>;
 
-interface UpdateProfileData {
-  skills?: string;
-  description?: string;
-  hourlyRate?: number;
-}
+export type UpdateProfileData = Partial<
+  Omit<Profile, "userType" | "profileId" | "userId" | "username">
+>;
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 

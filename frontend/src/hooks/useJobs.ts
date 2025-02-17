@@ -8,6 +8,7 @@ import {
   UpdateJobData,
   fetchJob,
   searchJobsByTitle,
+  CreateJobData,
 } from "../api/jobApi";
 
 export const useJobs = () => {
@@ -20,7 +21,9 @@ export const useJobs = () => {
   });
 };
 
-export const useCreateJob = (onSuccessCallback?: (newJob: any) => void) => {
+export const useCreateJob = (
+  onSuccessCallback?: (newJob: CreateJobData) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation(createJob, {
@@ -34,7 +37,9 @@ export const useCreateJob = (onSuccessCallback?: (newJob: any) => void) => {
   });
 };
 
-export const useUpdateJob = (onSuccessCallback?: (updatedJob: any) => void) => {
+export const useUpdateJob = (
+  onSuccessCallback?: (updatedJob: UpdateJobData) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -92,14 +97,14 @@ export const useSearchJobsByTitle = (title: string) => {
 
 export const useJobMutations = (
   userId: string,
-  onSuccess: (job: any) => void
+  onSuccess: (job: Job | CreateJobData | UpdateJobData) => void
 ) => {
   const createJobMutation = useCreateJob(onSuccess);
   const updateJobMutation = useUpdateJob(onSuccess);
 
   const handleJobSubmit = (
     isUpdate: boolean,
-    jobDetails: any,
+    jobDetails: Job,
     jobId?: string
   ) => {
     if (isUpdate && jobId) {

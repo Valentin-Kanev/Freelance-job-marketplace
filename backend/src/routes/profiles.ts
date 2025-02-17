@@ -28,8 +28,9 @@ router.get("/profiles", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/profiles/user/:user_id", async (req, res) => {
+router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
   const { user_id: userId } = req.params;
+  //use zod to validate the user_id
 
   if (!userId) {
     return res.status(400).json({ message: "User ID not provided" });
