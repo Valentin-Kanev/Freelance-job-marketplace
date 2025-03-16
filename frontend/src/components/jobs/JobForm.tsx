@@ -20,28 +20,35 @@ const JobForm: React.FC<JobFormProps> = ({
   const { handleJobSubmit } = useJobMutations(userId, onSubmitSuccess);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!jobDetails.title.trim()) newErrors.title = "Title is required";
-    if (!jobDetails.description.trim())
-      newErrors.description = "Description is required";
-    if (!jobDetails.budget || jobDetails.budget <= 0)
-      newErrors.budget = "Valid budget is required";
-    if (!jobDetails.deadline) newErrors.deadline = "Deadline is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // const validateForm = () => {
+  //   const newErrors: { [key: string]: string } = {};
+  //   if (!jobDetails.title.trim()) newErrors.title = "Title is required";
+  //   if (!jobDetails.description.trim())
+  //     newErrors.description = "Description is required";
+  //   if (!jobDetails.budget || jobDetails.budget <= 0)
+  //     newErrors.budget = "Valid budget is required";
+  //   if (!jobDetails.deadline) newErrors.deadline = "Deadline is required";
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      await handleJobSubmit(
-        Boolean(initialJobDetails?.id),
-        // jobDetails,
-        initialJobDetails?.id
-      );
-      onClose();
-    }
+    // if (validateForm()) {
+    handleJobSubmit(
+      Boolean(initialJobDetails.id),
+      {
+        ...jobDetails,
+        id: initialJobDetails.id || "", // Provide default value if id is missing
+        client_id: userId, // Include client_id
+        clientUsername: "", // Provide default value for clientUsername
+        budget: jobDetails.budget, // Handle budget as a number
+        deadline: jobDetails.deadline, // Ensure deadline is a string
+      },
+      initialJobDetails.id
+    );
+    onClose();
+    // }
   };
 
   const handleFocus = (fieldName: string) => {
@@ -106,6 +113,7 @@ const JobForm: React.FC<JobFormProps> = ({
         error={errors.deadline}
         onFocus={() => handleFocus("deadline")}
       />
+
       <button
         type="submit"
         className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"

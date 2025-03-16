@@ -33,7 +33,7 @@ const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
               id: "",
               title: "",
               description: "",
-              budget: 0,
+              budget: 0, // Initialize budget as a number
               deadline: "",
             }}
             onSubmitSuccess={(job) => {

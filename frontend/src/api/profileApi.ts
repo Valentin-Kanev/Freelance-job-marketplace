@@ -23,18 +23,21 @@ const fetchClient = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
+  const token = localStorage.getItem("token"); // Get the token
+
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}), // Attach token if available
       ...options?.headers,
     },
   });
 
   if (!response.ok) {
     let errorMessage = "Something went wrong";
-
     const contentType = response.headers.get("Content-Type");
+
     if (contentType && contentType.includes("application/json")) {
       const errorData = await response.json();
       errorMessage = errorData?.message || errorMessage;
@@ -54,9 +57,9 @@ export const fetchProfiles = async (): Promise<Profile[]> => {
 
 export const fetchUserProfile = async (userId: string): Promise<Profile> => {
   const response = await fetch(`${BASE_URL}/profiles/user/${userId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    // headers: {
+    //   "Content-Type": "application/json",
+    // },
   });
 
   if (!response.ok) {

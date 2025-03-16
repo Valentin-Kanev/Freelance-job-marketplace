@@ -39,22 +39,18 @@ const express_1 = __importDefault(require("express"));
 const expressions_1 = require("drizzle-orm/expressions");
 const schema_1 = require("../drizzle/schema");
 const db_1 = require("../drizzle/db");
-const drizzle_orm_1 = require("drizzle-orm");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path = __importStar(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const validate_1 = require("../middleware/validate");
+const userManagmentValidationScheema_1 = require("../schemas/userManagmentValidationScheema");
 const router = express_1.default.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
 dotenv_1.default.config({ path: envPath });
 const SECRET_KEY = process.env.SECRET_KEY;
-router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/register", (0, validate_1.validate)(userManagmentValidationScheema_1.createUserSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email, user_type } = req.body;
-    //use zod to validate the data
-    if (!username || !password || !email || !user_type) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
     try {
-        //This is fixed
         const existingUser = yield db_1.db.query.User.findFirst({
             where: (0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.username, username), (0, expressions_1.eq)(schema_1.User.email, email)),
         });
@@ -87,31 +83,14 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
     }
 }));
-router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+router.post("/login", (0, validate_1.validate)(userManagmentValidationScheema_1.loginSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-    }
     try {
-        const users = yield db_1.db
-            .select()
-            .from(schema_1.User)
-            .where((0, expressions_1.eq)(schema_1.User.email, email))
-            .execute();
-        const user = users[0];
+        const user = yield db_1.db.query.User.findFirst({
+            where: (0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.email, email), (0, expressions_1.eq)(schema_1.User.password, password)),
+        });
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        const isValidPassword = yield db_1.db
-            .select({
-            isValid: (0, drizzle_orm_1.sql) `crypt(${password}, ${user.password}) = ${user.password}`,
-        })
-            .from(schema_1.User)
-            .where((0, expressions_1.eq)(schema_1.User.email, email))
-            .execute();
-        if (!((_a = isValidPassword[0]) === null || _a === void 0 ? void 0 : _a.isValid)) {
-            return res.status(401).json({ message: "Invalid credentials" });
+            return res.status(404).json({ message: "invalid email or password" });
         }
         const existingProfile = yield db_1.db
             .select()

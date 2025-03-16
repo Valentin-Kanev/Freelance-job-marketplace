@@ -9,9 +9,10 @@ import {
   SearchJobValidation,
   CreateJobValidation,
   UpdateJobValidation,
-  jobSchema,
-  jobUpdateSchema,
+  createJobSchema,
+  updateJobSchema,
 } from "../schemas/jobValidationSchema";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
 
 const jobsRouter = Router();
 
@@ -60,16 +61,10 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
 jobsRouter.put(
   "/jobs/:id",
   authenticateToken,
-  validate(jobUpdateSchema),
-  async (req: Request, res: Response) => {
+  validate(updateJobSchema),
+  async (req: AuthenticatedRequest<UpdateJobValidation>, res: Response) => {
     const { id } = req.params;
-    const { title, description, budget, deadline } =
-      req.body as UpdateJobValidation;
-    const userType = (req.user as JwtPayload).user_type;
-
-    if (userType !== "client") {
-      return res.status(403).json({ message: "Only clients can edit jobs" });
-    }
+    const { title, description, budget, deadline } = req.body;
 
     try {
       await db
@@ -77,7 +72,7 @@ jobsRouter.put(
         .set({
           title,
           description,
-          budget,
+          budget: Number(budget).toString(),
           deadline,
         })
         .where(eq(Job.id, id));
@@ -107,7 +102,7 @@ jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
 
     const jobWithUsername = {
       ...job,
-      clientUsername: client?.username || null,
+      clientUsername: client?.username,
     };
 
     res.json(jobWithUsername);
@@ -119,28 +114,24 @@ jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
 jobsRouter.post(
   "/jobs",
   authenticateToken,
-  validate(jobSchema),
-  async (req: Request, res: Response) => {
-    const { title, description, budget, deadline } =
-      req.body as CreateJobValidation;
-
+  validate(createJobSchema),
+  async (req: AuthenticatedRequest<CreateJobValidation>, res: Response) => {
+    console.log("Validated Job Data:", req.body);
+    const { title, description, budget, deadline } = req.body;
     const userId = (req.user as JwtPayload).id;
-    const userType = (req.user as JwtPayload).user_type;
-
-    if (userType !== "client") {
-      return res.status(403).json({ message: "Only clients can create jobs" });
-    }
 
     try {
       const newJob = await db.insert(Job).values({
         client_id: userId,
         title,
         description,
-        budget,
-        deadline,
+        budget: Number(budget).toString(),
+        deadline: new Date(deadline),
       });
+
       res.status(201).json(newJob);
     } catch (error) {
+      console.error("Database error:", error);
       res.status(500).json({ message: "Error creating job" });
     }
   }
@@ -149,13 +140,8 @@ jobsRouter.post(
 jobsRouter.delete(
   "/jobs/:id",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
-    const { id: userId, user_type } = req.user as JwtPayload;
-
-    if (user_type !== "client") {
-      return res.status(403).json({ message: "Only clients can delete jobs" });
-    }
 
     try {
       const job = await db.query.Job.findFirst({
@@ -164,12 +150,6 @@ jobsRouter.delete(
 
       if (!job) {
         return res.status(404).json({ message: "Job not found" });
-      }
-
-      if (job.client_id !== userId) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to delete this job" });
       }
 
       await db.delete(Job).where(eq(Job.id, id));
@@ -185,11 +165,6 @@ jobsRouter.get(
   authenticateToken,
   async (req: Request, res: Response) => {
     const { clientId } = req.params;
-    const { id: loggedInUserId, user_type } = req.user as JwtPayload;
-
-    if (user_type !== "client" || clientId !== loggedInUserId) {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
 
     try {
       const jobs = await db

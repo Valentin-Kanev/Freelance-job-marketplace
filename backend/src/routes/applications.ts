@@ -1,35 +1,29 @@
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { Application, Job, User } from "../drizzle/schema";
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 import { and, eq } from "drizzle-orm";
 import { db } from "../drizzle/db";
-import { z } from "zod";
+import {
+  createApplicationSchema,
+  CreateApplicationValidation,
+} from "../schemas/applicationValidationSchema";
+import { validate } from "../middleware/validate";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { JwtPayload } from "jsonwebtoken";
 
 const applicationsRouter = Router();
 
-const bodySchema = z.object({
-  freelancer_id: z.string().uuid({ message: "Invalid freelancer ID format" }),
-  cover_letter: z
-    .string()
-    .min(20, { message: "Cover letter must be at least 20 characters" })
-    .max(500, { message: "Cover letter must not exceed 500 characters" }),
-});
-
 applicationsRouter.post(
   "/jobs/:id/apply",
+  validate(createApplicationSchema),
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (
+    req: AuthenticatedRequest<CreateApplicationValidation>,
+    res: Response
+  ) => {
     const { id: job_id } = req.params;
-    const validationResult = bodySchema.safeParse(req.body);
-
-    if (!validationResult.success) {
-      return res.status(400).json({
-        message: "Invalid request body",
-        errors: validationResult.error.errors,
-      });
-    }
-
-    const { freelancer_id, cover_letter } = validationResult.data;
+    const { cover_letter } = req.body;
+    const { id: freelancer_id } = req.user as JwtPayload;
 
     try {
       const existingApplication = await db.query.Application.findFirst({
@@ -42,10 +36,9 @@ applicationsRouter.post(
       if (existingApplication) {
         return res
           .status(400)
-          .json({ message: "You have already applied to this job" });
+          .json({ message: "You have already applied for this job" });
       }
 
-      // explain this code
       await db.transaction(async (trx) => {
         await trx.insert(Application).values({
           job_id,
@@ -66,31 +59,10 @@ applicationsRouter.post(
 applicationsRouter.get(
   "/jobs/:id/applications",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     const { id: job_id } = req.params;
 
-    //use ZOD to validate the request body
-
-    if (!req.user || typeof req.user === "string") {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized: User not authenticated" });
-    }
-
-    const userId = req.user.id;
-
     try {
-      const job = await db
-        .select()
-        .from(Job)
-        .where(eq(Job.id, job_id))
-        .limit(1);
-      if (!job || job[0].client_id !== userId) {
-        return res
-          .status(403)
-          .json({ message: "Unauthorized to view applications" });
-      }
-
       const applications = await db
         .select({
           id: Application.id,
@@ -113,11 +85,7 @@ applicationsRouter.get(
 applicationsRouter.get(
   "/applications/my-applications",
   authenticateToken,
-  async (req: Request, res: Response) => {
-    if (!req.user || typeof req.user === "string") {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
+  async (req: AuthenticatedRequest, res: Response) => {
     const freelancerId = req.user.id;
 
     try {

@@ -3,12 +3,19 @@ export interface Job {
   client_id: string;
   title: string;
   description: string;
-  budget: number;
+  budget: number; // Handle budget as a number
   deadline: string;
   clientUsername: string;
 }
 
-export type CreateJobData = Required<Omit<Job, "id" | "clientUsername">>;
+export interface CreateJobData {
+  title: string;
+  description: string;
+  budget: number; // Handle budget as a number
+  deadline: string;
+  client_id: string;
+}
+
 export type UpdateJobData = Partial<
   Omit<Job, "id" | "clientUsername" | "client_id">
 >;
@@ -51,6 +58,8 @@ export const fetchJobs = async (): Promise<Job[]> => {
 };
 
 export const createJob = async (jobData: CreateJobData): Promise<Job> => {
+  console.log("Sending job data:", jobData);
+
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${BASE_URL}/jobs`, {
@@ -59,7 +68,7 @@ export const createJob = async (jobData: CreateJobData): Promise<Job> => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(jobData),
+    body: JSON.stringify(jobData), // Handle budget as a number
   });
 
   if (!response.ok) {

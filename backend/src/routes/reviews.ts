@@ -3,53 +3,33 @@ import { db } from "../drizzle/db";
 import { and, eq } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { Profile, Review, User } from "../drizzle/schema";
+import { validate } from "../middleware/validate";
+import {
+  createReviewSchema,
+  CreateReviewValidation,
+} from "../schemas/reviewValidationSchema";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
 
 const reviewsRouter = Router();
 
 reviewsRouter.post(
   "/:id/reviews",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  validate(createReviewSchema),
+  async (req: AuthenticatedRequest<CreateReviewValidation>, res: Response) => {
     const { id: freelancer_id } = req.params;
-    const { client_id, rating, review_text } = req.body;
-
-    //Zod validation
-
-    if (!client_id || !rating || !review_text) {
-      return res
-        .status(400)
-        .json({ message: "Client ID, rating, and review text are required" });
-    }
-
-    if (rating < 1 || rating > 5) {
-      return res
-        .status(400)
-        .json({ message: "Rating must be between 1 and 5" });
-    }
+    const { rating, review_text } = req.body;
+    const { id: client_id } = req.user;
 
     try {
-      const profile = await db
-        .select()
-        .from(Profile)
-        .where(eq(Profile.user_id, freelancer_id))
-        .limit(1);
+      const existingReview = await db.query.Review.findFirst({
+        where: and(
+          eq(Review.freelancer_id, freelancer_id),
+          eq(Review.client_id, client_id)
+        ),
+      });
 
-      if (profile.length === 0) {
-        return res.status(404).json({ message: "Freelancer not found" });
-      }
-
-      const existingReview = await db
-        .select()
-        .from(Review)
-        .where(
-          and(
-            eq(Review.freelancer_id, freelancer_id),
-            eq(Review.client_id, client_id)
-          )
-        )
-        .limit(1);
-
-      if (existingReview.length > 0) {
+      if (existingReview) {
         return res.status(400).json({
           message: "You have already submitted a review for this freelancer.",
         });
@@ -77,19 +57,17 @@ reviewsRouter.get(
     const { id: profile_id } = req.params;
 
     try {
-      const profile = await db
-        .select()
-        .from(Profile)
-        .where(eq(Profile.id, profile_id))
-        .limit(1);
+      const profile = await db.query.Profile.findFirst({
+        where: eq(Profile.id, profile_id),
+      });
 
-      if (profile.length === 0) {
+      if (!profile) {
         return res
           .status(404)
           .json({ message: "Freelancer profile not found" });
       }
 
-      const user_id = profile[0].user_id;
+      const user_id = profile.user_id;
 
       const reviews = await db
         .select({

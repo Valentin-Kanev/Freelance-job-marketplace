@@ -17,36 +17,18 @@ const db_1 = require("../drizzle/db");
 const drizzle_orm_1 = require("drizzle-orm");
 const authenticateToken_1 = __importDefault(require("../middleware/Authentication/authenticateToken"));
 const schema_1 = require("../drizzle/schema");
+const validate_1 = require("../middleware/validate");
+const reviewValidationSchema_1 = require("../schemas/reviewValidationSchema");
 const reviewsRouter = (0, express_1.Router)();
-reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (0, validate_1.validate)(reviewValidationSchema_1.createReviewSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: freelancer_id } = req.params;
-    const { client_id, rating, review_text } = req.body;
-    //Zod validation
-    if (!client_id || !rating || !review_text) {
-        return res
-            .status(400)
-            .json({ message: "Client ID, rating, and review text are required" });
-    }
-    if (rating < 1 || rating > 5) {
-        return res
-            .status(400)
-            .json({ message: "Rating must be between 1 and 5" });
-    }
+    const { rating, review_text } = req.body;
+    const { id: client_id } = req.user;
     try {
-        const profile = yield db_1.db
-            .select()
-            .from(schema_1.Profile)
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.user_id, freelancer_id))
-            .limit(1);
-        if (profile.length === 0) {
-            return res.status(404).json({ message: "Freelancer not found" });
-        }
-        const existingReview = yield db_1.db
-            .select()
-            .from(schema_1.Review)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, freelancer_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)))
-            .limit(1);
-        if (existingReview.length > 0) {
+        const existingReview = yield db_1.db.query.Review.findFirst({
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Review.freelancer_id, freelancer_id), (0, drizzle_orm_1.eq)(schema_1.Review.client_id, client_id)),
+        });
+        if (existingReview) {
             return res.status(400).json({
                 message: "You have already submitted a review for this freelancer.",
             });
@@ -66,17 +48,15 @@ reviewsRouter.post("/:id/reviews", authenticateToken_1.default, (req, res) => __
 reviewsRouter.get("/:id/reviews", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: profile_id } = req.params;
     try {
-        const profile = yield db_1.db
-            .select()
-            .from(schema_1.Profile)
-            .where((0, drizzle_orm_1.eq)(schema_1.Profile.id, profile_id))
-            .limit(1);
-        if (profile.length === 0) {
+        const profile = yield db_1.db.query.Profile.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.Profile.id, profile_id),
+        });
+        if (!profile) {
             return res
                 .status(404)
                 .json({ message: "Freelancer profile not found" });
         }
-        const user_id = profile[0].user_id;
+        const user_id = profile.user_id;
         const reviews = yield db_1.db
             .select({
             id: schema_1.Review.id,

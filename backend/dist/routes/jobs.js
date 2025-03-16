@@ -57,20 +57,16 @@ jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: "Error retrieving jobs" });
     }
 }));
-jobsRouter.put("/jobs/:id", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.jobUpdateSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+jobsRouter.put("/jobs/:id", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.updateJobSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { title, description, budget, deadline } = req.body;
-    const userType = req.user.user_type;
-    if (userType !== "client") {
-        return res.status(403).json({ message: "Only clients can edit jobs" });
-    }
     try {
         yield db_1.db
             .update(schema_1.Job)
             .set({
             title,
             description,
-            budget,
+            budget: Number(budget).toString(),
             deadline,
         })
             .where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
@@ -93,51 +89,40 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
             where: (0, drizzle_orm_1.eq)(schema_1.User.id, job.client_id),
             columns: { username: true },
         });
-        const jobWithUsername = Object.assign(Object.assign({}, job), { clientUsername: (client === null || client === void 0 ? void 0 : client.username) || null });
+        const jobWithUsername = Object.assign(Object.assign({}, job), { clientUsername: client === null || client === void 0 ? void 0 : client.username });
         res.json(jobWithUsername);
     }
     catch (error) {
         res.status(500).json({ message: "Error retrieving job" });
     }
 }));
-jobsRouter.post("/jobs", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.jobSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+jobsRouter.post("/jobs", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.createJobSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Validated Job Data:", req.body);
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.id;
-    const userType = req.user.user_type;
-    if (userType !== "client") {
-        return res.status(403).json({ message: "Only clients can create jobs" });
-    }
     try {
         const newJob = yield db_1.db.insert(schema_1.Job).values({
             client_id: userId,
             title,
             description,
-            budget,
-            deadline,
+            budget: Number(budget).toString(),
+            deadline: new Date(deadline),
         });
         res.status(201).json(newJob);
     }
     catch (error) {
+        console.error("Database error:", error);
         res.status(500).json({ message: "Error creating job" });
     }
 }));
 jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { id: userId, user_type } = req.user;
-    if (user_type !== "client") {
-        return res.status(403).json({ message: "Only clients can delete jobs" });
-    }
     try {
         const job = yield db_1.db.query.Job.findFirst({
             where: (0, drizzle_orm_1.eq)(schema_1.Job.id, id),
         });
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
-        }
-        if (job.client_id !== userId) {
-            return res
-                .status(403)
-                .json({ message: "You are not authorized to delete this job" });
         }
         yield db_1.db.delete(schema_1.Job).where((0, drizzle_orm_1.eq)(schema_1.Job.id, id));
         res.json({ message: "Job deleted successfully" });
@@ -148,10 +133,6 @@ jobsRouter.delete("/jobs/:id", authenticateToken_1.default, (req, res) => __awai
 }));
 jobsRouter.get("/jobs/created-by/:clientId", authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { clientId } = req.params;
-    const { id: loggedInUserId, user_type } = req.user;
-    if (user_type !== "client" || clientId !== loggedInUserId) {
-        return res.status(403).json({ message: "Unauthorized access" });
-    }
     try {
         const jobs = yield db_1.db
             .select({

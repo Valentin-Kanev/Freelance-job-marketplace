@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 type JobDetails = {
   title: string;
   description: string;
-  budget: number;
+  budget: number; // Change budget to number
   deadline: string;
 };
 
@@ -11,7 +11,7 @@ const useJobForm = (initialDetails: JobDetails) => {
   const [jobDetails, setJobDetails] = useState<JobDetails>({
     title: "",
     description: "",
-    budget: 0,
+    budget: 0, // Initialize budget as a number
     deadline: "",
   });
 
@@ -25,9 +25,10 @@ const useJobForm = (initialDetails: JobDetails) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
     setJobDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value,
+      [name]: name === "budget" ? parseFloat(value) || 0 : value, // Handle budget as a number
     }));
   };
 

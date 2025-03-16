@@ -4,6 +4,12 @@ import { ChatRoom, Message, User } from "../drizzle/schema";
 import { eq, and, or, asc } from "drizzle-orm";
 import { JwtPayload } from "jsonwebtoken";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
+import { validate } from "../middleware/validate";
+import {
+  createMessageSchema,
+  CreateMessageValidation,
+} from "../schemas/ChatValidationSchema";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
 
 const chatRouter = Router();
 
@@ -87,12 +93,6 @@ chatRouter.post(
     const { user_1_id, user_2_id } = req.body;
 
     try {
-      if (!user_1_id || !user_2_id || user_1_id === user_2_id) {
-        console.error("Invalid user IDs");
-        return res.status(400).json({ error: "Invalid user IDs provided." });
-      }
-
-      //remove if needed
       const existingRoom = await db.query.ChatRoom.findFirst({
         where: or(
           and(
@@ -128,21 +128,15 @@ chatRouter.post(
 
 chatRouter.post(
   "/chat-rooms/:id/messages",
+  validate(createMessageSchema),
   authenticateToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest<CreateMessageValidation>, res: Response) => {
     const { id: chat_room_id } = req.params;
-    const { sender_id, content } = req.body;
+    const { content } = req.body;
     const userId = (req.user as JwtPayload)?.id;
+    const { id: sender_id } = req.user as JwtPayload;
 
     try {
-      if (!content || content.trim() === "") {
-        console.error("Message content cannot be empty");
-        return res
-          .status(400)
-          .json({ error: "Message content cannot be empty." });
-      }
-
-      //check this code
       const chatRoom = await db.query.ChatRoom.findFirst({
         where: and(
           eq(ChatRoom.id, chat_room_id),

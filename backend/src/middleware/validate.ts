@@ -8,7 +8,7 @@ export const validate =
     if (!validationResult.success) {
       return res.status(400).json({
         success: false,
-        message: "Invalid request body",
+        message: validationResult.error.errors[0].message,
         errors: validationResult.error.errors,
       });
     }

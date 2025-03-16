@@ -3,6 +3,15 @@ import { eq, like, and, or } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import { Profile, User } from "../drizzle/schema";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
+import { validate } from "../middleware/validate";
+import {
+  createProfileSchema,
+  CreateProfileValidation,
+  updateProfileSchema,
+  UpdateProfileValidation,
+} from "../schemas/profileValidationSchema";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { JwtPayload } from "jsonwebtoken";
 
 const router = Router();
 
@@ -30,11 +39,6 @@ router.get("/profiles", async (req: Request, res: Response) => {
 
 router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
   const { user_id: userId } = req.params;
-  //use zod to validate the user_id
-
-  if (!userId) {
-    return res.status(400).json({ message: "User ID not provided" });
-  }
 
   try {
     const profile = await db
@@ -51,10 +55,6 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
       .leftJoin(User, eq(Profile.user_id, User.id))
       .where(eq(Profile.user_id, userId));
 
-    if (profile.length === 0) {
-      return res.status(404).json({ message: "Profile not found" });
-    }
-
     res.status(200).json(profile[0]);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -64,8 +64,10 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
 router.post(
   "/profiles",
   authenticateToken,
-  async (req: Request, res: Response) => {
-    const { user_id, skills, description, hourly_rate } = req.body;
+  validate(createProfileSchema),
+  async (req: AuthenticatedRequest<CreateProfileValidation>, res: Response) => {
+    const { skills, description, hourly_rate } = req.body;
+    const { id: user_id } = req.user as JwtPayload;
 
     try {
       const newProfile = await db
@@ -89,7 +91,8 @@ router.post(
 router.put(
   "/profiles/user/:id",
   authenticateToken,
-  async (req: Request, res: Response) => {
+  validate(updateProfileSchema),
+  async (req: AuthenticatedRequest<UpdateProfileValidation>, res: Response) => {
     const { id } = req.params;
     const { skills, description, hourly_rate } = req.body;
 
@@ -106,10 +109,6 @@ router.put(
           hourlyRate: Profile.hourly_rate,
         });
 
-      if (updatedProfile.length === 0) {
-        return res.status(404).json({ error: "Profile not found" });
-      }
-
       res.status(200).json(updatedProfile);
     } catch (error) {
       res.status(500).json({ error: "Failed to update profile" });
@@ -119,10 +118,6 @@ router.put(
 
 router.get("/profiles/search", async (req: Request, res: Response) => {
   const { query } = req.query;
-
-  if (!query) {
-    return res.status(400).json({ message: "Query parameter is required" });
-  }
 
   try {
     const profiles = await db
@@ -140,11 +135,7 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
       .where(
         and(
           eq(User.user_type, "freelancer"),
-          or(
-            like(User.username, `%${query}%`),
-            like(Profile.skills, `%${query}%`),
-            like(Profile.description, `%${query}%`)
-          )
+          or(like(User.username, `%${query}%`))
         )
       );
 
