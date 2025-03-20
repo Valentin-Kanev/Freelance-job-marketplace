@@ -39,11 +39,11 @@ const JobForm: React.FC<JobFormProps> = ({
       Boolean(initialJobDetails.id),
       {
         ...jobDetails,
-        id: initialJobDetails.id || "", // Provide default value if id is missing
-        client_id: userId, // Include client_id
-        clientUsername: "", // Provide default value for clientUsername
-        budget: jobDetails.budget, // Handle budget as a number
-        deadline: jobDetails.deadline, // Ensure deadline is a string
+        id: initialJobDetails.id || "",
+        client_id: userId,
+        clientUsername: "",
+        budget: jobDetails.budget,
+        deadline: jobDetails.deadline,
       },
       initialJobDetails.id
     );

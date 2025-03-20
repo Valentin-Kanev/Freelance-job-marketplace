@@ -21,9 +21,9 @@ applicationsRouter.post(
     req: AuthenticatedRequest<CreateApplicationValidation>,
     res: Response
   ) => {
-    const { id: job_id } = req.params;
+    const { job_id } = req.params;
     const { cover_letter } = req.body;
-    const { id: freelancer_id } = req.user as JwtPayload;
+    const { freelancer_id } = req.user as JwtPayload;
 
     try {
       const existingApplication = await db.query.Application.findFirst({

@@ -3,7 +3,7 @@ export interface Job {
   client_id: string;
   title: string;
   description: string;
-  budget: number; // Handle budget as a number
+  budget: number;
   deadline: string;
   clientUsername: string;
 }
@@ -11,7 +11,7 @@ export interface Job {
 export interface CreateJobData {
   title: string;
   description: string;
-  budget: number; // Handle budget as a number
+  budget: number;
   deadline: string;
   client_id: string;
 }
@@ -68,7 +68,7 @@ export const createJob = async (jobData: CreateJobData): Promise<Job> => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(jobData), // Handle budget as a number
+    body: JSON.stringify(jobData),
   });
 
   if (!response.ok) {

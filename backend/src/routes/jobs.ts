@@ -116,7 +116,6 @@ jobsRouter.post(
   authenticateToken,
   validate(createJobSchema),
   async (req: AuthenticatedRequest<CreateJobValidation>, res: Response) => {
-    console.log("Validated Job Data:", req.body);
     const { title, description, budget, deadline } = req.body;
     const userId = (req.user as JwtPayload).id;
 

@@ -104,7 +104,7 @@ export const useJobMutations = (
 
   const handleJobSubmit = (
     isUpdate: boolean,
-    jobDetails: Job, // Change type to JobDetails
+    jobDetails: Job,
     jobId?: string
   ) => {
     if (isUpdate && jobId) {
@@ -112,9 +112,9 @@ export const useJobMutations = (
     } else {
       createJobMutation.mutate({
         ...jobDetails,
-        client_id: userId, // Include client_id here
-        budget: jobDetails.budget, // Handle budget as a number
-        deadline: jobDetails.deadline, // Ensure deadline is a string
+        client_id: userId,
+        budget: jobDetails.budget,
+        deadline: jobDetails.deadline,
       });
     }
   };
