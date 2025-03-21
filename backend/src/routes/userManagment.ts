@@ -67,11 +67,11 @@ router.post(
   "/login",
   validate(loginSchema),
   async (req: Request, res: Response) => {
-    const { email, password } = req.body as LoginValidation;
+    const { email } = req.body as LoginValidation;
 
     try {
       const user = await db.query.User.findFirst({
-        where: or(eq(User.email, email), eq(User.password, password)),
+        where: eq(User.email, email),
       });
 
       if (!user) {

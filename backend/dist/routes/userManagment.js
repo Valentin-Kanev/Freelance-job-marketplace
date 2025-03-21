@@ -84,10 +84,10 @@ router.post("/register", (0, validate_1.validate)(userManagmentValidationScheema
     }
 }));
 router.post("/login", (0, validate_1.validate)(userManagmentValidationScheema_1.loginSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const { email } = req.body;
     try {
         const user = yield db_1.db.query.User.findFirst({
-            where: (0, expressions_1.or)((0, expressions_1.eq)(schema_1.User.email, email), (0, expressions_1.eq)(schema_1.User.password, password)),
+            where: (0, expressions_1.eq)(schema_1.User.email, email),
         });
         if (!user) {
             return res.status(404).json({ message: "invalid email or password" });

@@ -21,9 +21,9 @@ const applicationValidationSchema_1 = require("../schemas/applicationValidationS
 const validate_1 = require("../middleware/validate");
 const applicationsRouter = (0, express_1.Router)();
 applicationsRouter.post("/jobs/:id/apply", (0, validate_1.validate)(applicationValidationSchema_1.createApplicationSchema), authenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id: job_id } = req.params;
+    const { job_id } = req.params;
     const { cover_letter } = req.body;
-    const { id: freelancer_id } = req.user;
+    const { freelancer_id } = req.user;
     try {
         const existingApplication = yield db_1.db.query.Application.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.Application.job_id, job_id), (0, drizzle_orm_1.eq)(schema_1.Application.freelancer_id, freelancer_id)),

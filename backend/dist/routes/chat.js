@@ -107,7 +107,6 @@ chatRouter.post("/chat-rooms/:id/messages", (0, validate_1.validate)(ChatValidat
             .values({ chat_room_id, sender_id, content })
             .returning()
             .then((messages) => messages[0]);
-        console.log("Message sent successfully:", message);
         res.json(message);
     }
     catch (error) {

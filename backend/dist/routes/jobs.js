@@ -24,17 +24,17 @@ jobsRouter.get("/jobs/search", (req, res) => __awaiter(void 0, void 0, void 0, f
     const { title } = req.query;
     try {
         const titleSearch = title;
-        const jobs = yield db_1.db
+        const job = yield db_1.db
             .select({ id: schema_1.Job.id, title: schema_1.Job.title })
             .from(schema_1.Job)
             .where((0, drizzle_orm_1.ilike)(schema_1.Job.title, `%${titleSearch}%`));
-        res.status(200).json(jobs);
+        res.status(200).json(job);
     }
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         res
             .status(500)
-            .json({ message: "Error searching jobs", error: errorMessage });
+            .json({ message: "Error searching job", error: errorMessage });
     }
 }));
 jobsRouter.get("/jobs", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,7 +97,6 @@ jobsRouter.get("/jobs/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 }));
 jobsRouter.post("/jobs", authenticateToken_1.default, (0, validate_1.validate)(jobValidationSchema_1.createJobSchema), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Validated Job Data:", req.body);
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.id;
     try {
