@@ -157,7 +157,6 @@ chatRouter.post(
         .returning()
         .then((messages) => messages[0]);
 
-      console.log("Message sent successfully:", message);
       res.json(message);
     } catch (error) {
       console.error("Error sending message:", error);

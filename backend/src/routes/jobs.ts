@@ -22,18 +22,18 @@ jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
   try {
     const titleSearch = title as string;
 
-    const jobs = await db
+    const job = await db
       .select({ id: Job.id, title: Job.title })
       .from(Job)
       .where(ilike(Job.title, `%${titleSearch}%`));
 
-    res.status(200).json(jobs);
+    res.status(200).json(job);
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     res
       .status(500)
-      .json({ message: "Error searching jobs", error: errorMessage });
+      .json({ message: "Error searching job", error: errorMessage });
   }
 });
 
@@ -117,7 +117,7 @@ jobsRouter.post(
   validate(createJobSchema),
   async (req: AuthenticatedRequest<CreateJobValidation>, res: Response) => {
     const { title, description, budget, deadline } = req.body;
-    const userId = (req.user as JwtPayload).id;
+    const userId = req.user.id;
 
     try {
       const newJob = await db.insert(Job).values({
