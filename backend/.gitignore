@@ -1,4 +1,6 @@
 /node_modules
-/config
-/dist
-/src/uploads
+# /config
+# /dist
+# /src/uploads
+backend\config
+backend\dist
