@@ -34,5 +34,6 @@ app.use(chat_1.default);
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    //use logger
 });
 exports.default = app;

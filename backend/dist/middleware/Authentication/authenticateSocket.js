@@ -16,6 +16,7 @@ const authenticateSocket = (socket, next) => {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         socket.user = decoded;
         next();
+        //?
     }
     catch (error) {
         if (error instanceof Error) {
@@ -24,6 +25,7 @@ const authenticateSocket = (socket, next) => {
         else {
             console.error("Socket authentication failed:", error);
         }
+        //?
         const authError = new Error("Authentication failed.");
         next(authError);
     }

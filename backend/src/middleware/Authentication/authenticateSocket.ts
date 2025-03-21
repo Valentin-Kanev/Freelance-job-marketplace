@@ -25,12 +25,14 @@ const authenticateSocket = (
     ) as JwtPayload;
     socket.user = decoded;
     next();
+    //?
   } catch (error) {
     if (error instanceof Error) {
       console.error("Socket authentication failed:", error.message);
     } else {
       console.error("Socket authentication failed:", error);
     }
+    //?
     const authError = new Error("Authentication failed.");
     next(authError);
   }
