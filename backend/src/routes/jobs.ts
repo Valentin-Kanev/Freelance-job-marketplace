@@ -23,7 +23,7 @@ jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
     const titleSearch = title as string;
 
     const job = await db
-      .select({ id: Job.id, title: Job.title })
+      .select({ id: Job.job_id, title: Job.title })
       .from(Job)
       .where(ilike(Job.title, `%${titleSearch}%`));
 
@@ -41,7 +41,7 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
   try {
     const jobs = await db
       .select({
-        id: Job.id,
+        id: Job.job_id,
         title: Job.title,
         description: Job.description,
         budget: Job.budget,
@@ -50,7 +50,7 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
         client_username: User.username,
       })
       .from(Job)
-      .leftJoin(User, eq(User.id, Job.client_id));
+      .leftJoin(User, eq(User.user_id, Job.client_id));
 
     res.json(jobs);
   } catch (error) {
@@ -65,8 +65,23 @@ jobsRouter.put(
   async (req: AuthenticatedRequest<UpdateJobValidation>, res: Response) => {
     const { id } = req.params;
     const { title, description, budget, deadline } = req.body;
+    const userId = req.user.id;
 
     try {
+      const job = await db.query.Job.findFirst({
+        where: eq(Job.job_id, id),
+      });
+
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      if (job.client_id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "Unauthorized: You don't own this job" });
+      }
+
       await db
         .update(Job)
         .set({
@@ -75,7 +90,7 @@ jobsRouter.put(
           budget: Number(budget).toString(),
           deadline,
         })
-        .where(eq(Job.id, id));
+        .where(eq(Job.job_id, id));
 
       res.json({ message: "Job updated successfully" });
     } catch (error) {
@@ -88,7 +103,7 @@ jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const job = await db.query.Job.findFirst({
-      where: eq(Job.id, id),
+      where: eq(Job, id),
     });
 
     if (!job) {
@@ -96,7 +111,7 @@ jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
     }
 
     const client = await db.query.User.findFirst({
-      where: eq(User.id, job.client_id),
+      where: eq(User.user_id, job.client_id),
       columns: { username: true },
     });
 
@@ -141,17 +156,24 @@ jobsRouter.delete(
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
+    const userId = req.user.id;
 
     try {
       const job = await db.query.Job.findFirst({
-        where: eq(Job.id, id),
+        where: eq(Job.job_id, id),
       });
 
       if (!job) {
         return res.status(404).json({ message: "Job not found" });
       }
 
-      await db.delete(Job).where(eq(Job.id, id));
+      if (job.client_id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "Unauthorized: You don't own this job" });
+      }
+
+      await db.delete(Job).where(eq(Job.job_id, id));
       res.json({ message: "Job deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error deleting job" });
@@ -168,7 +190,7 @@ jobsRouter.get(
     try {
       const jobs = await db
         .select({
-          id: Job.id,
+          id: Job.job_id,
           title: Job.title,
           description: Job.description,
           budget: Job.budget,
@@ -177,7 +199,7 @@ jobsRouter.get(
           client_username: User.username,
         })
         .from(Job)
-        .leftJoin(User, eq(User.id, Job.client_id))
+        .leftJoin(User, eq(User.user_id, Job.client_id))
         .where(eq(Job.client_id, clientId));
 
       res.json(jobs);

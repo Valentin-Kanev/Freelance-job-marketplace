@@ -58,7 +58,7 @@ reviewsRouter.get(
 
     try {
       const profile = await db.query.Profile.findFirst({
-        where: eq(Profile.id, profile_id),
+        where: eq(Profile.profile_id, profile_id),
       });
 
       if (!profile) {
@@ -71,7 +71,7 @@ reviewsRouter.get(
 
       const reviews = await db
         .select({
-          id: Review.id,
+          id: Review.review_id,
           freelancer_id: Review.freelancer_id,
           client_id: Review.client_id,
           rating: Review.rating,
@@ -80,7 +80,7 @@ reviewsRouter.get(
         })
         .from(Review)
         .innerJoin(Profile, eq(Review.client_id, Profile.user_id))
-        .innerJoin(User, eq(Profile.user_id, User.id))
+        .innerJoin(User, eq(Profile.user_id, User.user_id))
         .where(eq(Review.freelancer_id, user_id));
 
       res.json(reviews);
@@ -99,7 +99,7 @@ reviewsRouter.get(
     try {
       const reviews = await db
         .select({
-          id: Review.id,
+          id: Review.review_id,
           freelancer_id: Review.freelancer_id,
           client_id: Review.client_id,
           rating: Review.rating,
@@ -108,7 +108,7 @@ reviewsRouter.get(
         })
         .from(Review)
         .innerJoin(Profile, eq(Review.freelancer_id, Profile.user_id))
-        .innerJoin(User, eq(Profile.user_id, User.id))
+        .innerJoin(User, eq(Profile.user_id, User.user_id))
         .where(eq(Review.client_id, clientId));
 
       res.json(reviews);

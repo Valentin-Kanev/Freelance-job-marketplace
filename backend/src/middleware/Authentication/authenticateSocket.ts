@@ -14,7 +14,6 @@ const authenticateSocket = (
 
   if (!token) {
     const error = new Error("Authentication token is required.");
-    console.error("Authentication token is required.");
     return next(error);
   }
 
@@ -25,17 +24,11 @@ const authenticateSocket = (
     ) as JwtPayload;
     socket.user = decoded;
     next();
-    //?
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Socket authentication failed:", error.message);
-    } else {
-      console.error("Socket authentication failed:", error);
+      const authError = new Error("Authentication failed.");
+      next(authError);
     }
-    //?
-    const authError = new Error("Authentication failed.");
-    next(authError);
   }
 };
-
 export default authenticateSocket;

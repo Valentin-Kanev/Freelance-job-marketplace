@@ -33,12 +33,15 @@ chatRouter.get(
             room.user_1_id === userId ? room.user_2_id : room.user_1_id;
 
           const otherUser = await db.query.User.findFirst({
-            where: eq(User.id, otherUserId),
+            where: eq(User.user_id, otherUserId),
           });
 
           return {
             ...room,
-            otherUser: { id: otherUser?.id, username: otherUser?.username },
+            otherUser: {
+              id: otherUser?.user_id,
+              username: otherUser?.username,
+            },
           };
         })
       );
@@ -67,7 +70,7 @@ chatRouter.get(
       const messagesWithUsernames = await Promise.all(
         messages.map(async (message) => {
           const sender = await db.query.User.findFirst({
-            where: eq(User.id, message.sender_id),
+            where: eq(User.user_id, message.sender_id),
           });
 
           return {

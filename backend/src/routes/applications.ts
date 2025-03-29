@@ -50,7 +50,6 @@ applicationsRouter.post(
 
       res.status(201).json({ message: "Application submitted successfully" });
     } catch (error) {
-      console.error("Error applying for the job:", error);
       res.status(500).json({ message: "Error applying for the job", error });
     }
   }
@@ -65,13 +64,13 @@ applicationsRouter.get(
     try {
       const applications = await db
         .select({
-          id: Application.id,
+          id: Application.application_id,
           cover_letter: Application.cover_letter,
           freelancer_id: Application.freelancer_id,
           username: User.username,
         })
         .from(Application)
-        .innerJoin(User, eq(Application.freelancer_id, User.id))
+        .innerJoin(User, eq(Application.freelancer_id, User.user_id))
         .where(eq(Application.job_id, job_id));
 
       res.json(applications);
@@ -97,7 +96,7 @@ applicationsRouter.get(
           applicationDate: Application.timestamp,
         })
         .from(Application)
-        .innerJoin(Job, eq(Application.job_id, Job.id))
+        .innerJoin(Job, eq(Application.job_id, Job.job_id))
         .where(eq(Application.freelancer_id, freelancerId));
 
       res.json(applications);

@@ -19,7 +19,7 @@ router.get("/profiles", async (req: Request, res: Response) => {
   try {
     const profiles = await db
       .select({
-        profileId: Profile.id,
+        profileId: Profile.profile_id,
         userId: Profile.user_id,
         skills: Profile.skills,
         description: Profile.description,
@@ -28,7 +28,7 @@ router.get("/profiles", async (req: Request, res: Response) => {
         userType: User.user_type,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.id))
+      .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(eq(User.user_type, "freelancer"));
 
     res.status(200).json(profiles);
@@ -43,7 +43,7 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
   try {
     const profile = await db
       .select({
-        profileId: Profile.id,
+        profileId: Profile.profile_id,
         userId: Profile.user_id,
         skills: Profile.skills,
         description: Profile.description,
@@ -52,7 +52,7 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
         userType: User.user_type,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.id))
+      .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(eq(Profile.user_id, userId));
 
     res.status(200).json(profile[0]);
@@ -74,7 +74,7 @@ router.post(
         .insert(Profile)
         .values({ user_id, skills, description, hourly_rate })
         .returning({
-          id: Profile.id,
+          id: Profile.profile_id,
           userId: Profile.user_id,
           skills: Profile.skills,
           description: Profile.description,
@@ -95,14 +95,29 @@ router.put(
   async (req: AuthenticatedRequest<UpdateProfileValidation>, res: Response) => {
     const { id } = req.params;
     const { skills, description, hourly_rate } = req.body;
+    const userId = req.user.id;
 
     try {
+      const profile = await db.query.Profile.findFirst({
+        where: eq(Profile.profile_id, id),
+      });
+
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      if (profile.user_id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "Unauthorized: You don't own this profile" });
+      }
+
       const updatedProfile = await db
         .update(Profile)
         .set({ skills, description, hourly_rate })
-        .where(eq(Profile.id, id))
+        .where(eq(Profile.profile_id, id))
         .returning({
-          id: Profile.id,
+          id: Profile.profile_id,
           userId: Profile.user_id,
           skills: Profile.skills,
           description: Profile.description,
@@ -122,7 +137,7 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
   try {
     const profiles = await db
       .select({
-        profileId: Profile.id,
+        profileId: Profile.profile_id,
         userId: Profile.user_id,
         skills: Profile.skills,
         description: Profile.description,
@@ -131,7 +146,7 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
         userType: User.user_type,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.id))
+      .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(
         and(
           eq(User.user_type, "freelancer"),

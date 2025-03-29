@@ -12,6 +12,7 @@ import {
   loginSchema,
   LoginValidation,
 } from "../schemas/userManagmentValidationScheema";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
@@ -43,7 +44,7 @@ router.post(
         .returning();
 
       await db.insert(Profile).values({
-        user_id: newUser[0].id,
+        user_id: newUser[0].user_id,
         skills: "",
         description: "",
         hourly_rate: "0.00",
@@ -67,43 +68,48 @@ router.post(
   "/login",
   validate(loginSchema),
   async (req: Request, res: Response) => {
-    const { email } = req.body as LoginValidation;
+    const { email, password } = req.body as LoginValidation;
 
     try {
       const user = await db.query.User.findFirst({
         where: eq(User.email, email),
+        columns: {
+          user_id: true,
+          username: true,
+          user_type: true,
+          password: true,
+        },
       });
 
-      if (!user) {
-        return res.status(404).json({ message: "invalid email or password" });
+      if (!user || !user.password) {
+        return res.status(400).json({ message: "Invalid email or password" });
       }
 
-      const existingProfile = await db
-        .select()
-        .from(Profile)
-        .where(eq(Profile.user_id, user.id))
-        .execute();
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid email or password" });
+      }
 
-      if (existingProfile.length === 0) {
-        await db.insert(Profile).values({
-          user_id: user.id,
-          skills: "",
-          description: "",
-          hourly_rate: "0.00",
-        });
+      if (!SECRET_KEY) {
+        console.error("SECRET_KEY is not defined in environment variables.");
+        return res.status(500).json({ message: "Internal server error" });
       }
 
       const token = jwt.sign(
-        { id: user.id, username: user.username, user_type: user.user_type },
+        {
+          id: user.user_id,
+          username: user.username,
+          user_type: user.user_type,
+        },
         SECRET_KEY,
         { expiresIn: "1h" }
       );
 
       res
         .status(200)
-        .json({ message: "Login successful", token, userId: user.id });
+        .json({ message: "Login successful", token, userId: user.user_id });
     } catch (error) {
-      res.status(500).json({ message: "Server error", error });
+      res.status(500).json({ message: "Server error" });
     }
   }
 );
