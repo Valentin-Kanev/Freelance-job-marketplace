@@ -1,6 +1,7 @@
 import { useFreelancerReviews } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect } from "react";
+import ExpandableText from "../UI/ExpandableText";
 
 interface ReviewListProps {
   freelancerId: string;
@@ -23,9 +24,7 @@ export default function ReviewList({
     refetch();
   }, [freelancerId, refetch]);
 
-  if (!isFreelancer) {
-    return null;
-  }
+  if (!isFreelancer) return null;
 
   if (!isLoggedIn) {
     return (
@@ -46,23 +45,33 @@ export default function ReviewList({
   return (
     <div className="space-y-6">
       {reviews && reviews.length > 0 ? (
-        reviews.map((review) => (
-          <div
-            key={review.id}
-            className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
-          >
-            <p className="text-lg font-semibold text-gray-800">
-              Client: {review.client_username}
-            </p>
-            <p className="text-yellow-500 font-semibold">
-              Rating: {"⭐".repeat(review.rating)}
-            </p>
-            <p className="text-gray-700">{review.review_text}</p>
-          </div>
-        ))
+        reviews.map((review) => <ReviewCard key={review.id} review={review} />)
       ) : (
         <div className="text-gray-500">No reviews yet.</div>
       )}
+    </div>
+  );
+}
+
+function ReviewCard({
+  review,
+}: {
+  review: {
+    id: string;
+    client_username: string;
+    rating: number;
+    review_text: string;
+  };
+}) {
+  return (
+    <div className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
+      <p className="text-lg font-semibold text-gray-800">
+        Client: {review.client_username}
+      </p>
+      <p className="text-yellow-500 font-semibold">
+        Rating: {"⭐".repeat(review.rating)}
+      </p>
+      <ExpandableText text={review.review_text} />
     </div>
   );
 }

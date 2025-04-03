@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useMessages } from "../../hooks/useChat";
 import { useAuth } from "../../contexts/AuthContext";
+import { Message } from "../../types/MessageTypes";
 
 interface MessagesListProps {
   roomId: string;
@@ -27,7 +28,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
           <p className="text-center text-gray-500">No messages yet.</p>
         ) : (
           <ul className="space-y-2">
-            {messages?.map((message: any, index: number) => {
+            {messages?.map((message: Message, index: number) => {
               const isLoggedUser = message.sender_id === userId;
 
               return (

@@ -1,24 +1,4 @@
-export interface Job {
-  id: string;
-  client_id: string;
-  title: string;
-  description: string;
-  budget: number;
-  deadline: string;
-  clientUsername: string;
-}
-
-export interface CreateJobData {
-  title: string;
-  description: string;
-  budget: number;
-  deadline: string;
-  client_id: string;
-}
-
-export type UpdateJobData = Partial<
-  Omit<Job, "id" | "clientUsername" | "client_id">
->;
+import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
 
@@ -58,10 +38,7 @@ export const fetchJobs = async (): Promise<Job[]> => {
 };
 
 export const createJob = async (jobData: CreateJobData): Promise<Job> => {
-  console.log("Sending job data:", jobData);
-
   const token = localStorage.getItem("token");
-
   const response = await fetch(`${BASE_URL}/jobs`, {
     method: "POST",
     headers: {
@@ -80,13 +57,10 @@ export const createJob = async (jobData: CreateJobData): Promise<Job> => {
 };
 
 export const updateJob = async (
-  id: string,
+  job_id: number,
   data: UpdateJobData
 ): Promise<Job> => {
-  if (data.deadline) {
-    data.deadline = new Date(data.deadline).toISOString();
-  }
-  return fetchClient<Job>(`/jobs/${id}`, {
+  return fetchClient<Job>(`/jobs/${job_id}`, {
     method: "PUT",
     body: JSON.stringify(data),
     headers: {
@@ -95,14 +69,14 @@ export const updateJob = async (
   });
 };
 
-export const deleteJob = async (id: string): Promise<void> => {
-  return fetchClient<void>(`/jobs/${id}`, {
+export const deleteJob = async (job_id: number): Promise<void> => {
+  return fetchClient<void>(`/jobs/${job_id}`, {
     method: "DELETE",
   });
 };
 
-export const fetchJob = async (id: string): Promise<Job> => {
-  return fetchClient<Job>(`/jobs/${id}`);
+export const fetchJob = async (job_id: number): Promise<Job> => {
+  return fetchClient<Job>(`/jobs/${job_id}`);
 };
 
 export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {
@@ -110,5 +84,5 @@ export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {
 };
 
 export const searchJobsByTitle = async (title: string): Promise<Job[]> => {
-  return fetchClient<Job[]>(`/jobs/search?title=${encodeURIComponent(title)}`);
+  return fetchClient<Job[]>(`/jobs/search?title=${title}`);
 };

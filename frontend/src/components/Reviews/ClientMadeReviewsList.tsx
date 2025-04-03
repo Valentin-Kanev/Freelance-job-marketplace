@@ -3,6 +3,7 @@ import { fetchClientReviews } from "../../api/ReviewApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import { useEffect } from "react";
+import ExpandableText from "../UI/ExpandableText";
 
 const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
   const {
@@ -45,9 +46,7 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
                 <p className="text-gray-800">
                   <strong>Rating:</strong> {review.rating} / 5
                 </p>
-                <p className="text-gray-600">
-                  <strong>Review:</strong> {review.review_text}
-                </p>
+                <ExpandableText text={review.review_text} />
               </div>
             </li>
           ))}

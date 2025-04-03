@@ -1,21 +1,8 @@
-export interface Profile {
-  userType: string;
-  profileId: string;
-  userId: string;
-  skills: string;
-  description: string;
-  hourlyRate: number;
-  username: string;
-}
-
-export type CreateProfileData = Omit<
+import {
+  CreateProfileData,
   Profile,
-  "userType" | "profileId" | "username"
->;
-
-export type UpdateProfileData = Partial<
-  Omit<Profile, "userType" | "profileId" | "userId" | "username">
->;
+  UpdateProfileData,
+} from "../types/ProfileTypes";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
@@ -23,7 +10,7 @@ const fetchClient = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
-  const token = localStorage.getItem("token"); // Get the token
+  const token = localStorage.getItem("token");
 
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,

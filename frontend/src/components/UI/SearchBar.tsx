@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchJobsByTitle } from "../../hooks/useJobs";
 import { useSearchProfiles } from "../../hooks/useProfiles";
-import { Job } from "../../api/jobApi";
-import { Profile } from "../../api/profileApi";
+import { Job } from "../../types/JobTypes";
+import { Profile } from "../../types/ProfileTypes";
 
 const SearchBar: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -26,12 +26,16 @@ const SearchBar: React.FC = () => {
     setTitle("");
   };
 
-  const handleSuggestionClick = (id: string) => {
-    if (searchType === "jobs") {
-      navigate(`/jobs/${id}`);
+  const handleProfileSuggestionClick = (profile_id: string) => {
+    if (searchType === "freelancers") {
+      navigate(`/profiles/${profile_id}`);
       setTitle("");
-    } else {
-      navigate(`/profiles/${id}`);
+    }
+  };
+
+  const handleJobSuggestionClick = (job_id: number) => {
+    if (searchType === "jobs") {
+      navigate(`/jobs/${job_id}`);
       setTitle("");
     }
   };
@@ -72,9 +76,9 @@ const SearchBar: React.FC = () => {
             <ul className="absolute left-0 w-full bg-gray-800 rounded-lg shadow-lg z-10 max-h-60 overflow-auto">
               {jobs.map((job: Job) => (
                 <li
-                  key={job.id}
+                  key={job.title}
                   className="px-4 py-2 text-white hover:bg-gray-700 cursor-pointer"
-                  onClick={() => handleSuggestionClick(job.id)}
+                  onClick={() => handleJobSuggestionClick(job.job_id)}
                 >
                   {job.title}
                 </li>
@@ -99,7 +103,7 @@ const SearchBar: React.FC = () => {
                 <li
                   key={profile.profileId}
                   className="px-4 py-2 text-white hover:bg-gray-700 cursor-pointer"
-                  onClick={() => handleSuggestionClick(profile.userId)}
+                  onClick={() => handleProfileSuggestionClick(profile.userId)}
                 >
                   {profile.username}
                 </li>

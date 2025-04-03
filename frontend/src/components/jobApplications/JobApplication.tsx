@@ -5,11 +5,11 @@ import { useToast } from "../../contexts/ToastManager";
 import StatusMessage from "../UI/StatusMessage";
 
 interface JobApplicationProps {
-  jobId: string;
+  job_id: number;
   onClose: () => void;
 }
 
-const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
+const JobApplication: React.FC<JobApplicationProps> = ({ job_id, onClose }) => {
   const [coverLetter, setCoverLetter] = useState("");
   const freelancerId = localStorage.getItem("userId");
   const { addToast } = useToast();
@@ -24,7 +24,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
       addToast("Application submitted successfully!");
       onClose();
     },
-    (error: any) => {
+    (error: Error) => {
       console.error("Error applying for job:", error.message);
     }
   );
@@ -38,7 +38,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
     }
 
     submitApplication({
-      jobId,
+      job_id,
       data: {
         freelancer_id: freelancerId!,
         cover_letter: coverLetter,
@@ -55,7 +55,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, onClose }) => {
         onChange={(e) => setCoverLetter(e.target.value)}
       />
       {isError && (
-        <StatusMessage message={`Error: ${(error as any)?.message}`} />
+        <StatusMessage message={`Error: ${(error as Error)?.message}`} />
       )}
       <div className="flex justify-center gap-3">
         <Button

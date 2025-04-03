@@ -4,12 +4,10 @@ import {
   createJob,
   updateJob,
   deleteJob,
-  Job,
-  UpdateJobData,
   fetchJob,
   searchJobsByTitle,
-  CreateJobData,
 } from "../api/jobApi";
+import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
 export const useJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {
@@ -43,10 +41,12 @@ export const useUpdateJob = (
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ id, data }: { id: string; data: UpdateJobData }) => updateJob(id, data),
+    ({ job_id, data }: { job_id: number; data: UpdateJobData }) => {
+      return updateJob(job_id, data);
+    },
     {
       onSuccess: (updatedJob) => {
-        queryClient.invalidateQueries(["job", updatedJob.id]);
+        queryClient.invalidateQueries(["job", updatedJob.job_id]);
         queryClient.invalidateQueries("jobs");
         if (onSuccessCallback) onSuccessCallback(updatedJob);
       },
@@ -60,7 +60,7 @@ export const useUpdateJob = (
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((id: string) => deleteJob(id), {
+  return useMutation((job_id: number) => deleteJob(job_id), {
     onSuccess: () => {
       queryClient.invalidateQueries("jobs");
     },
@@ -70,8 +70,8 @@ export const useDeleteJob = () => {
   });
 };
 
-export const useJob = (id: string) => {
-  return useQuery<Job, Error>(["job", id], () => fetchJob(id), {
+export const useJob = (job_id: number) => {
+  return useQuery<Job, Error>(["job", job_id], () => fetchJob(job_id), {
     retry: 2,
     staleTime: 5 * 60 * 1000,
     onError: (error: Error) => {
@@ -83,9 +83,9 @@ export const useJob = (id: string) => {
 export const useSearchJobsByTitle = (title: string) => {
   return useQuery<Job[], Error>(
     ["jobs", title],
-    () => searchJobsByTitle(title),
+    () => (title ? searchJobsByTitle(title) : Promise.resolve([])),
     {
-      enabled: !!title,
+      enabled: Boolean(title),
       staleTime: 5 * 60 * 1000,
       retry: 2,
       onError: (error: Error) => {
@@ -102,13 +102,9 @@ export const useJobMutations = (
   const createJobMutation = useCreateJob(onSuccess);
   const updateJobMutation = useUpdateJob(onSuccess);
 
-  const handleJobSubmit = (
-    isUpdate: boolean,
-    jobDetails: Job,
-    jobId?: string
-  ) => {
-    if (isUpdate && jobId) {
-      updateJobMutation.mutate({ id: jobId, data: jobDetails });
+  const handleJobSubmit = (isUpdate: boolean, jobDetails: Job) => {
+    if (isUpdate) {
+      updateJobMutation.mutate({ job_id: jobDetails.job_id, data: jobDetails });
     } else {
       createJobMutation.mutate({
         ...jobDetails,

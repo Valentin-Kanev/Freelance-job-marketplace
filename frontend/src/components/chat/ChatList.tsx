@@ -33,16 +33,16 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
         <div className="text-gray-500">Loading chat rooms...</div>
       ) : (
         <ul className="space-y-2">
-          {chatRooms?.map((room: any) => {
+          {chatRooms?.map((room: any, index: number) => {
             const otherUser = room.otherUser;
-            const isSelected = room.id === localSelectedRoomId;
+            const isSelected = room.chatRoom_id === localSelectedRoomId;
             return (
               <li
-                key={room.id}
+                key={room.chatRoom_id || `chat-room-${index}`}
                 className={`p-2 rounded-full cursor-pointer ${
                   isSelected ? "bg-blue-300" : "bg-gray-100 hover:bg-gray-200"
                 }`}
-                onClick={() => handleSelectRoom(room.id)}
+                onClick={() => handleSelectRoom(room.chatRoom_id)}
               >
                 {otherUser?.username || "Unknown User"}
               </li>

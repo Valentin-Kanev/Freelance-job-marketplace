@@ -5,13 +5,13 @@ import { useDeleteJob } from "../../../hooks/useJobs";
 import { useToast } from "../../../contexts/ToastManager";
 
 interface DeleteJobModalProps {
-  jobId: string;
+  job_id: number;
   onSuccess?: () => void;
   onClose: () => void;
 }
 
 const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
-  jobId,
+  job_id,
   onSuccess,
   onClose,
   isOpen,
@@ -20,7 +20,7 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
   const { addToast } = useToast();
 
   const handleDelete = () => {
-    deleteJobMutation.mutate(jobId, {
+    deleteJobMutation.mutate(job_id, {
       onSuccess: () => {
         addToast("Job deleted successfully!");
         if (onSuccess) onSuccess();

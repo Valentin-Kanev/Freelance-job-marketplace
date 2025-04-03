@@ -65,7 +65,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/auth/register" element={<AuthMode />} />
       <Route path="/jobs" element={<JobManagement />} />
       <Route
-        path="/jobs/:id"
+        path="/jobs/:job_id"
         element={
           <JobDashboard
             jobs={jobs || []}

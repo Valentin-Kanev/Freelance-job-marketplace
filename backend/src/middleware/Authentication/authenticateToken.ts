@@ -42,6 +42,8 @@ const authenticateToken = async (
       }
 
       try {
+        console.log("Decoded JWT:", decoded);
+
         const user = await db.query.User.findFirst({
           where: eq(User.user_id, (decoded as JwtPayload).id),
         });
@@ -50,9 +52,12 @@ const authenticateToken = async (
           return res.status(404).json({ message: "User not found" });
         }
 
-        req.user = user;
+        req.user = { ...(decoded as JwtPayload), ...user };
+        console.log("Authenticated user:", req.user);
+
         next();
       } catch (dbError) {
+        console.error("Database error:", dbError);
         return res.status(500).json({ message: "Error fetching user data" });
       }
     }

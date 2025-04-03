@@ -1,0 +1,1 @@
+ALTER TABLE "jobs" ALTER COLUMN "deadline" SET DATA TYPE date;

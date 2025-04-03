@@ -21,11 +21,22 @@ applicationsRouter.post(
     req: AuthenticatedRequest<CreateApplicationValidation>,
     res: Response
   ) => {
-    const { job_id } = req.params;
+    const job_id = Number(req.params.id);
     const { cover_letter } = req.body;
-    const { freelancer_id } = req.user as JwtPayload;
+    const freelancer_id = req.user.user_id;
+
+    if (!job_id || !freelancer_id) {
+      console.error("Missing job_id or freelancer_id", {
+        job_id,
+        freelancer_id,
+      });
+      return res
+        .status(400)
+        .json({ message: "Invalid job ID or freelancer ID" });
+    }
 
     try {
+      console.log("Checking if the user has already applied...");
       const existingApplication = await db.query.Application.findFirst({
         where: and(
           eq(Application.job_id, job_id),
@@ -34,11 +45,16 @@ applicationsRouter.post(
       });
 
       if (existingApplication) {
+        console.warn("User has already applied for this job:", {
+          job_id,
+          freelancer_id,
+        });
         return res
           .status(400)
           .json({ message: "You have already applied for this job" });
       }
 
+      console.log("Starting transaction to insert application...");
       await db.transaction(async (trx) => {
         await trx.insert(Application).values({
           job_id,
@@ -48,9 +64,14 @@ applicationsRouter.post(
         });
       });
 
+      console.log("Application submitted successfully.");
       res.status(201).json({ message: "Application submitted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Error applying for the job", error });
+      console.error("Error applying for job:", error);
+      res.status(500).json({
+        message: "Error applying for the job",
+        error: (error as Error).message,
+      });
     }
   }
 );
@@ -85,12 +106,12 @@ applicationsRouter.get(
   "/applications/my-applications",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    const freelancerId = req.user.id;
+    const freelancerId = req.user.user_id;
 
     try {
       const applications = await db
         .select({
-          jobId: Application.job_id,
+          job_id: Application.job_id,
           jobTitle: Job.title,
           coverLetter: Application.cover_letter,
           applicationDate: Application.timestamp,

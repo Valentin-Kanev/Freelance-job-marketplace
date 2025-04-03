@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import Input from "../UI/Input";
 import useJobForm from "../../hooks/useJobForm";
 import { useJobMutations } from "../../hooks/useJobs";
+import { CreateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
   userId: string;
-  initialJobDetails: any;
+  initialJobDetails: CreateJobData;
   onClose: () => void;
   onSubmitSuccess: (job: any) => void;
 }
@@ -34,21 +35,18 @@ const JobForm: React.FC<JobFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (validateForm()) {
-    handleJobSubmit(
-      Boolean(initialJobDetails.id),
-      {
-        ...jobDetails,
-        id: initialJobDetails.id || "",
-        client_id: userId,
-        clientUsername: "",
-        budget: jobDetails.budget,
-        deadline: jobDetails.deadline,
-      },
-      initialJobDetails.id
-    );
+
+    const isUpdate = Boolean(initialJobDetails.job_id);
+
+    handleJobSubmit(isUpdate, {
+      ...jobDetails,
+      job_id: initialJobDetails.job_id,
+      client_id: userId,
+      client_username: "",
+      budget: Number(jobDetails.budget),
+      deadline: new Date(jobDetails.deadline),
+    });
     onClose();
-    // }
   };
 
   const handleFocus = (fieldName: string) => {
@@ -106,7 +104,7 @@ const JobForm: React.FC<JobFormProps> = ({
       <Input
         label="Deadline"
         name="deadline"
-        value={jobDetails.deadline}
+        value={new Date(jobDetails.deadline).toISOString().split("T")[0]}
         onChange={handleChange}
         type="date"
         required
@@ -118,7 +116,7 @@ const JobForm: React.FC<JobFormProps> = ({
         type="submit"
         className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
       >
-        {initialJobDetails?.id ? "Update Job" : "Create Job"}
+        {initialJobDetails.job_id ? "Update Job" : "Create Job"}
       </button>
     </form>
   );

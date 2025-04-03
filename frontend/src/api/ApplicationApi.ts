@@ -1,13 +1,13 @@
 export interface Application {
-  id: string;
-  job_id: string;
+  application_id: number;
+  job_id: number;
   freelancer_id: string;
   username: string;
   cover_letter: string;
 }
 
 export interface MyApplication {
-  jobId: string;
+  job_id: number;
   jobTitle: string;
   coverLetter: string;
   applicationDate: string;
@@ -46,10 +46,10 @@ const fetchClient = async <T>(
 };
 
 export const applyForJob = async (
-  jobId: string,
+  job_id: number,
   data: { freelancer_id: string; cover_letter: string }
 ): Promise<Application> => {
-  return fetchClient<Application>(`/jobs/${jobId}/apply`, {
+  return fetchClient<Application>(`/jobs/${job_id}/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,9 +59,9 @@ export const applyForJob = async (
 };
 
 export const fetchJobApplications = async (
-  jobId: string
+  job_id: number
 ): Promise<Application[]> => {
-  return fetchClient<Application[]>(`/jobs/${jobId}/applications`);
+  return fetchClient<Application[]>(`/jobs/${job_id}/applications`);
 };
 
 export const fetchMyApplications = async (): Promise<MyApplication[]> => {

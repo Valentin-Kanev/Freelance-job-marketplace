@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useMyApplications } from "../../hooks/useApplication";
 import StatusMessage from "../UI/StatusMessage";
+import ExpandableText from "../UI/ExpandableText";
 
 const MyApplications: React.FC = () => {
   const {
@@ -32,13 +33,15 @@ const MyApplications: React.FC = () => {
         )
         .map((application, index) => (
           <li
-            key={`${application.jobId}-${index}`}
+            key={`${application.job_id}-${index}`}
             className="p-4 border rounded-lg"
           >
             <h3 className="text-lg font-semibold">
               Applied for: {application.jobTitle}
             </h3>
-            <p className="text-md text-gray-600">{application.coverLetter}</p>
+            <div>
+              <ExpandableText text={application.coverLetter} />
+            </div>
             <p className="text-sm text-gray-600">
               Applied on:{" "}
               {new Date(application.applicationDate).toLocaleDateString()}

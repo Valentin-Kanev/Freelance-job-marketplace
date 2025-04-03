@@ -28,7 +28,7 @@ const Header: React.FC = () => {
             <Link
               to="/jobs"
               className={`text-white hover:text-gray-300 pb-1 border-b-2 transform transition-all duration-300 ease-in-out ${
-                isActive("/jobs") || isActive("/jobs/:jobId")
+                isActive("/jobs") || isActive("/jobs/:job_id")
                   ? "border-white scale-105"
                   : "border-transparent"
               }`}

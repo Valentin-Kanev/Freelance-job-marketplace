@@ -2,8 +2,8 @@ import { useState } from "react";
 import Modal from "../UI/Modal";
 import Toast from "../UI/Toast";
 import Input from "../UI/Input";
-import { Profile } from "../../api/profileApi";
 import Button from "../UI/Button";
+import { Profile } from "../../types/ProfileTypes";
 
 interface EditProfileProps {
   profile: Profile;

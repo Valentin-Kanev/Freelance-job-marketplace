@@ -1,1 +1,0 @@
-ALTER TABLE "messages" ADD COLUMN "chat_id" uuid NOT NULL;

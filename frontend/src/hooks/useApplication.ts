@@ -13,12 +13,12 @@ export const useApplyForJob = (
 ) => {
   return useMutation(
     ({
-      jobId,
+      job_id,
       data,
     }: {
-      jobId: string;
+      job_id: number;
       data: { freelancer_id: string; cover_letter: string };
-    }) => applyForJob(jobId, data),
+    }) => applyForJob(job_id, data),
     {
       onSuccess,
       onError: (error: Error) => {
@@ -29,10 +29,10 @@ export const useApplyForJob = (
   );
 };
 
-export const useJobApplications = (jobId: string) => {
+export const useJobApplications = (job_id: number) => {
   return useQuery<Application[], Error>(
-    ["jobApplications", jobId],
-    () => fetchJobApplications(jobId),
+    ["jobApplications", job_id],
+    () => fetchJobApplications(job_id),
     {
       staleTime: 5 * 60 * 1000,
       retry: 2,

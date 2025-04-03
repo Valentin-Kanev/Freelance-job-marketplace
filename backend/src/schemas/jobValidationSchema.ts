@@ -9,7 +9,10 @@ export const createJobSchema = z.object({
     .string()
     .min(20, "Description must be at least 20 characters")
     .max(1500, "Description is too long. It must be less than 1500 characters"),
-  budget: z.number().positive("Budget must be a positive number"),
+  budget: z
+    .number()
+    .positive("Budget must be a positive number")
+    .refine((val) => typeof val === "number", "Budget must be a number"), // Ensure budget is a number
   deadline: z.preprocess(
     (date) => (typeof date === "string" ? new Date(date) : date),
     z.date({

@@ -5,15 +5,15 @@ import {
   updateProfile,
   fetchUserProfile,
   searchProfiles,
-  Profile,
 } from "../api/profileApi";
+import { Profile } from "../types/ProfileTypes";
 
 interface UpdateProfileVariables {
   id: string;
   data: {
     skills: string;
     description: string;
-    hourly_rate: number;
+    hourlyRate: number;
   };
 }
 

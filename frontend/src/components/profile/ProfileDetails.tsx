@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Profile } from "../../api/profileApi";
 import ReviewList from "../Reviews/FreelancerReviewsList";
 import MyJobs from "../jobs/MyJobsList";
 import MyReviews from "../Reviews/ClientMadeReviewsList";
@@ -9,6 +8,7 @@ import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
 import FloatingChatButton from "../chat/ChatButtonExpand";
 import { useChat } from "../../contexts/ChatContext";
+import { Profile } from "../../types/ProfileTypes";
 
 interface ProfileDetailsProps {
   profile: Profile;
@@ -55,7 +55,7 @@ export function ProfileDetails({
         </div>
         <div>
           <strong className="font-medium">Description:</strong>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg break-words whitespace-pre-line text-gray-600">
             {profile.description || "No description provided."}
           </p>
         </div>

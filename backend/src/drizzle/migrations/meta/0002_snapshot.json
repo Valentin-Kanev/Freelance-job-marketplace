@@ -1,6 +1,6 @@
 {
-  "id": "f24967d9-113a-43bf-bbc0-bdaf2f7b3899",
-  "prevId": "b8df3f8d-8909-4893-a891-416167c367cf",
+  "id": "9edce9f1-22b0-4085-9b79-62cc96be5d51",
+  "prevId": "59a76956-80d0-46c1-b8a7-f4fbedf5b4b9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -8,16 +8,15 @@
       "name": "applications",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
+        "application_id": {
+          "name": "application_id",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "job_id": {
           "name": "job_id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": false,
           "notNull": true
         },
@@ -43,17 +42,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "applications_job_id_jobs_id_fk": {
-          "name": "applications_job_id_jobs_id_fk",
+        "applications_job_id_jobs_job_id_fk": {
+          "name": "applications_job_id_jobs_job_id_fk",
           "tableFrom": "applications",
           "tableTo": "jobs",
           "columnsFrom": [
             "job_id"
           ],
           "columnsTo": [
-            "id"
+            "job_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "applications_freelancer_id_users_id_fk": {
@@ -71,10 +70,18 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "applications_application_id_unique": {
+          "name": "applications_application_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "application_id"
+          ]
+        }
+      }
     },
-    "public.jobs": {
-      "name": "jobs",
+    "public.chat_rooms": {
+      "name": "chat_rooms",
       "schema": "",
       "columns": {
         "id": {
@@ -84,6 +91,77 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "user_1_id": {
+          "name": "user_1_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_2_id": {
+          "name": "user_2_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_rooms_user_1_id_users_id_fk": {
+          "name": "chat_rooms_user_1_id_users_id_fk",
+          "tableFrom": "chat_rooms",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_1_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chat_rooms_user_2_id_users_id_fk": {
+          "name": "chat_rooms_user_2_id_users_id_fk",
+          "tableFrom": "chat_rooms",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_2_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "unique_users": {
+          "name": "unique_users",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_1_id",
+            "user_2_id"
+          ]
+        }
+      }
+    },
+    "public.jobs": {
+      "name": "jobs",
+      "schema": "",
+      "columns": {
+        "job_id": {
+          "name": "job_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "client_id": {
           "name": "client_id",
           "type": "uuid",
@@ -92,7 +170,7 @@
         },
         "title": {
           "name": "title",
-          "type": "varchar(150)",
+          "type": "varchar(90)",
           "primaryKey": false,
           "notNull": true
         },
@@ -110,7 +188,7 @@
         },
         "deadline": {
           "name": "deadline",
-          "type": "timestamp",
+          "type": "date",
           "primaryKey": false,
           "notNull": true
         }
@@ -132,7 +210,105 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "jobs_job_id_unique": {
+          "name": "jobs_job_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "job_id"
+          ]
+        },
+        "jobs_title_unique": {
+          "name": "jobs_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "title"
+          ]
+        },
+        "jobs_description_unique": {
+          "name": "jobs_description_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "description"
+          ]
+        }
+      }
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "message_id": {
+          "name": "message_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "chat_room_id": {
+          "name": "chat_room_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender_id": {
+          "name": "sender_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_chat_room_id_chat_rooms_id_fk": {
+          "name": "messages_chat_room_id_chat_rooms_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "chat_rooms",
+          "columnsFrom": [
+            "chat_room_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "messages_sender_id_users_id_fk": {
+          "name": "messages_sender_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "sender_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "messages_message_id_unique": {
+          "name": "messages_message_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "message_id"
+          ]
+        }
+      }
     },
     "public.profiles": {
       "name": "profiles",
@@ -153,13 +329,13 @@
         },
         "skills": {
           "name": "skills",
-          "type": "varchar(255)",
+          "type": "varchar(30)",
           "primaryKey": false,
           "notNull": true
         },
         "description": {
           "name": "description",
-          "type": "text",
+          "type": "varchar(800)",
           "primaryKey": false,
           "notNull": true
         },
@@ -193,12 +369,11 @@
       "name": "reviews",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
+        "review_id": {
+          "name": "review_id",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "freelancer_id": {
           "name": "freelancer_id",
@@ -262,7 +437,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "reviews_review_id_unique": {
+          "name": "reviews_review_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "review_id"
+          ]
+        }
+      }
     },
     "public.users": {
       "name": "users",
@@ -277,19 +460,19 @@
         },
         "username": {
           "name": "username",
-          "type": "varchar(100)",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         },
         "password": {
           "name": "password",
-          "type": "varchar(150)",
+          "type": "varchar(60)",
           "primaryKey": false,
           "notNull": true
         },
         "email": {
           "name": "email",
-          "type": "varchar(255)",
+          "type": "varchar(25)",
           "primaryKey": false,
           "notNull": true
         },
@@ -312,6 +495,13 @@
             "username"
           ]
         },
+        "users_password_unique": {
+          "name": "users_password_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "password"
+          ]
+        },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
@@ -327,8 +517,8 @@
       "name": "userRole",
       "schema": "public",
       "values": [
-        "FREELANCER",
-        "CLIENT"
+        "freelancer",
+        "client"
       ]
     }
   },

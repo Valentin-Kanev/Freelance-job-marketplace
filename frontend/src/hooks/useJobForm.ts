@@ -4,7 +4,7 @@ type JobDetails = {
   title: string;
   description: string;
   budget: number;
-  deadline: string;
+  deadline: Date;
 };
 
 const useJobForm = (initialDetails: JobDetails) => {
@@ -12,7 +12,7 @@ const useJobForm = (initialDetails: JobDetails) => {
     title: "",
     description: "",
     budget: 0,
-    deadline: "",
+    deadline: new Date(),
   });
 
   useEffect(() => {

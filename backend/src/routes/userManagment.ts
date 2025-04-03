@@ -38,9 +38,12 @@ router.post(
           .json({ message: "Username or email already exists" });
       }
 
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
       const newUser = await db
         .insert(User)
-        .values({ username, password, email, user_type })
+        .values({ username, password: hashedPassword, email, user_type })
         .returning();
 
       await db.insert(Profile).values({
@@ -55,11 +58,7 @@ router.post(
         user: newUser,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-      } else {
-        res.status(500).json({ message: "Server error", error: String(error) });
-      }
+      res.status(500).json({ message: "Server error", error: String(error) });
     }
   }
 );

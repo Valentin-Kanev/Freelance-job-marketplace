@@ -17,7 +17,7 @@ chatRouter.get(
   "/chat-rooms",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const userId = (req.user as JwtPayload)?.id;
+    const userId = (req.user as JwtPayload)?.user_id;
 
     try {
       const chatRooms = await db
@@ -110,7 +110,7 @@ chatRouter.post(
       });
 
       if (existingRoom) {
-        return res.json({ chat_room_id: existingRoom.id });
+        return res.json({ chat_room_id: existingRoom.chatRoom_id });
       }
 
       const newRoom = await db
@@ -119,7 +119,7 @@ chatRouter.post(
         .returning()
         .then((rooms) => rooms[0]);
 
-      res.json({ chat_room_id: newRoom.id });
+      res.json({ chat_room_id: newRoom.chatRoom_id });
     } catch (error) {
       console.error("Error creating chat room:", error);
       res
@@ -136,14 +136,14 @@ chatRouter.post(
   async (req: AuthenticatedRequest<CreateMessageValidation>, res: Response) => {
     const { id: chat_room_id } = req.params;
     const { content } = req.body;
-    const userId = (req.user as JwtPayload)?.id;
-    const { id: sender_id } = req.user as JwtPayload;
+    const userId = req.user.user_id;
+    const sender_id = req.user.user_id;
 
     try {
       const chatRoom = await db.query.ChatRoom.findFirst({
         where: and(
-          eq(ChatRoom.id, chat_room_id),
-          eq(ChatRoom.user_1_id, userId)
+          eq(ChatRoom.chatRoom_id, chat_room_id),
+          or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
         ),
       });
 

@@ -1,1 +1,0 @@
-ALTER TABLE "applications" ALTER COLUMN "cover_letter_file" SET DATA TYPE text;

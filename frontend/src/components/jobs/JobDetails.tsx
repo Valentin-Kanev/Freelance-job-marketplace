@@ -6,9 +6,10 @@ import DeleteJob from "./jobActions/DeleteJob";
 import ApplyForJob from "./jobActions/ApplyForJob";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
+import { Job } from "../../types/JobTypes";
 
 interface JobDetailsProps {
-  job: any | null;
+  job: Job | null;
   userId: string;
   userType: string;
   isInModal?: boolean;
@@ -107,7 +108,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       </p>
 
       {userId === job.client_id && !isInModal && (
-        <JobApplicationsList jobId={job.id} creatorId={job.client_id} />
+        <JobApplicationsList job_id={job.job_id} creatorId={job.client_id} />
       )}
 
       {activeModal === "edit" && (
@@ -115,7 +116,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       )}
       {activeModal === "delete" && (
         <DeleteJob
-          jobId={job.id}
+          job_id={job.job_id}
           isOpen={activeModal === "delete"}
           onSuccess={onJobUpdate}
           onClose={() => setActiveModal(null)}
@@ -123,7 +124,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       )}
 
       {activeModal === "apply" && (
-        <ApplyForJob jobId={job.id} onClose={() => setActiveModal(null)} />
+        <ApplyForJob job_id={job.job_id} onClose={() => setActiveModal(null)} />
       )}
     </div>
   );

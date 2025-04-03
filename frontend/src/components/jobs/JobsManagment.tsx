@@ -6,11 +6,12 @@ import Modal from "../UI/Modal";
 import JobForm from "./JobForm";
 
 export const initialJobDetails = {
-  id: "",
+  job_id: 0,
   title: "",
   description: "",
   budget: 0,
-  deadline: "",
+  deadline: new Date(),
+  client_id: "",
 };
 
 const JobManagement: React.FC = () => {

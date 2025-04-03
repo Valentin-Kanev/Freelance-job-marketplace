@@ -1,9 +1,8 @@
 import { Router, Request, Response } from "express";
 import { db } from "../drizzle/db";
 import { Job, User } from "../drizzle/schema";
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike, sql } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
-import { JwtPayload } from "jsonwebtoken";
 import { validate } from "../middleware/validate";
 import {
   SearchJobValidation,
@@ -20,12 +19,10 @@ jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
   const { title } = req.query as SearchJobValidation;
 
   try {
-    const titleSearch = title as string;
-
     const job = await db
-      .select({ id: Job.job_id, title: Job.title })
+      .select({ job_id: Job.job_id, title: Job.title })
       .from(Job)
-      .where(ilike(Job.title, `%${titleSearch}%`));
+      .where(ilike(Job.title, `%${title}%`));
 
     res.status(200).json(job);
   } catch (error) {
@@ -41,7 +38,7 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
   try {
     const jobs = await db
       .select({
-        id: Job.job_id,
+        job_id: Job.job_id,
         title: Job.title,
         description: Job.description,
         budget: Job.budget,
@@ -59,17 +56,17 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
 });
 
 jobsRouter.put(
-  "/jobs/:id",
+  "/jobs/:job_id",
   authenticateToken,
   validate(updateJobSchema),
   async (req: AuthenticatedRequest<UpdateJobValidation>, res: Response) => {
-    const { id } = req.params;
+    const { job_id } = req.params;
     const { title, description, budget, deadline } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.user_id;
 
     try {
       const job = await db.query.Job.findFirst({
-        where: eq(Job.job_id, id),
+        where: eq(Job.job_id, job_id),
       });
 
       if (!job) {
@@ -82,28 +79,30 @@ jobsRouter.put(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      await db
+      const result = await db
         .update(Job)
         .set({
           title,
           description,
-          budget: Number(budget).toString(),
-          deadline,
+          budget: sql`${budget}`,
+          deadline: sql`${deadline}`,
         })
-        .where(eq(Job.job_id, id));
+        .where(eq(Job.job_id, job_id))
+        .execute();
 
       res.json({ message: "Job updated successfully" });
     } catch (error) {
+      console.error("Error updating job:", error);
       res.status(500).json({ message: "Error updating job" });
     }
   }
 );
 
-jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+jobsRouter.get("/jobs/:job_id", async (req: Request, res: Response) => {
+  const { job_id } = req.params;
   try {
     const job = await db.query.Job.findFirst({
-      where: eq(Job, id),
+      where: eq(Job, job_id),
     });
 
     if (!job) {
@@ -117,7 +116,7 @@ jobsRouter.get("/jobs/:id", async (req: Request, res: Response) => {
 
     const jobWithUsername = {
       ...job,
-      clientUsername: client?.username,
+      client_username: client?.username,
     };
 
     res.json(jobWithUsername);
@@ -132,15 +131,15 @@ jobsRouter.post(
   validate(createJobSchema),
   async (req: AuthenticatedRequest<CreateJobValidation>, res: Response) => {
     const { title, description, budget, deadline } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.user_id;
 
     try {
       const newJob = await db.insert(Job).values({
         client_id: userId,
         title,
         description,
-        budget: Number(budget).toString(),
-        deadline: new Date(deadline),
+        budget: sql`${budget}`,
+        deadline: sql`${deadline}`,
       });
 
       res.status(201).json(newJob);
@@ -152,15 +151,15 @@ jobsRouter.post(
 );
 
 jobsRouter.delete(
-  "/jobs/:id",
+  "/jobs/:job_id",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    const { id } = req.params;
-    const userId = req.user.id;
+    const { job_id } = req.params;
+    const userId = req.user.user_id;
 
     try {
       const job = await db.query.Job.findFirst({
-        where: eq(Job.job_id, id),
+        where: eq(Job.job_id, job_id),
       });
 
       if (!job) {
@@ -173,7 +172,7 @@ jobsRouter.delete(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      await db.delete(Job).where(eq(Job.job_id, id));
+      await db.delete(Job).where(eq(Job.job_id, job_id));
       res.json({ message: "Job deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error deleting job" });

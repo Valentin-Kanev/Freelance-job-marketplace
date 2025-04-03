@@ -8,6 +8,8 @@ import {
   numeric,
   timestamp,
   unique,
+  serial,
+  date,
 } from "drizzle-orm/pg-core";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
@@ -15,7 +17,7 @@ export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
 export const User = pgTable("users", {
   user_id: uuid("id").primaryKey().defaultRandom(),
   username: varchar("username", { length: 20 }).notNull().unique(),
-  password: varchar("password", { length: 20 }).notNull().unique(),
+  password: varchar("password", { length: 60 }).notNull().unique(),
   email: varchar("email", { length: 25 }).notNull().unique(),
   user_type: UserRole("user_type").notNull(),
 });
@@ -31,19 +33,19 @@ export const Profile = pgTable("profiles", {
 });
 
 export const Job = pgTable("jobs", {
-  job_id: integer("id").primaryKey().notNull().unique(),
+  job_id: serial("job_id").primaryKey().notNull().unique(),
   client_id: uuid("client_id")
     .references(() => User.user_id)
     .notNull(),
   title: varchar("title", { length: 90 }).notNull().unique(),
   description: text("description").notNull().unique(),
   budget: numeric("budget", { precision: 12, scale: 2 }).notNull(),
-  deadline: timestamp("deadline").notNull(),
+  deadline: date("deadline").notNull(),
 });
 
 export const Application = pgTable("applications", {
-  application_id: integer("id").primaryKey().notNull().unique(),
-  job_id: uuid("job_id")
+  application_id: serial("application_id").primaryKey().notNull().unique(),
+  job_id: serial("job_id")
     .references(() => Job.job_id, { onDelete: "cascade" })
     .notNull(),
   freelancer_id: uuid("freelancer_id")
@@ -54,7 +56,7 @@ export const Application = pgTable("applications", {
 });
 
 export const Review = pgTable("reviews", {
-  review_id: integer("id").primaryKey().notNull().unique(),
+  review_id: serial("review_id").primaryKey().notNull().unique(),
   freelancer_id: uuid("freelancer_id")
     .references(() => User.user_id)
     .notNull(),
@@ -69,7 +71,7 @@ export const Review = pgTable("reviews", {
 export const ChatRoom = pgTable(
   "chat_rooms",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    chatRoom_id: uuid("id").primaryKey().defaultRandom(),
     user_1_id: uuid("user_1_id")
       .references(() => User.user_id)
       .notNull(),
@@ -84,9 +86,9 @@ export const ChatRoom = pgTable(
 );
 
 export const Message = pgTable("messages", {
-  message_id: integer("id").primaryKey().notNull().unique(),
+  message_id: serial("message_id").primaryKey().notNull().unique(),
   chat_room_id: uuid("chat_room_id")
-    .references(() => ChatRoom.id, { onDelete: "cascade" })
+    .references(() => ChatRoom.chatRoom_id, { onDelete: "cascade" })
     .notNull(),
   sender_id: uuid("sender_id")
     .references(() => User.user_id)

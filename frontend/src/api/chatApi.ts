@@ -1,9 +1,4 @@
-interface Message {
-  sender_id: string;
-  content: string;
-  timestamp: string;
-  sender_username: string;
-}
+import { Message } from "../types/MessageTypes";
 
 const API_BASE_URL = "http://localhost:3000";
 
