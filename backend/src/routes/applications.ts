@@ -9,7 +9,7 @@ import {
 } from "../schemas/applicationValidationSchema";
 import { validate } from "../middleware/validate";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { JwtPayload } from "jsonwebtoken";
+import { logger } from "../middleware/logger";
 
 const applicationsRouter = Router();
 
@@ -26,7 +26,7 @@ applicationsRouter.post(
     const freelancer_id = req.user.user_id;
 
     if (!job_id || !freelancer_id) {
-      console.error("Missing job_id or freelancer_id", {
+      logger.error("Missing job_id or freelancer_id", {
         job_id,
         freelancer_id,
       });
@@ -36,7 +36,6 @@ applicationsRouter.post(
     }
 
     try {
-      console.log("Checking if the user has already applied...");
       const existingApplication = await db.query.Application.findFirst({
         where: and(
           eq(Application.job_id, job_id),
@@ -45,7 +44,7 @@ applicationsRouter.post(
       });
 
       if (existingApplication) {
-        console.warn("User has already applied for this job:", {
+        logger.warn("User has already applied for this job:", {
           job_id,
           freelancer_id,
         });
@@ -54,7 +53,6 @@ applicationsRouter.post(
           .json({ message: "You have already applied for this job" });
       }
 
-      console.log("Starting transaction to insert application...");
       await db.transaction(async (trx) => {
         await trx.insert(Application).values({
           job_id,
@@ -64,10 +62,9 @@ applicationsRouter.post(
         });
       });
 
-      console.log("Application submitted successfully.");
       res.status(201).json({ message: "Application submitted successfully" });
     } catch (error) {
-      console.error("Error applying for job:", error);
+      logger.error("Error applying for job:", error);
       res.status(500).json({
         message: "Error applying for the job",
         error: (error as Error).message,
@@ -96,7 +93,7 @@ applicationsRouter.get(
 
       res.json(applications);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).json({ message: "Error retrieving applications" });
     }
   }
@@ -122,7 +119,7 @@ applicationsRouter.get(
 
       res.json(applications);
     } catch (error) {
-      console.error("Error fetching applications:", error);
+      logger.error("Error fetching applications:", error);
       res.status(500).json({ message: "Error fetching applications" });
     }
   }

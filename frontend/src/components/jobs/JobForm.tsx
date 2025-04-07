@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import Input from "../UI/Input";
 import useJobForm from "../../hooks/useJobForm";
 import { useJobMutations } from "../../hooks/useJobs";
-import { CreateJobData } from "../../types/JobTypes";
+import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
   userId: string;
   initialJobDetails: CreateJobData;
   onClose: () => void;
-  onSubmitSuccess: (job: any) => void;
+  onSubmitSuccess: (job: CreateJobData | UpdateJobData) => void;
 }
 
 const JobForm: React.FC<JobFormProps> = ({
@@ -20,18 +20,6 @@ const JobForm: React.FC<JobFormProps> = ({
   const { jobDetails, handleChange } = useJobForm(initialJobDetails);
   const { handleJobSubmit } = useJobMutations(userId, onSubmitSuccess);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  // const validateForm = () => {
-  //   const newErrors: { [key: string]: string } = {};
-  //   if (!jobDetails.title.trim()) newErrors.title = "Title is required";
-  //   if (!jobDetails.description.trim())
-  //     newErrors.description = "Description is required";
-  //   if (!jobDetails.budget || jobDetails.budget <= 0)
-  //     newErrors.budget = "Valid budget is required";
-  //   if (!jobDetails.deadline) newErrors.deadline = "Deadline is required";
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

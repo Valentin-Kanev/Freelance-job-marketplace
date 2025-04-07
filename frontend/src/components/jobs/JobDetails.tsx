@@ -103,7 +103,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
         )}
       </div>
       <p className="text-xl text-gray-800 font-semibold">About the Job:</p>
-      <p className="text-md text-gray-600 mb-4 border-b border-gray-300 pb-2">
+      <p className="text-md text-gray-600 mb-4 border-b border-gray-300 pb-2 break-all overflow-hidden">
         {job.description}
       </p>
 

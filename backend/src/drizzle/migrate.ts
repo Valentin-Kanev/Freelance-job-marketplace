@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import dotenv from "dotenv";
+import { logger } from "../middleware/logger";
 
 dotenv.config({ path: "./config/.env" });
 
@@ -15,16 +16,16 @@ const migrationClient = postgres(process.env.DATABASE_URL, {
 
 async function main() {
   try {
-    console.log("Starting migration...");
+    logger.info("Starting migration...");
 
     await migrate(drizzle(migrationClient), {
       migrationsFolder: "./src/drizzle/migrations",
     });
   } catch (err) {
-    console.error("Migration failed:", err);
+    logger.error("Migration failed:", err);
   } finally {
     await migrationClient.end();
-    console.log("Database connection closed.");
+    logger.info("Database connection closed.");
   }
 }
 

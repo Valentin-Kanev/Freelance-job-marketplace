@@ -12,6 +12,8 @@ import {
   updateJobSchema,
 } from "../schemas/jobValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { CustomResponse } from "../types/responseType";
+import { logger } from "../middleware/logger";
 
 const jobsRouter = Router();
 
@@ -51,6 +53,7 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
 
     res.json(jobs);
   } catch (error) {
+    logger.error("Error retrieving jobs:", error);
     res.status(500).json({ message: "Error retrieving jobs" });
   }
 });
@@ -59,7 +62,10 @@ jobsRouter.put(
   "/jobs/:job_id",
   authenticateToken,
   validate(updateJobSchema),
-  async (req: AuthenticatedRequest<UpdateJobValidation>, res: Response) => {
+  async (
+    req: AuthenticatedRequest<UpdateJobValidation>,
+    res: Response<CustomResponse<string>>
+  ) => {
     const { job_id } = req.params;
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.user_id;
@@ -79,7 +85,7 @@ jobsRouter.put(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      const result = await db
+      await db
         .update(Job)
         .set({
           title,
@@ -92,7 +98,7 @@ jobsRouter.put(
 
       res.json({ message: "Job updated successfully" });
     } catch (error) {
-      console.error("Error updating job:", error);
+      logger.error("Error updating job:", error);
       res.status(500).json({ message: "Error updating job" });
     }
   }
@@ -121,6 +127,7 @@ jobsRouter.get("/jobs/:job_id", async (req: Request, res: Response) => {
 
     res.json(jobWithUsername);
   } catch (error) {
+    logger.error("Error retrieving job:", error);
     res.status(500).json({ message: "Error retrieving job" });
   }
 });
@@ -129,22 +136,31 @@ jobsRouter.post(
   "/jobs",
   authenticateToken,
   validate(createJobSchema),
-  async (req: AuthenticatedRequest<CreateJobValidation>, res: Response) => {
+  async (
+    req: AuthenticatedRequest<CreateJobValidation>,
+    res: Response<CustomResponse<number>>
+  ) => {
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.user_id;
 
     try {
-      const newJob = await db.insert(Job).values({
-        client_id: userId,
-        title,
-        description,
-        budget: sql`${budget}`,
-        deadline: sql`${deadline}`,
-      });
+      const [newJob] = await db
+        .insert(Job)
+        .values({
+          client_id: userId,
+          title,
+          description,
+          budget: sql`${budget}`,
+          deadline: sql`${deadline}`,
+        })
+        .returning({ id: Job.job_id });
 
-      res.status(201).json(newJob);
+      res
+        .status(201)
+        .json({ data: newJob.id, message: "Job created successfully" });
+      logger.info("Job created successfully:", newJob.id);
     } catch (error) {
-      console.error("Database error:", error);
+      logger.error("Error creating job:", error);
       res.status(500).json({ message: "Error creating job" });
     }
   }
@@ -153,7 +169,7 @@ jobsRouter.post(
 jobsRouter.delete(
   "/jobs/:job_id",
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response<CustomResponse<string>>) => {
     const { job_id } = req.params;
     const userId = req.user.user_id;
 
@@ -189,7 +205,7 @@ jobsRouter.get(
     try {
       const jobs = await db
         .select({
-          id: Job.job_id,
+          job_id: Job.job_id,
           title: Job.title,
           description: Job.description,
           budget: Job.budget,

@@ -61,7 +61,7 @@ export const sendMessage = async ({
   roomId: string;
   sender_id: string;
   content: string;
-}): Promise<any> => {
+}): Promise<Message> => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("No auth token found");

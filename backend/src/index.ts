@@ -9,6 +9,7 @@ import jobsRouter from "./routes/jobs";
 import applicationsRouter from "./routes/applications";
 import reviewsRouter from "./routes/reviews";
 import chatRouter from "./routes/chat";
+import { logger } from "./middleware/logger";
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -34,8 +35,7 @@ app.use(chatRouter);
 
 const PORT: string | number = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  //use logger
+  logger.info(`Server running on port ${PORT}`);
 });
 
 export default app;

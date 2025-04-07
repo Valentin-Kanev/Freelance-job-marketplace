@@ -10,6 +10,7 @@ import {
   CreateMessageValidation,
 } from "../schemas/ChatValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { logger } from "../middleware/logger";
 
 const chatRouter = Router();
 
@@ -48,7 +49,7 @@ chatRouter.get(
 
       res.json(chatRoomsWithDetails);
     } catch (error) {
-      console.error("Error fetching chat rooms:", error);
+      logger.error("Error fetching chat rooms:", error);
       res.status(500).json({ error: "Failed to fetch chat rooms." });
     }
   }
@@ -83,7 +84,7 @@ chatRouter.get(
 
       res.json(messagesWithUsernames);
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      logger.error("Error fetching messages:", error);
       res.status(500).json({ error: "Failed to fetch messages." });
     }
   }
@@ -121,7 +122,7 @@ chatRouter.post(
 
       res.json({ chat_room_id: newRoom.chatRoom_id });
     } catch (error) {
-      console.error("Error creating chat room:", error);
+      logger.error("Error creating chat room:", error);
       res
         .status(500)
         .json({ error: "Failed to create or retrieve chat room." });
@@ -148,7 +149,7 @@ chatRouter.post(
       });
 
       if (!chatRoom) {
-        console.error("User not authorized to send messages in this chat room");
+        logger.error("User not authorized to send messages in this chat room");
         return res.status(403).json({
           error: "User not authorized to send messages in this chat room.",
         });
@@ -162,7 +163,7 @@ chatRouter.post(
 
       res.json(message);
     } catch (error) {
-      console.error("Error sending message:", error);
+      logger.error("Error sending message:", error);
       res.status(500).json({ error: "Failed to send message." });
     }
   }

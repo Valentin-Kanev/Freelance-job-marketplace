@@ -4,7 +4,7 @@ import { formatBudget } from "../../utils/formatBudget";
 interface JobListProps {
   jobs: Job[];
   selectedjob_id: number | null;
-  onSelectJob: (job: any) => void;
+  onSelectJob: (job: Job) => void;
 }
 
 const JobList: React.FC<JobListProps> = ({
@@ -21,9 +21,10 @@ const JobList: React.FC<JobListProps> = ({
       <h2 className="text-2xl font-bold mb-4 border-b-2 border-gray-300 pb-2">
         Available Jobs
       </h2>
-      {jobs.length === 0 ? (
+      {Array.isArray(jobs) && jobs.length === 0 ? (
         <p className="text-gray-600">No jobs available at the moment.</p>
       ) : (
+        Array.isArray(jobs) &&
         jobs.map((job, index) => (
           <div
             key={job.job_id}
@@ -32,7 +33,7 @@ const JobList: React.FC<JobListProps> = ({
             }`}
             onClick={() => handleJobClick(job)}
           >
-            <h3 className="text-lg font-semibold group-hover:underline">
+            <h3 className="text-lg font-semibold break-words whitespace-pre-line group-hover:underline">
               {job.title}
             </h3>
             <p className="text-sm text-gray-600">

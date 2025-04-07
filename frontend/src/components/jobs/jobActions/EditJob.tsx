@@ -3,7 +3,7 @@ import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useUpdateJob } from "../../../hooks/useJobs";
 import { useToast } from "../../../contexts/ToastManager";
-import { Job } from "../../../types/JobTypes";
+import { Job, UpdateJobData } from "../../../types/JobTypes";
 
 interface EditJobModalProps {
   job: Job;
@@ -14,7 +14,7 @@ const EditJobModal: React.FC<EditJobModalProps> = ({ job, onClose }) => {
   const updateJobMutation = useUpdateJob();
   const { addToast } = useToast();
 
-  const handleUpdateJob = (updatedJob: Job) => {
+  const handleUpdateJob = (updatedJob: UpdateJobData) => {
     updateJobMutation.mutate(
       { job_id: job.job_id, data: updatedJob },
       {

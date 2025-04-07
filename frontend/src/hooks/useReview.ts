@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { submitReview, fetchFreelancerReviews, Review } from "../api/ReviewApi";
+import { submitReview, fetchFreelancerReviews } from "../api/ReviewApi";
+import { Review } from "../types/ReviewTypes";
 
 export const useSubmitReview = (
   onSuccess?: () => void,

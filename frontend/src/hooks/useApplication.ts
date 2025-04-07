@@ -2,10 +2,9 @@ import { useQuery, useMutation } from "react-query";
 import {
   applyForJob,
   fetchJobApplications,
-  Application,
-  MyApplication,
   fetchMyApplications,
 } from "../api/ApplicationApi";
+import { Application, MyApplication } from "../types/ApplicationTypes";
 
 export const useApplyForJob = (
   onSuccess?: () => void,

@@ -6,16 +6,16 @@ import {
   fetchUserProfile,
   searchProfiles,
 } from "../api/profileApi";
-import { Profile } from "../types/ProfileTypes";
+import { Profile, UpdateProfileData } from "../types/ProfileTypes";
 
-interface UpdateProfileVariables {
-  id: string;
-  data: {
-    skills: string;
-    description: string;
-    hourlyRate: number;
-  };
-}
+// interface UpdateProfileVariables {
+//   id: string;
+//   data: {
+//     skills: string;
+//     description: string;
+//     hourlyRate: number;
+//   };
+// }
 
 export const useProfiles = () => {
   return useQuery<Profile[], Error>("profiles", fetchProfiles, {
@@ -57,8 +57,13 @@ export const useCreateProfile = () => {
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Profile, Error, UpdateProfileVariables>(
-    ({ id, data }) => updateProfile(id, data),
+  return useMutation<
+    Profile,
+    Error,
+    { profileId: string; data: UpdateProfileData }
+  >(
+    ({ profileId, data }: { profileId: string; data: UpdateProfileData }) =>
+      updateProfile(profileId, data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("profile");

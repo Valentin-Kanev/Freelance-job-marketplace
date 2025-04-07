@@ -3,6 +3,7 @@ import { db } from "../drizzle/db";
 import { Message } from "../drizzle/schema";
 import authenticateSocket from "../middleware/Authentication/authenticateSocket";
 import { Server as HttpServer } from "http";
+import { logger } from "../middleware/logger";
 
 export const initializeSocket = (server: HttpServer) => {
   const io = new Server(server, {
@@ -29,7 +30,7 @@ export const initializeSocket = (server: HttpServer) => {
 
         io.to(chat_room_id).emit("receiveMessage", message);
       } catch (error) {
-        console.error("Error sending message:", error);
+        logger.error("Error sending message:", error);
         socket.emit("error", { message: "Failed to send message." });
       }
     });

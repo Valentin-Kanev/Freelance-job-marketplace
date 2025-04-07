@@ -10,7 +10,7 @@ const JobDashboard: React.FC<{
   jobs: Job[];
   isLoading: boolean;
   isError: boolean;
-  error: any;
+  error: Error | null;
 }> = ({ jobs, isLoading, isError, error }) => {
   const navigate = useNavigate();
   const { job_id } = useParams<{ job_id: string }>();
@@ -20,7 +20,9 @@ const JobDashboard: React.FC<{
   const userType = localStorage.getItem("userType") || "";
 
   useEffect(() => {
-    const job = jobs.find((j) => j.job_id === (job_id ? Number(job_id) : null));
+    const job = Array.isArray(jobs)
+      ? jobs.find((j) => j.job_id === (job_id ? Number(job_id) : null))
+      : null;
     setSelectedJob(job || null);
   }, [job_id, jobs, jobUpdated]);
 
@@ -35,6 +37,9 @@ const JobDashboard: React.FC<{
 
   if (isLoading) return <StatusMessage message="Loading jobs..." />;
   if (isError) return <StatusMessage message={`Error: ${error?.message}`} />;
+  if (!Array.isArray(jobs) || jobs.length === 0) {
+    return <StatusMessage message="No jobs available." />;
+  }
 
   return (
     <div className="pt-12 flex justify-center min-h-screen bg-gray-50">

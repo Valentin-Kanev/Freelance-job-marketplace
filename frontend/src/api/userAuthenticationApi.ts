@@ -1,21 +1,8 @@
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  user_type: string;
-}
-
-interface RegisterUserData {
-  username: string;
-  password: string;
-  email: string;
-  user_type: string;
-}
-
-interface LoginUserData {
-  email: string;
-  password: string;
-}
+import {
+  User,
+  RegisterUserData,
+  LoginUserData,
+} from "../types/AuthenticationTypes";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 

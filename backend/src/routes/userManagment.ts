@@ -13,6 +13,7 @@ import {
   LoginValidation,
 } from "../schemas/userManagmentValidationScheema";
 import bcrypt from "bcrypt";
+import { logger } from "../middleware/logger";
 
 const router = express.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
@@ -90,7 +91,7 @@ router.post(
       }
 
       if (!SECRET_KEY) {
-        console.error("SECRET_KEY is not defined in environment variables.");
+        logger.error("SECRET_KEY is not defined in environment variables.");
         return res.status(500).json({ message: "Internal server error" });
       }
 

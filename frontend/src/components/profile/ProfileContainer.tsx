@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import EditProfileForm from "./EditProfileForm";
 import StatusMessage from "../UI/StatusMessage";
+import { UpdateProfileData } from "../../types/ProfileTypes";
 
 interface ProfileContainerProps {
   userId?: string | null;
@@ -32,8 +33,8 @@ export function ProfileContainer({
 
   const isOwner = loggedInUserId === profile.userId;
 
-  const handleSave = (updatedData: any) => {
-    updateProfile({ id: profile.profileId, data: updatedData });
+  const handleSave = (updatedData: UpdateProfileData) => {
+    updateProfile({ profileId: profile.profileId, data: updatedData });
     setIsModalOpen(false);
   };
 

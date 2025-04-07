@@ -11,8 +11,17 @@ import {
   serial,
   date,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
+
+// export const timestamps = {
+//   createdAt: timestamp("createdAt", { withTimezone: true })
+//     .default(sql`now()`)
+//     .notNull(),
+//   updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(() => new Date()),
+//   deletedAt: timestamp("deletedAt", { withTimezone: true }),
+// };
 
 export const User = pgTable("users", {
   user_id: uuid("id").primaryKey().defaultRandom(),

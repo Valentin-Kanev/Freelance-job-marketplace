@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { db } from "../../drizzle/db";
 import { eq } from "drizzle-orm";
 import { User } from "../../drizzle/schema";
+import { logger } from "../logger";
 
 const authenticateToken = async (
   req: Request,
@@ -42,8 +43,6 @@ const authenticateToken = async (
       }
 
       try {
-        console.log("Decoded JWT:", decoded);
-
         const user = await db.query.User.findFirst({
           where: eq(User.user_id, (decoded as JwtPayload).id),
         });
@@ -53,11 +52,11 @@ const authenticateToken = async (
         }
 
         req.user = { ...(decoded as JwtPayload), ...user };
-        console.log("Authenticated user:", req.user);
+        logger.info("Authenticated user:", req.user);
 
         next();
       } catch (dbError) {
-        console.error("Database error:", dbError);
+        logger.error("Database error:", dbError);
         return res.status(500).json({ message: "Error fetching user data" });
       }
     }
