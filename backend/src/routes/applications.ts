@@ -10,6 +10,7 @@ import {
 import { validate } from "../middleware/validate";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
 import { logger } from "../middleware/logger";
+import { CustomResponse } from "../types/responseType";
 
 const applicationsRouter = Router();
 
@@ -19,7 +20,7 @@ applicationsRouter.post(
   authenticateToken,
   async (
     req: AuthenticatedRequest<CreateApplicationValidation>,
-    res: Response
+    res: Response<CustomResponse<CreateApplicationValidation>>
   ) => {
     const job_id = Number(req.params.id);
     const { cover_letter } = req.body;

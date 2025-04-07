@@ -66,7 +66,9 @@ const JobDetails: React.FC<JobDetailsProps> = ({
         scrollbarColor: "#4A5568 #E2E8F0",
       }}
     >
-      <h2 className="text-4xl font-bold mb-4">{job.title}</h2>
+      <h2 className="text-4xl font-bold mb-4 break-all overflow-hidden">
+        {job.title}
+      </h2>
       <Link
         to={`/profiles/${job.client_id}`}
         className="text-blue-600 hover:text-blue-800 underline"

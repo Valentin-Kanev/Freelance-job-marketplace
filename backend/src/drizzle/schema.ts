@@ -31,15 +31,21 @@ export const User = pgTable("users", {
   user_type: UserRole("user_type").notNull(),
 });
 
-export const Profile = pgTable("profiles", {
-  profile_id: uuid("id").primaryKey().defaultRandom(),
-  user_id: uuid("user_id")
-    .references(() => User.user_id)
-    .notNull(),
-  skills: varchar("skills", { length: 30 }).notNull(),
-  description: varchar("description", { length: 800 }).notNull(),
-  hourly_rate: numeric("hourly_rate", { precision: 10, scale: 2 }).notNull(),
-});
+export const Profile = pgTable(
+  "profiles",
+  {
+    profile_id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .references(() => User.user_id)
+      .notNull(),
+    skills: varchar("skills", { length: 30 }).notNull(),
+    description: varchar("description", { length: 800 }).notNull(),
+    hourly_rate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  },
+  (profile) => ({
+    hourlyRateConstraint: sql`CHECK (${User.user_type} = 'freelancer' OR ${profile.hourly_rate} IS NULL)`,
+  })
+);
 
 export const Job = pgTable("jobs", {
   job_id: serial("job_id").primaryKey().notNull().unique(),

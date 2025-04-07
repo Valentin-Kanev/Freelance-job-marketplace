@@ -34,7 +34,13 @@ export function ProfileContainer({
   const isOwner = loggedInUserId === profile.userId;
 
   const handleSave = (updatedData: UpdateProfileData) => {
-    updateProfile({ profileId: profile.profileId, data: updatedData });
+    const { hourly_rate, ...rest } = updatedData;
+    const dataToSend =
+      localStorage.getItem("userType") === "freelancer"
+        ? { ...rest, hourly_rate }
+        : rest;
+
+    updateProfile({ profileId: profile.profileId, data: dataToSend });
     setIsModalOpen(false);
   };
 

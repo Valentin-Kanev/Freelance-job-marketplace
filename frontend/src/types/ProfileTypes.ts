@@ -4,7 +4,7 @@ export interface Profile {
   userId: string;
   skills: string;
   description: string;
-  hourlyRate: number;
+  hourlyRate?: number;
   username: string;
 }
 
@@ -14,5 +14,7 @@ export type CreateProfileData = Omit<
 >;
 
 export type UpdateProfileData = Partial<
-  Omit<Profile, "userType" | "profileId" | "userId" | "username">
+  Omit<Profile, "userType" | "profileId" | "userId" | "username"> & {
+    hourly_rate?: number;
+  }
 >;

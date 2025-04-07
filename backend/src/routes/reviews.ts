@@ -9,6 +9,7 @@ import {
   CreateReviewValidation,
 } from "../schemas/reviewValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { CustomResponse } from "../types/responseType";
 
 const reviewsRouter = Router();
 
@@ -16,7 +17,10 @@ reviewsRouter.post(
   "/:id/reviews",
   authenticateToken,
   validate(createReviewSchema),
-  async (req: AuthenticatedRequest<CreateReviewValidation>, res: Response) => {
+  async (
+    req: AuthenticatedRequest<CreateReviewValidation>,
+    res: Response<CustomResponse<CreateReviewValidation>>
+  ) => {
     const { id: freelancer_id } = req.params;
     const { rating, review_text } = req.body;
     const { id: client_id } = req.user;

@@ -9,7 +9,10 @@ export const createProfileSchema = z.object({
     .string()
     .min(1, "Description is required")
     .max(500, "Description is too long. It must be less than 500 characters"),
-  hourly_rate: z.string().min(1, "Hourly rate is required"),
+  hourly_rate: z
+    .number()
+    .positive("Hourly rate must be a positive number")
+    .nullable(),
 });
 export type CreateProfileValidation = z.infer<typeof createProfileSchema>;
 

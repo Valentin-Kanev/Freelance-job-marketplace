@@ -10,7 +10,7 @@ interface EditProfileProps {
   onSave: (data: {
     skills: string;
     description: string;
-    hourly_rate: number;
+    hourly_rate?: number;
   }) => void;
   isOpen: boolean;
   onClose: () => void;
@@ -30,7 +30,11 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ skills, description, hourly_rate: hourlyRate });
+    const dataToSend = isFreelancer
+      ? { skills, description, hourly_rate: hourlyRate }
+      : { skills, description };
+
+    onSave(dataToSend);
     setToastMessage("Profile updated successfully!");
   };
 
@@ -62,7 +66,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
               label="Hourly Rate"
               name="hourlyRate"
               type="number"
-              value={hourlyRate}
+              value={hourlyRate || ""}
               onChange={(e) => setHourlyRate(Number(e.target.value))}
               required
             />

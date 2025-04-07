@@ -14,6 +14,9 @@ import {
 } from "../schemas/userManagmentValidationScheema";
 import bcrypt from "bcrypt";
 import { logger } from "../middleware/logger";
+import { sql } from "drizzle-orm";
+import { AuthenticatedRequest } from "../types/authenticatedRequest";
+import { CustomResponse } from "../types/responseType";
 
 const router = express.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");
@@ -24,7 +27,10 @@ const SECRET_KEY = process.env.SECRET_KEY as string;
 router.post(
   "/register",
   validate(createUserSchema),
-  async (req: Request, res: Response) => {
+  async (
+    req: AuthenticatedRequest<CreateUserValidation>,
+    res: Response<CustomResponse<CreateUserValidation>>
+  ) => {
     const { username, password, email, user_type } =
       req.body as CreateUserValidation;
 
@@ -51,12 +57,12 @@ router.post(
         user_id: newUser[0].user_id,
         skills: "",
         description: "",
-        hourly_rate: "0.00",
+        hourly_rate: user_type === "freelancer" ? sql`0` : null,
       });
 
       res.status(201).json({
         message: "User registered and profile created successfully",
-        user: newUser,
+        data: newUser[0],
       });
     } catch (error) {
       res.status(500).json({ message: "Server error", error: String(error) });
@@ -67,8 +73,8 @@ router.post(
 router.post(
   "/login",
   validate(loginSchema),
-  async (req: Request, res: Response) => {
-    const { email, password } = req.body as LoginValidation;
+  async (req: AuthenticatedRequest<LoginValidation>, res: Response) => {
+    const { email, password } = req.body;
 
     try {
       const user = await db.query.User.findFirst({

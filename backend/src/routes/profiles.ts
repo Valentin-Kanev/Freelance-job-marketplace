@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { eq, like, and, or } from "drizzle-orm";
+import { eq, like, and, or, sql } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import { Profile, User } from "../drizzle/schema";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
@@ -12,6 +12,7 @@ import {
 } from "../schemas/profileValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
 import { JwtPayload } from "jsonwebtoken";
+import { CustomResponse } from "../types/responseType";
 
 const router = Router();
 
@@ -23,7 +24,10 @@ router.get("/profiles", async (req: Request, res: Response) => {
         userId: Profile.user_id,
         skills: Profile.skills,
         description: Profile.description,
-        hourlyRate: Profile.hourly_rate,
+        hourlyRate:
+          sql`CASE WHEN ${User.user_type} = 'freelancer' THEN ${Profile.hourly_rate} ELSE NULL END`.as(
+            "hourlyRate"
+          ),
         username: User.username,
         userType: User.user_type,
       })
@@ -47,7 +51,10 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
         userId: Profile.user_id,
         skills: Profile.skills,
         description: Profile.description,
-        hourlyRate: Profile.hourly_rate,
+        hourlyRate:
+          sql`CASE WHEN ${User.user_type} = 'freelancer' THEN ${Profile.hourly_rate} ELSE NULL END`.as(
+            "hourlyRate"
+          ),
         username: User.username,
         userType: User.user_type,
       })
@@ -65,14 +72,22 @@ router.post(
   "/profiles",
   authenticateToken,
   validate(createProfileSchema),
-  async (req: AuthenticatedRequest<CreateProfileValidation>, res: Response) => {
+  async (
+    req: AuthenticatedRequest<CreateProfileValidation>,
+    res: Response<CustomResponse<UpdateProfileValidation>>
+  ) => {
     const { skills, description, hourly_rate } = req.body;
     const { id: user_id } = req.user as JwtPayload;
 
     try {
       const newProfile = await db
         .insert(Profile)
-        .values({ user_id, skills, description, hourly_rate })
+        .values({
+          user_id,
+          skills,
+          description,
+          hourly_rate: sql`${hourly_rate}`,
+        })
         .returning({
           id: Profile.profile_id,
           userId: Profile.user_id,
@@ -81,7 +96,9 @@ router.post(
           hourlyRate: Profile.hourly_rate,
         });
 
-      res.status(201).json(newProfile);
+      res
+        .status(201)
+        .json({ message: "Profile created successfully", data: newProfile[0] });
     } catch (error) {
       res.status(500).json({ error: "Failed to create profile" });
     }
@@ -92,7 +109,10 @@ router.put(
   "/profiles/user/:id",
   authenticateToken,
   validate(updateProfileSchema),
-  async (req: AuthenticatedRequest<UpdateProfileValidation>, res: Response) => {
+  async (
+    req: AuthenticatedRequest<UpdateProfileValidation>,
+    res: Response<CustomResponse<UpdateProfileValidation>>
+  ) => {
     const { id } = req.params;
     const { skills, description, hourly_rate } = req.body;
     const userId = req.user.id;
@@ -114,7 +134,11 @@ router.put(
 
       const updatedProfile = await db
         .update(Profile)
-        .set({ skills, description, hourly_rate })
+        .set({
+          skills,
+          description,
+          hourly_rate: hourly_rate !== undefined ? sql`${hourly_rate}` : null, // Handle null values
+        })
         .where(eq(Profile.profile_id, id))
         .returning({
           id: Profile.profile_id,
@@ -124,7 +148,10 @@ router.put(
           hourlyRate: Profile.hourly_rate,
         });
 
-      res.status(200).json(updatedProfile);
+      res.status(200).json({
+        message: "Profile updated successfully",
+        data: updatedProfile[0],
+      });
     } catch (error) {
       res.status(500).json({ error: "Failed to update profile" });
     }
