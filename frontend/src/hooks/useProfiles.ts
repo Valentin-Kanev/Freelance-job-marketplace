@@ -8,15 +8,6 @@ import {
 } from "../api/profileApi";
 import { Profile, UpdateProfileData } from "../types/ProfileTypes";
 
-// interface UpdateProfileVariables {
-//   id: string;
-//   data: {
-//     skills: string;
-//     description: string;
-//     hourlyRate: number;
-//   };
-// }
-
 export const useProfiles = () => {
   return useQuery<Profile[], Error>("profiles", fetchProfiles, {
     staleTime: 5 * 60 * 1000,
@@ -54,25 +45,26 @@ export const useCreateProfile = () => {
   });
 };
 
-export const useUpdateProfile = () => {
+export const useUpdateProfile = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: (errorMessage: string) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation<
     Profile,
     Error,
     { profileId: string; data: UpdateProfileData }
-  >(
-    ({ profileId, data }: { profileId: string; data: UpdateProfileData }) =>
-      updateProfile(profileId, data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("profile");
-      },
-      onError: (error: Error) => {
-        console.error("Error updating profile:", error.message);
-      },
-    }
-  );
+  >(({ profileId, data }) => updateProfile(profileId, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("profile");
+      if (onSuccessCallback) onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error("Error updating profile:", error.message);
+      if (onErrorCallback) onErrorCallback(error.message);
+    },
+  });
 };
 
 export const useSearchProfiles = (query: string) => {

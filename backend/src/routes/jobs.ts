@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../drizzle/db";
 import { Job, User } from "../drizzle/schema";
-import { eq, ilike, sql } from "drizzle-orm";
+import { and, eq, ilike, isNull, sql } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { validate } from "../middleware/validate";
 import {
@@ -24,7 +24,7 @@ jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
     const job = await db
       .select({ job_id: Job.job_id, title: Job.title })
       .from(Job)
-      .where(ilike(Job.title, `%${title}%`));
+      .where(and(ilike(Job.title, `%${title}%`), isNull(Job.deleted_at)));
 
     res.status(200).json(job);
   } catch (error) {
@@ -47,9 +47,11 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
         deadline: Job.deadline,
         client_id: Job.client_id,
         client_username: User.username,
+        deleted_at: Job.deleted_at,
       })
       .from(Job)
-      .leftJoin(User, eq(User.user_id, Job.client_id));
+      .leftJoin(User, eq(User.user_id, Job.client_id))
+      .where(isNull(Job.deleted_at));
 
     res.json(jobs);
   } catch (error) {
@@ -108,7 +110,7 @@ jobsRouter.get("/jobs/:job_id", async (req: Request, res: Response) => {
   const { job_id } = req.params;
   try {
     const job = await db.query.Job.findFirst({
-      where: eq(Job, job_id),
+      where: and(eq(Job.job_id, Number(job_id)), isNull(Job.deleted_at)),
     });
 
     if (!job) {
@@ -166,7 +168,7 @@ jobsRouter.post(
   }
 );
 
-jobsRouter.delete(
+jobsRouter.patch(
   "/jobs/:job_id",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response<CustomResponse<string>>) => {
@@ -188,9 +190,15 @@ jobsRouter.delete(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      await db.delete(Job).where(eq(Job.job_id, job_id));
+      await db
+        .update(Job)
+        .set({ deleted_at: sql`now()` })
+        .where(eq(Job.job_id, job_id));
+
+      // await db.delete(Job).where(eq(Job.job_id, job_id));
       res.json({ message: "Job deleted successfully" });
     } catch (error) {
+      logger.error("Error deleting job:", error);
       res.status(500).json({ message: "Error deleting job" });
     }
   }

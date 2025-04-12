@@ -71,7 +71,11 @@ export const updateJob = async (
 
 export const deleteJob = async (job_id: number): Promise<void> => {
   return fetchClient<void>(`/jobs/${job_id}`, {
-    method: "DELETE",
+    method: "PATCH",
+    body: JSON.stringify({ deleted_at: new Date() }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

@@ -137,7 +137,7 @@ router.put(
         .set({
           skills,
           description,
-          hourly_rate: hourly_rate !== undefined ? sql`${hourly_rate}` : null, // Handle null values
+          hourly_rate: hourly_rate !== undefined ? sql`${hourly_rate}` : null,
         })
         .where(eq(Profile.profile_id, id))
         .returning({

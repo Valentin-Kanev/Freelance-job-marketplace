@@ -20,23 +20,26 @@ export const useJobs = () => {
 };
 
 export const useCreateJob = (
-  onSuccessCallback?: (newJob: CreateJobData) => void
+  onSuccessCallback?: (newJob: CreateJobData) => void,
+  onErrorCallback?: (errorMessage: string) => void
 ) => {
   const queryClient = useQueryClient();
 
-  return useMutation(createJob, {
+  return useMutation<Job, Error, CreateJobData>(createJob, {
     onSuccess: (newJob) => {
       queryClient.invalidateQueries("jobs");
       if (onSuccessCallback) onSuccessCallback(newJob);
     },
     onError: (error: Error) => {
       console.error("Error creating job:", error.message);
+      if (onErrorCallback) onErrorCallback(error.message);
     },
   });
 };
 
 export const useUpdateJob = (
-  onSuccessCallback?: (updatedJob: UpdateJobData) => void
+  onSuccessCallback?: (updatedJob: UpdateJobData) => void,
+  onErrorCallback?: (errorMessage: string) => void
 ) => {
   const queryClient = useQueryClient();
 
@@ -52,6 +55,7 @@ export const useUpdateJob = (
       },
       onError: (error: Error) => {
         console.error("Error updating job:", error.message);
+        if (onErrorCallback) onErrorCallback(error.message);
       },
     }
   );
@@ -97,10 +101,11 @@ export const useSearchJobsByTitle = (title: string) => {
 
 export const useJobMutations = (
   userId: string,
-  onSuccess: (job: Job | CreateJobData | UpdateJobData) => void
+  onSuccess: (job: Job | CreateJobData | UpdateJobData) => void,
+  onError?: (errorMessage: string) => void
 ) => {
-  const createJobMutation = useCreateJob(onSuccess);
-  const updateJobMutation = useUpdateJob(onSuccess);
+  const createJobMutation = useCreateJob(onSuccess, onError);
+  const updateJobMutation = useUpdateJob(onSuccess, onError);
 
   const handleJobSubmit = (isUpdate: boolean, jobDetails: Job) => {
     if (isUpdate) {

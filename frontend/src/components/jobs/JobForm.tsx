@@ -18,14 +18,24 @@ const JobForm: React.FC<JobFormProps> = ({
   onSubmitSuccess,
 }) => {
   const { jobDetails, handleChange } = useJobForm(initialJobDetails);
-  const { handleJobSubmit } = useJobMutations(userId, onSubmitSuccess);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const { handleJobSubmit } = useJobMutations(
+    userId,
+    (job) => {
+      setErrors({});
+      onSubmitSuccess(job);
+      onClose();
+    },
+    (errorMessage: string) => {
+      setErrors({ general: errorMessage });
+    }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const isUpdate = Boolean(initialJobDetails.job_id);
-
+    setErrors({});
     handleJobSubmit(isUpdate, {
       ...jobDetails,
       job_id: initialJobDetails.job_id,
@@ -34,7 +44,6 @@ const JobForm: React.FC<JobFormProps> = ({
       budget: Number(jobDetails.budget),
       deadline: new Date(jobDetails.deadline),
     });
-    onClose();
   };
 
   const handleFocus = (fieldName: string) => {
@@ -46,6 +55,12 @@ const JobForm: React.FC<JobFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {errors.general && (
+        <div className="rounded bg-red-100 px-4 py-2 text-red-700">
+          {errors.general}
+        </div>
+      )}
+
       <Input
         label="Job Title"
         name="title"

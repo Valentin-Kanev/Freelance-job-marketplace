@@ -15,14 +15,6 @@ import { sql } from "drizzle-orm";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
 
-// export const timestamps = {
-//   createdAt: timestamp("createdAt", { withTimezone: true })
-//     .default(sql`now()`)
-//     .notNull(),
-//   updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(() => new Date()),
-//   deletedAt: timestamp("deletedAt", { withTimezone: true }),
-// };
-
 export const User = pgTable("users", {
   user_id: uuid("id").primaryKey().defaultRandom(),
   username: varchar("username", { length: 20 }).notNull().unique(),
@@ -56,6 +48,7 @@ export const Job = pgTable("jobs", {
   description: text("description").notNull().unique(),
   budget: numeric("budget", { precision: 12, scale: 2 }).notNull(),
   deadline: date("deadline").notNull(),
+  deleted_at: timestamp("deleted_at"),
 });
 
 export const Application = pgTable("applications", {

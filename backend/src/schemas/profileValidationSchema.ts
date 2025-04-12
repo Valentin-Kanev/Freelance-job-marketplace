@@ -3,11 +3,11 @@ import { z } from "zod";
 export const createProfileSchema = z.object({
   skills: z
     .string()
-    .min(4, "Skills are required")
+    .min(4, "Skills are required to be at least 4 characters")
     .max(100, "Skills are too long. They must be less than 200 characters"),
   description: z
     .string()
-    .min(1, "Description is required")
+    .min(20, "Description is required to be at least 20 characters")
     .max(500, "Description is too long. It must be less than 500 characters"),
   hourly_rate: z
     .number()

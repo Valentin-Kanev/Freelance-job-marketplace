@@ -43,11 +43,7 @@ export const fetchProfiles = async (): Promise<Profile[]> => {
 };
 
 export const fetchUserProfile = async (userId: string): Promise<Profile> => {
-  const response = await fetch(`${BASE_URL}/profiles/user/${userId}`, {
-    // headers: {
-    //   "Content-Type": "application/json",
-    // },
-  });
+  const response = await fetch(`${BASE_URL}/profiles/user/${userId}`, {});
 
   if (!response.ok) {
     throw new Error(`Error ${response.status}: ${response.statusText}`);

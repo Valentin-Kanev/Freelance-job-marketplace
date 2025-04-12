@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useApplyForJob } from "../../hooks/useApplication";
 import Button from "../UI/Button";
 import { useToast } from "../../contexts/ToastManager";
-import StatusMessage from "../UI/StatusMessage";
 
 interface JobApplicationProps {
   job_id: number;
@@ -11,21 +10,18 @@ interface JobApplicationProps {
 
 const JobApplication: React.FC<JobApplicationProps> = ({ job_id, onClose }) => {
   const [coverLetter, setCoverLetter] = useState("");
+  const [errors, setErrors] = useState<{ general?: string }>({});
   const freelancerId = localStorage.getItem("userId");
   const { addToast } = useToast();
 
-  const {
-    mutate: submitApplication,
-    isLoading,
-    isError,
-    error,
-  } = useApplyForJob(
+  const { mutate: submitApplication, isLoading } = useApplyForJob(
     () => {
       addToast("Application submitted successfully!");
+      setErrors({});
       onClose();
     },
     (error: Error) => {
-      console.error("Error applying for job:", error.message);
+      setErrors({ general: error.message });
     }
   );
 
@@ -33,7 +29,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ job_id, onClose }) => {
     e.preventDefault();
 
     if (!coverLetter.trim()) {
-      alert("Cover letter cannot be empty!");
+      setErrors({ general: "Cover letter cannot be empty!" });
       return;
     }
 
@@ -47,16 +43,20 @@ const JobApplication: React.FC<JobApplicationProps> = ({ job_id, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4">
+    <form onSubmit={handleSubmit} className="p-4 space-y-4 ">
+      {errors.general && (
+        <div className="rounded bg-red-100 px-4 py-2 text-red-700">
+          {errors.general}
+        </div>
+      )}
+
       <textarea
-        className="w-full border p-2 mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Write your cover letter here..."
         value={coverLetter}
         onChange={(e) => setCoverLetter(e.target.value)}
       />
-      {isError && (
-        <StatusMessage message={`Error: ${(error as Error)?.message}`} />
-      )}
+
       <div className="flex justify-center gap-3">
         <Button
           type="button"

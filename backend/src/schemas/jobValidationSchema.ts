@@ -12,7 +12,7 @@ export const createJobSchema = z.object({
   budget: z
     .number()
     .positive("Budget must be a positive number")
-    .refine((val) => typeof val === "number", "Budget must be a number"), // Ensure budget is a number
+    .refine((val) => typeof val === "number", "Budget must be a number"),
   deadline: z.preprocess(
     (date) => (typeof date === "string" ? new Date(date) : date),
     z.date({

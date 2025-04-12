@@ -23,10 +23,8 @@ export const useSubmitReview = (
       },
       onError: (error: Error) => {
         if (error.message.includes("already submitted")) {
-          alert("You have already submitted a review for this freelancer.");
         } else {
           console.error("Error submitting review:", error.message);
-          alert("An error occurred while submitting the review.");
         }
         if (onError) onError(error);
       },
