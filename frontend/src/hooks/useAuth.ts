@@ -2,11 +2,12 @@ import { jwtDecode } from "jwt-decode";
 import { useMutation, useQuery } from "react-query";
 import { registerUser, loginUser } from "../api/userAuthenticationApi";
 import { User } from "../types/AuthenticationTypes";
+import { DecodedToken } from "../types/DecodedToken";
 
 export const isTokenValid = (token: string): boolean => {
   try {
-    const decoded: any = (jwtDecode as any)(token);
-    return decoded.exp * 1000 > Date.now();
+    const decodedToken: DecodedToken = jwtDecode(token);
+    return decodedToken.exp * 1000 > Date.now();
   } catch (e) {
     return false;
   }
@@ -18,8 +19,8 @@ export const useAuthUser = () => {
     () => {
       const token = localStorage.getItem("token");
       if (token && isTokenValid(token)) {
-        const decoded: any = jwtDecode(token);
-        return { id: decoded.id, userType: decoded.user_type };
+        const decodedToken: DecodedToken = jwtDecode(token);
+        return { id: decodedToken.id, userType: decodedToken.user_type };
       } else {
         localStorage.removeItem("token");
         return null;

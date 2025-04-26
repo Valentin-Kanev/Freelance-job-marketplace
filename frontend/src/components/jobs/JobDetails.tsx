@@ -59,7 +59,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
 
   return (
     <div
-      className="w-full overflow-y-auto p-4"
+      className="w-full overflow-y-auto p-4 scroll-smooth"
       style={{
         maxHeight: "85vh",
         scrollbarWidth: "thin",

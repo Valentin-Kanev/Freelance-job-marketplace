@@ -37,7 +37,7 @@ const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
               deadline: new Date(),
               client_id: userId,
             }}
-            onSubmitSuccess={(job) => {
+            onSubmitSuccess={() => {
               addToast("Job created successfully!");
               setIsModalOpen(false);
             }}

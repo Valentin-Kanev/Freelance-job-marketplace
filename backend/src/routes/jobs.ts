@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { db } from "../drizzle/db";
-import { Job, User } from "../drizzle/schema";
+import { Application, Job, User } from "../drizzle/schema";
 import { and, eq, ilike, isNull, sql } from "drizzle-orm";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { validate } from "../middleware/validate";
@@ -190,13 +190,21 @@ jobsRouter.patch(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      await db
-        .update(Job)
-        .set({ deleted_at: sql`now()` })
-        .where(eq(Job.job_id, job_id));
+      await db.transaction(async (trx) => {
+        await trx
+          .update(Job)
+          .set({ deleted_at: new Date() })
+          .where(eq(Job.job_id, job_id));
 
-      // await db.delete(Job).where(eq(Job.job_id, job_id));
-      res.json({ message: "Job deleted successfully" });
+        await trx
+          .update(Application)
+          .set({ deleted_at: new Date() })
+          .where(eq(Application.job_id, job_id));
+      });
+
+      res.json({
+        message: "Job and related applications deleted successfully",
+      });
     } catch (error) {
       logger.error("Error deleting job:", error);
       res.status(500).json({ message: "Error deleting job" });
@@ -223,7 +231,7 @@ jobsRouter.get(
         })
         .from(Job)
         .leftJoin(User, eq(User.user_id, Job.client_id))
-        .where(eq(Job.client_id, clientId));
+        .where(and(eq(Job.client_id, clientId), isNull(Job.deleted_at)));
 
       res.json(jobs);
     } catch (error) {

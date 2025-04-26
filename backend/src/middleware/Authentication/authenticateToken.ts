@@ -32,26 +32,30 @@ const authenticateToken = async (
     SECRET_KEY,
     async (
       err: VerifyErrors | null,
-      decoded: string | JwtPayload | undefined
+      decodedToken: string | JwtPayload | undefined
     ) => {
       if (err) {
         return res.status(403).json({ message: "Invalid or expired token" });
       }
 
-      if (typeof decoded !== "object" || !decoded || !("id" in decoded)) {
+      if (
+        typeof decodedToken !== "object" ||
+        !decodedToken ||
+        !("id" in decodedToken)
+      ) {
         return res.status(400).json({ message: "Invalid token payload" });
       }
 
       try {
         const user = await db.query.User.findFirst({
-          where: eq(User.user_id, (decoded as JwtPayload).id),
+          where: eq(User.user_id, (decodedToken as JwtPayload).id),
         });
 
         if (!user) {
           return res.status(404).json({ message: "User not found" });
         }
 
-        req.user = { ...(decoded as JwtPayload), ...user };
+        req.user = { ...(decodedToken as JwtPayload), ...user };
         logger.info("Authenticated user:", req.user);
 
         next();

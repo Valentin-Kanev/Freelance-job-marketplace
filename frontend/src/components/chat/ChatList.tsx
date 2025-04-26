@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useChatRooms } from "../../hooks/useChat";
+import { ChatRoom } from "../../types/chatType";
 
 interface ChatRoomListProps {
   onSelectRoom: (roomId: string) => void;
@@ -15,12 +16,6 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
     selectedRoomId || null
   );
 
-  useEffect(() => {
-    if (selectedRoomId) {
-      setLocalSelectedRoomId(selectedRoomId);
-    }
-  }, [selectedRoomId]);
-
   const handleSelectRoom = (roomId: string) => {
     setLocalSelectedRoomId(roomId);
     onSelectRoom(roomId);
@@ -33,8 +28,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
         <div className="text-gray-500">Loading chat rooms...</div>
       ) : (
         <ul className="space-y-2">
-          {chatRooms?.map((room: any, index: number) => {
-            const otherUser = room.otherUser;
+          {chatRooms?.map((room: ChatRoom, index: number) => {
             const isSelected = room.chatRoom_id === localSelectedRoomId;
             return (
               <li
@@ -44,7 +38,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
                 }`}
                 onClick={() => handleSelectRoom(room.chatRoom_id)}
               >
-                {otherUser?.username || "Unknown User"}
+                {room.otherUser?.username || "Unknown User"}
               </li>
             );
           })}

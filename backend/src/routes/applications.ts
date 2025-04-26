@@ -1,7 +1,7 @@
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { Application, Job, User } from "../drizzle/schema";
 import { Router, Response } from "express";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import {
   createApplicationSchema,
@@ -90,7 +90,9 @@ applicationsRouter.get(
         })
         .from(Application)
         .innerJoin(User, eq(Application.freelancer_id, User.user_id))
-        .where(eq(Application.job_id, job_id));
+        .where(
+          and(eq(Application.job_id, job_id), isNull(Application.deleted_at))
+        );
 
       res.json(applications);
     } catch (error) {
@@ -116,7 +118,12 @@ applicationsRouter.get(
         })
         .from(Application)
         .innerJoin(Job, eq(Application.job_id, Job.job_id))
-        .where(eq(Application.freelancer_id, freelancerId));
+        .where(
+          and(
+            eq(Application.freelancer_id, freelancerId),
+            isNull(Application.deleted_at)
+          )
+        );
 
       res.json(applications);
     } catch (error) {

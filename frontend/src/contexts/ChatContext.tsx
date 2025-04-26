@@ -2,7 +2,7 @@ import { createContext, useState, useContext } from "react";
 
 interface ChatContextProps {
   isChatOpen: boolean;
-  chatRoomId: string | null;
+  chatRoom_id: string | null;
   openChat: (roomId: string) => void;
   closeChat: () => void;
 }
@@ -15,7 +15,7 @@ interface ChatProviderProps {
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+  const [chatRoom_id, setChatRoomId] = useState<string | null>(null);
 
   const openChat = (roomId: string) => {
     setChatRoomId(roomId);
@@ -29,7 +29,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   return (
     <ChatContext.Provider
-      value={{ isChatOpen, chatRoomId, openChat, closeChat }}
+      value={{ isChatOpen, chatRoom_id, openChat, closeChat }}
     >
       {children}
     </ChatContext.Provider>

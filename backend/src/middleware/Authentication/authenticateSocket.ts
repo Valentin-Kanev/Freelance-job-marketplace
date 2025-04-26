@@ -18,11 +18,11 @@ const authenticateSocket = (
   }
 
   try {
-    const decoded = jwt.verify(
+    const decodedToken = jwt.verify(
       token,
       process.env.JWT_SECRET as string
     ) as JwtPayload;
-    socket.user = decoded;
+    socket.user = decodedToken;
     next();
   } catch (error) {
     if (error instanceof Error) {

@@ -3,7 +3,7 @@ import { useChat } from "../../contexts/ChatContext";
 import FloatingChatButton from "./ChatButtonExpand";
 
 export const ChatButtonWrapper: React.FC = () => {
-  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
+  const { isChatOpen, chatRoom_id, openChat, closeChat } = useChat();
   const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
     useState(true);
 
@@ -12,9 +12,9 @@ export const ChatButtonWrapper: React.FC = () => {
       isOpen={isChatOpen}
       setIsOpen={(isOpen) => {
         if (!isOpen) setIsFloatingChatButtonVisible(true);
-        isOpen ? openChat(chatRoomId!) : closeChat();
+        isOpen ? openChat(chatRoom_id!) : closeChat();
       }}
-      chatRoomId={chatRoomId}
+      chatRoom_id={chatRoom_id}
       isVisible={isFloatingChatButtonVisible}
     />
   );

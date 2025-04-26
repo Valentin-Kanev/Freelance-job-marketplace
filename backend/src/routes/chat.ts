@@ -59,13 +59,13 @@ chatRouter.get(
   "/chat-rooms/:id/messages",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const { id: chat_room_id } = req.params;
+    const { id: chatRoom_id } = req.params;
 
     try {
       const messages = await db
         .select()
         .from(Message)
-        .where(eq(Message.chat_room_id, chat_room_id))
+        .where(eq(Message.chatRoom_id, chatRoom_id))
         .orderBy(asc(Message.created_at));
 
       const messagesWithUsernames = await Promise.all(
@@ -94,7 +94,8 @@ chatRouter.post(
   "/chat-rooms",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const { user_1_id, user_2_id } = req.body;
+    const user_1_id = req.user.user_id;
+    const { user_2_id } = req.body;
 
     try {
       const existingRoom = await db.query.ChatRoom.findFirst({
@@ -111,7 +112,7 @@ chatRouter.post(
       });
 
       if (existingRoom) {
-        return res.json({ chat_room_id: existingRoom.chatRoom_id });
+        return res.json({ chatRoom_id: existingRoom.chatRoom_id });
       }
 
       const newRoom = await db
@@ -120,7 +121,7 @@ chatRouter.post(
         .returning()
         .then((rooms) => rooms[0]);
 
-      res.json({ chat_room_id: newRoom.chatRoom_id });
+      res.json({ chatRoom_id: newRoom.chatRoom_id });
     } catch (error) {
       logger.error("Error creating chat room:", error);
       res
@@ -135,7 +136,7 @@ chatRouter.post(
   validate(createMessageSchema),
   authenticateToken,
   async (req: AuthenticatedRequest<CreateMessageValidation>, res: Response) => {
-    const { id: chat_room_id } = req.params;
+    const { id: chatRoom_id } = req.params;
     const { content } = req.body;
     const userId = req.user.user_id;
     const sender_id = req.user.user_id;
@@ -143,7 +144,7 @@ chatRouter.post(
     try {
       const chatRoom = await db.query.ChatRoom.findFirst({
         where: and(
-          eq(ChatRoom.chatRoom_id, chat_room_id),
+          eq(ChatRoom.chatRoom_id, chatRoom_id),
           or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
         ),
       });
@@ -157,7 +158,7 @@ chatRouter.post(
 
       const message = await db
         .insert(Message)
-        .values({ chat_room_id, sender_id, content })
+        .values({ chatRoom_id, sender_id, content })
         .returning()
         .then((messages) => messages[0]);
 

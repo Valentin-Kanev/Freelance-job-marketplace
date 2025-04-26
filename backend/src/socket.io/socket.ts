@@ -16,19 +16,19 @@ export const initializeSocket = (server: HttpServer) => {
   io.use(authenticateSocket);
 
   io.on("connection", (socket) => {
-    socket.on("joinRoom", (chat_room_id) => {
-      socket.join(chat_room_id);
+    socket.on("joinRoom", (chatRoom_id) => {
+      socket.join(chatRoom_id);
     });
 
-    socket.on("sendMessage", async ({ chat_room_id, senderId, content }) => {
+    socket.on("sendMessage", async ({ chatRoom_id, senderId, content }) => {
       try {
         const message = await db
           .insert(Message)
-          .values({ chat_room_id, sender_id: senderId, content })
+          .values({ chatRoom_id, sender_id: senderId, content })
           .returning()
           .then((messages) => messages[0]);
 
-        io.to(chat_room_id).emit("receiveMessage", message);
+        io.to(chatRoom_id).emit("receiveMessage", message);
       } catch (error) {
         logger.error("Error sending message:", error);
         socket.emit("error", { message: "Failed to send message." });

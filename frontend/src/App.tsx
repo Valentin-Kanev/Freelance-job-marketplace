@@ -8,7 +8,7 @@ import { ProfileContainer } from "./components/profile/ProfileContainer";
 import AuthMode from "./components/userAuthentication/AuthMode";
 import { ToastProvider } from "./contexts/ToastManager";
 import { useJobs } from "./hooks/useJobs";
-import FreelancerProfilesList from "./components/profile/ProfilesList";
+import FreelancerProfilesList from "./components/profile/FreelancerProfilesList";
 import ProfileLoader from "./components/profile/ProfileLoader";
 import { SocketProvider } from "./hooks/useSocket";
 import ChatContainer from "./components/chat/ChatContainer";

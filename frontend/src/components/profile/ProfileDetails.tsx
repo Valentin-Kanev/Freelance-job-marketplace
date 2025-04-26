@@ -27,7 +27,7 @@ export function ProfileDetails({
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
-  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
+  const { isChatOpen, chatRoom_id, openChat, closeChat } = useChat();
   const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
     useState(true);
 
@@ -38,7 +38,7 @@ export function ProfileDetails({
 
   const handleSetIsOpen = (isOpen: boolean) => {
     if (!isOpen) setIsFloatingChatButtonVisible(true);
-    isOpen ? openChat(chatRoomId!) : closeChat();
+    isOpen ? openChat(chatRoom_id!) : closeChat();
   };
 
   return (
@@ -159,7 +159,7 @@ export function ProfileDetails({
       <FloatingChatButton
         isOpen={isChatOpen}
         setIsOpen={handleSetIsOpen}
-        chatRoomId={chatRoomId}
+        chatRoom_id={chatRoom_id}
         isVisible={isFloatingChatButtonVisible}
       />
     </div>

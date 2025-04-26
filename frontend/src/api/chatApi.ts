@@ -1,8 +1,9 @@
+import { ChatRoom } from "../types/chatType";
 import { Message } from "../types/MessageTypes";
 
 const API_BASE_URL = "http://localhost:3000";
 
-export const fetchChatRooms = async (): Promise<any[]> => {
+export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("No auth token found");
@@ -24,10 +25,10 @@ export const fetchChatRooms = async (): Promise<any[]> => {
 };
 
 export const fetchMessages = async ({
-  chatRoomId,
+  chatRoom_id,
   page,
 }: {
-  chatRoomId: string;
+  chatRoom_id: string;
   page?: number;
 }): Promise<Message[]> => {
   const token = localStorage.getItem("authToken");
@@ -36,7 +37,7 @@ export const fetchMessages = async ({
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/chat-rooms/${chatRoomId}/messages?page=${page}`,
+    `${API_BASE_URL}/chat-rooms/${chatRoom_id}/messages?page=${page}`,
     {
       method: "GET",
       headers: {
@@ -92,7 +93,7 @@ export const createChatRoom = async ({
 }: {
   user_1_id: string;
   user_2_id: string;
-}): Promise<any> => {
+}): Promise<ChatRoom> => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("No auth token found");

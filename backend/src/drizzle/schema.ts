@@ -53,14 +53,13 @@ export const Job = pgTable("jobs", {
 
 export const Application = pgTable("applications", {
   application_id: serial("application_id").primaryKey().notNull().unique(),
-  job_id: serial("job_id")
-    .references(() => Job.job_id, { onDelete: "cascade" })
-    .notNull(),
+  job_id: serial("job_id").notNull(),
   freelancer_id: uuid("freelancer_id")
     .references(() => User.user_id)
     .notNull(),
   cover_letter: text("cover_letter").notNull(),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
+  deleted_at: timestamp("deleted_at"),
 });
 
 export const Review = pgTable("reviews", {
@@ -95,7 +94,7 @@ export const ChatRoom = pgTable(
 
 export const Message = pgTable("messages", {
   message_id: serial("message_id").primaryKey().notNull().unique(),
-  chat_room_id: uuid("chat_room_id")
+  chatRoom_id: uuid("chatRoom_id")
     .references(() => ChatRoom.chatRoom_id, { onDelete: "cascade" })
     .notNull(),
   sender_id: uuid("sender_id")

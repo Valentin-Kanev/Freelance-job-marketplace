@@ -21,7 +21,7 @@ export const useCreateChatRoom = () => {
 
 export const useMessages = (roomId: string, page = 1) => {
   return useQuery(["messages", roomId, page], () =>
-    fetchMessages({ chatRoomId: roomId, page })
+    fetchMessages({ chatRoom_id: roomId, page })
   );
 };
 

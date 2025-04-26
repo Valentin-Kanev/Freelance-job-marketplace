@@ -22,7 +22,7 @@ const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
         user_1_id: userId,
         user_2_id: targetUserId,
       });
-      onStartChat(chatRoom.chat_room_id);
+      onStartChat(chatRoom.chatRoom_id);
     } catch (error) {
       console.error("Error creating chat room:", error);
       alert("Failed to create chat room. Please try again.");
