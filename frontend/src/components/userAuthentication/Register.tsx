@@ -1,4 +1,9 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createUserSchema,
+  CreateUserValidation,
+} from "../../schemas/userManagmentValidationScheema";
 import { useRegisterUser } from "../../hooks/useAuth";
 import Input from "../UI/Input";
 
@@ -7,75 +12,70 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    userType: "client",
+  const {
+    register,
+    handleSubmit,
+    setError,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm<CreateUserValidation>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      user_type: "client",
+    },
   });
+
+  const userType = watch("user_type");
 
   const registerMutation = useRegisterUser();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+  const onSubmit = (data: CreateUserValidation) => {
+    registerMutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+        onRegistrationSuccess();
+      },
+      onError: (error: Error) => {
+        setError("root", { message: error.message });
+      },
     });
   };
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    registerMutation.mutate(
-      {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        user_type: formData.userType,
-      },
-      {
-        onSuccess: () => {
-          setFormData({
-            username: "",
-            email: "",
-            password: "",
-            userType: "client",
-          });
-          onRegistrationSuccess();
-        },
-      }
-    );
-  };
-
   return (
-    <form onSubmit={handleRegister} className="space-y-3 ">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
       <Input
         label="Username"
-        name="username"
-        value={formData.username}
-        onChange={handleChange}
-        required
+        {...register("username")}
         placeholder="Enter your username"
       />
+      {errors.username && (
+        <p className="text-sm text-red-600 mt-1">{errors.username.message}</p>
+      )}
+
       <Input
         label="Email"
-        name="email"
         type="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
+        {...register("email")}
         placeholder="Enter your email"
       />
+      {errors.email && (
+        <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+      )}
+
       <Input
         label="Password"
-        name="password"
         type="password"
-        value={formData.password}
-        onChange={handleChange}
-        required
+        {...register("password")}
         placeholder="Enter your password"
       />
+      {errors.password && (
+        <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+      )}
+
       <div>
         <label className="block text-gray-600 font-medium mb-2">
           User Type
@@ -84,11 +84,9 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
           <label className="flex items-center p-2 rounded">
             <input
               type="radio"
-              name="userType"
               value="freelancer"
-              checked={formData.userType === "freelancer"}
-              onChange={handleChange}
-              required
+              {...register("user_type")}
+              checked={userType === "freelancer"}
               className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
             />
             <span className="ml-2">Freelancer</span>
@@ -96,25 +94,32 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
           <label className="flex items-center p-2 rounded">
             <input
               type="radio"
-              name="userType"
               value="client"
-              checked={formData.userType === "client"}
-              onChange={handleChange}
-              required
+              {...register("user_type")}
+              checked={userType === "client"}
               className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
             />
             <span className="ml-2">Client</span>
           </label>
         </div>
+        {errors.user_type && (
+          <p className="text-sm text-red-600 mt-1">
+            {errors.user_type.message}
+          </p>
+        )}
       </div>
+
       <button
         type="submit"
         className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
       >
         Register
       </button>
-      {registerMutation.isError && (
-        <p className="text-red-500 mt-2">{registerMutation.error?.message}</p>
+
+      {(errors.root?.message || registerMutation.isError) && (
+        <p className="text-red-500 mt-2">
+          {errors.root?.message || registerMutation.error?.message}
+        </p>
       )}
     </form>
   );

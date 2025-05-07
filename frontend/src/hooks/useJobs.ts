@@ -11,7 +11,7 @@ import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
 export const useJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 30 * 1000,
     retry: 2,
     onError: (error: Error) => {
       console.error("Error fetching jobs:", error.message);

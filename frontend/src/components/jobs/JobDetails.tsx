@@ -3,7 +3,7 @@ import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJobModal from "./jobActions/EditJob";
 import DeleteJob from "./jobActions/DeleteJob";
-import ApplyForJob from "./jobActions/ApplyForJob";
+import ApplyForJob from "../jobApplications/ApplyForJob";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
 import { Job } from "../../types/JobTypes";

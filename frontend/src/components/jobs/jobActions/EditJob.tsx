@@ -32,7 +32,7 @@ const EditJobModal: React.FC<EditJobModalProps> = ({ job, onClose }) => {
       <JobForm
         userId={job.client_id}
         initialJobDetails={{
-          client_id: job.client_id,
+          // client_id: job.client_id,
           job_id: job.job_id,
           title: job.title,
           description: job.description,

@@ -1,14 +1,19 @@
-import React, { useState } from "react";
-import Input from "../UI/Input";
-import useJobForm from "../../hooks/useJobForm";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createJobSchema,
+  CreateJobValidation,
+} from "../../schemas/jobValidationSchema";
 import { useJobMutations } from "../../hooks/useJobs";
-import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
+import Input from "../UI/Input";
+import { CreateJobData, Job, UpdateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
   userId: string;
-  initialJobDetails: CreateJobData;
+  initialJobDetails: Partial<CreateJobValidation> & { job_id: number };
   onClose: () => void;
-  onSubmitSuccess: (job: CreateJobData | UpdateJobData) => void;
+  onSubmitSuccess: (job: Job | CreateJobData | UpdateJobData) => void;
 }
 
 const JobForm: React.FC<JobFormProps> = ({
@@ -17,60 +22,60 @@ const JobForm: React.FC<JobFormProps> = ({
   onClose,
   onSubmitSuccess,
 }) => {
-  const { jobDetails, handleChange } = useJobForm(initialJobDetails);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<CreateJobValidation>({
+    resolver: zodResolver(createJobSchema),
+    defaultValues: {
+      ...initialJobDetails,
+      budget: Number(initialJobDetails.budget) || 0,
+      deadline: initialJobDetails.deadline
+        ? new Date(initialJobDetails.deadline)
+        : undefined,
+    },
+  });
 
   const { handleJobSubmit } = useJobMutations(
     userId,
     (job) => {
-      setErrors({});
       onSubmitSuccess(job);
       onClose();
     },
     (errorMessage: string) => {
-      setErrors({ general: errorMessage });
+      setError("root.serverError", { message: errorMessage });
     }
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: CreateJobValidation) => {
     const isUpdate = Boolean(initialJobDetails.job_id);
-    setErrors({});
     handleJobSubmit(isUpdate, {
-      ...jobDetails,
+      ...data,
       job_id: initialJobDetails.job_id,
       client_id: userId,
       client_username: "",
-      budget: Number(jobDetails.budget),
-      deadline: new Date(jobDetails.deadline),
+      budget: Number(data.budget),
+      deadline: new Date(data.deadline),
     });
   };
 
-  const handleFocus = (fieldName: string) => {
-    setErrors((prev) => ({
-      ...prev,
-      [fieldName]: "",
-    }));
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {errors.general && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {errors.root?.serverError && (
         <div className="rounded bg-red-100 px-4 py-2 text-red-700">
-          {errors.general}
+          {errors.root.serverError.message}
         </div>
       )}
 
       <Input
         label="Job Title"
-        name="title"
-        value={jobDetails.title}
-        onChange={handleChange}
+        {...register("title")}
         placeholder="Enter job title"
-        required
-        error={errors.title}
-        onFocus={() => handleFocus("title")}
+        error={errors.title?.message}
       />
+
       <div>
         <label
           htmlFor="description"
@@ -80,39 +85,29 @@ const JobForm: React.FC<JobFormProps> = ({
         </label>
         <textarea
           id="description"
-          name="description"
-          value={jobDetails.description}
-          onChange={handleChange}
+          {...register("description")}
           placeholder="Enter job description"
           rows={5}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-          required
-          onFocus={() => handleFocus("description")}
         />
         {errors.description && (
-          <p className="text-red-500 text-sm">{errors.description}</p>
+          <p className="text-red-500 text-sm">{errors.description.message}</p>
         )}
       </div>
+
       <Input
         label="Budget"
-        name="budget"
-        value={jobDetails.budget}
-        onChange={handleChange}
         type="number"
+        {...register("budget", { valueAsNumber: true })}
         placeholder="Enter budget"
-        required
-        error={errors.budget}
-        onFocus={() => handleFocus("budget")}
+        error={errors.budget?.message}
       />
+
       <Input
         label="Deadline"
-        name="deadline"
-        value={new Date(jobDetails.deadline).toISOString().split("T")[0]}
-        onChange={handleChange}
         type="date"
-        required
-        error={errors.deadline}
-        onFocus={() => handleFocus("deadline")}
+        {...register("deadline", { valueAsDate: true })}
+        error={errors.deadline?.message}
       />
 
       <button

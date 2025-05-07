@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import Modal from "../UI/Modal";
 import Toast from "../UI/Toast";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { Profile } from "../../types/ProfileTypes";
+import {
+  updateProfileSchema,
+  UpdateProfileValidation,
+} from "../../schemas/profileValidationSchema";
 import { useUpdateProfile } from "../../hooks/useProfiles";
+import { useState } from "react";
 
 interface EditProfileProps {
   profile: Profile;
@@ -18,73 +24,88 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [skills, setSkills] = useState(profile.skills);
-  const [description, setDescription] = useState(profile.description);
-  const [hourlyRate, setHourlyRate] = useState(profile.hourlyRate);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ general?: string }>({});
   const isFreelancer = localStorage.getItem("userType") === "freelancer";
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<UpdateProfileValidation>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      skills: profile.skills,
+      description: profile.description,
+      hourly_rate: profile.hourlyRate ?? undefined,
+    },
+  });
 
   const updateProfileMutation = useUpdateProfile(
     () => {
       setToastMessage("Profile updated successfully!");
-      setErrors({});
       onClose();
     },
     (errorMessage: string) => {
-      setErrors({ general: errorMessage });
+      setError("root", { message: errorMessage });
     }
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const dataToSend = isFreelancer
-      ? { skills, description, hourly_rate: hourlyRate }
-      : { skills, description };
+  const onSubmit = (data: UpdateProfileValidation) => {
+    const cleanedData = {
+      ...data,
+      hourly_rate:
+        data.hourly_rate === null || !isFreelancer
+          ? undefined
+          : data.hourly_rate,
+    };
 
     updateProfileMutation.mutate({
       profileId: profile.profileId,
-      data: dataToSend,
+      data: cleanedData,
     });
   };
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} title="Edit Profile">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.general && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {errors.root?.message && (
             <div className="rounded bg-red-100 px-4 py-2 text-red-700">
-              {errors.general}
+              {errors.root.message}
             </div>
           )}
+
           <Input
             label="Skills"
-            name="skills"
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-            required
+            {...register("skills")}
+            error={errors.skills?.message}
           />
+
           <div>
             <label className="block text-gray-700 font-medium mb-2">
               Description
             </label>
             <textarea
-              name="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              {...register("description")}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
+            {errors.description && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.description.message}
+              </p>
+            )}
           </div>
+
           {isFreelancer && (
             <Input
               label="Hourly Rate"
-              name="hourlyRate"
               type="number"
-              value={hourlyRate || ""}
-              onChange={(e) => setHourlyRate(Number(e.target.value))}
-              required
+              {...register("hourly_rate", {
+                valueAsNumber: true,
+              })}
+              error={errors.hourly_rate?.message}
             />
           )}
 

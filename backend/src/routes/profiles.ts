@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { eq, like, and, or, sql } from "drizzle-orm";
+import { eq, and, or, sql, ilike } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import { Profile, User } from "../drizzle/schema";
 import authenticateToken from "../middleware/Authentication/authenticateToken";
@@ -177,7 +177,7 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
       .where(
         and(
           eq(User.user_type, "freelancer"),
-          or(like(User.username, `%${query}%`))
+          or(ilike(User.username, `%${query}%`))
         )
       );
 

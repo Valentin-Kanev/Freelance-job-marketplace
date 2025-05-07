@@ -1,6 +1,6 @@
 import React from "react";
-import Modal from "../../UI/Modal";
-import JobApplication from "../../jobApplications/JobApplication";
+import Modal from "../UI/Modal";
+import JobApplication from "./JobApplication";
 
 interface ApplyJobProps {
   job_id: number;

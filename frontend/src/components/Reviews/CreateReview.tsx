@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FaStar } from "react-icons/fa";
 import { useSubmitReview } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
-import Button from "../UI/Button";
-import Modal from "../UI/Modal";
 import { useToast } from "../../contexts/ToastManager";
-import { FaStar } from "react-icons/fa";
+import Modal from "../UI/Modal";
+import Button from "../UI/Button";
+import {
+  createReviewSchema,
+  CreateReviewValidation,
+} from "../../schemas/reviewValidationSchema";
 
 interface CreateReviewProps {
   freelancerId: string;
@@ -18,35 +24,43 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   onClose,
 }) => {
   const { userId } = useAuth();
-  const [rating, setRating] = useState<number>(0);
-  const [hover, setHover] = useState<number>(0);
-  const [reviewText, setReviewText] = useState<string>("");
-  const [errors, setErrors] = useState<{ general?: string }>({});
   const { addToast } = useToast();
+  const [hover, setHover] = useState<number>(0);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    setError,
+    formState: { errors },
+    reset,
+  } = useForm<CreateReviewValidation>({
+    resolver: zodResolver(createReviewSchema),
+    defaultValues: {
+      rating: 0,
+      review_text: "",
+    },
+  });
+
+  const rating = watch("rating");
 
   const submitReviewMutation = useSubmitReview(
     () => {
-      setRating(0);
-      setReviewText("");
-      setErrors({});
+      reset();
       onClose();
       addToast("Review submitted successfully!");
     },
     (error: Error) => {
-      setErrors({ general: error.message });
+      setError("root", { message: error.message });
     }
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = (data: CreateReviewValidation) => {
     if (!userId) {
-      setErrors({ general: "You need to be logged in to leave a review." });
-      return;
-    }
-
-    if (rating === 0) {
-      setErrors({ general: "Please provide a rating." });
+      setError("root", {
+        message: "You need to be logged in to leave a review.",
+      });
       return;
     }
 
@@ -54,20 +68,21 @@ const CreateReview: React.FC<CreateReviewProps> = ({
       freelancerId,
       data: {
         client_id: userId,
-        rating,
-        review_text: reviewText,
+        rating: data.rating,
+        review_text: data.review_text,
       },
     });
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Leave a Review">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {errors.general && (
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {errors.root?.message && (
           <div className="rounded bg-red-100 px-4 py-2 text-red-700">
-            {errors.general}
+            {errors.root.message}
           </div>
         )}
+
         <div>
           <label className="block text-gray-700 font-medium mb-2">Rating</label>
           <div className="flex space-x-1">
@@ -80,24 +95,32 @@ const CreateReview: React.FC<CreateReviewProps> = ({
                     ? "text-yellow-500"
                     : "text-gray-300"
                 }`}
-                onClick={() => setRating(star)}
+                onClick={() => setValue("rating", star)}
                 onMouseEnter={() => setHover(star)}
                 onMouseLeave={() => setHover(0)}
               />
             ))}
           </div>
+          {errors.rating && (
+            <p className="text-sm text-red-600 mt-1">{errors.rating.message}</p>
+          )}
         </div>
+
         <div>
           <label className="block text-gray-700 font-medium mb-2">Review</label>
           <textarea
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
+            {...register("review_text")}
             rows={4}
-            required
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
             placeholder="Write your review here..."
           />
+          {errors.review_text && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.review_text.message}
+            </p>
+          )}
         </div>
+
         <Button
           type="submit"
           label="Submit Review"

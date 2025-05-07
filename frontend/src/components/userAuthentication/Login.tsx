@@ -1,16 +1,29 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  loginSchema,
+  LoginValidation,
+} from "../../schemas/userManagmentValidationScheema";
 import { useLoginUser } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
-import Input from "../UI/Input";
 import { jwtDecode } from "jwt-decode";
+import Input from "../UI/Input";
 import Button from "../UI/Button";
 
 const Login: React.FC = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<LoginValidation>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const loginMutation = useLoginUser();
@@ -18,72 +31,66 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const queryClient = useQueryClient();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+  const onSubmit = (data: LoginValidation) => {
+    loginMutation.mutate(data, {
+      onSuccess: (response: { token: string; userId: string }) => {
+        const decodedToken: {
+          id: string;
+          username: string;
+          user_type: string;
+        } = jwtDecode(response.token);
+
+        const userType = decodedToken.user_type;
+
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", decodedToken.id);
+        localStorage.setItem("userType", userType);
+
+        login(response.token);
+
+        queryClient.invalidateQueries("profile", { exact: true });
+        queryClient.refetchQueries("profile", { exact: true });
+
+        navigate("/jobs");
+      },
+      onError: (error: Error) => {
+        setError("root", { message: error.message });
+      },
     });
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    loginMutation.mutate(
-      { email: formData.email, password: formData.password },
-      {
-        onSuccess: (data: { token: string; userId: string }) => {
-          const decodedToken: {
-            id: string;
-            username: string;
-            user_type: string;
-          } = jwtDecode(data.token);
-
-          const userType = decodedToken.user_type;
-
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("userId", decodedToken.id);
-          localStorage.setItem("userType", userType);
-
-          login(data.token);
-
-          queryClient.invalidateQueries("profile", { exact: true });
-          queryClient.refetchQueries("profile", { exact: true });
-
-          navigate("/jobs");
-        },
-        onError: (error) => {
-          console.error("Login failed:", error);
-        },
-      }
-    );
-  };
-
   return (
-    <form onSubmit={handleLogin} className="space-y-3 h-full ">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 h-full">
       <Input
         label="Email"
-        name="email"
         type="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
+        {...register("email")}
         placeholder="Enter your email"
       />
+      {errors.email && (
+        <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+      )}
+
       <Input
         label="Password"
-        name="password"
         type="password"
-        value={formData.password}
-        onChange={handleChange}
-        required
+        {...register("password")}
         placeholder="Enter your password"
       />
+      {errors.password && (
+        <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+      )}
+
       <Button
         label="Login"
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-lg "
+        className="w-full bg-blue-500 text-white py-2 rounded-lg"
       />
-      {loginMutation.isError && (
-        <p className="text-red-500 mt-2">{loginMutation.error?.message}</p>
+
+      {(errors.root?.message || loginMutation.isError) && (
+        <p className="text-red-500 mt-2">
+          {errors.root?.message || loginMutation.error?.message}
+        </p>
       )}
     </form>
   );
