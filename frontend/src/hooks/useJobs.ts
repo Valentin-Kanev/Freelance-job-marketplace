@@ -122,11 +122,6 @@ export const useJobMutations = (
         Object.entries(fields).filter(([_, v]) => v !== undefined)
       );
 
-      if (Object.keys(updatedData).length === 0) {
-        onError?.("At least one field must be provided to update");
-        return;
-      }
-
       const args: UpdateJobArgs = {
         job_id,
         data: updatedData,
