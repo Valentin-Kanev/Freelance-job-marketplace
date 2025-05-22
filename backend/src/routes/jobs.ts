@@ -12,7 +12,7 @@ import {
   updateJobSchema,
 } from "../schemas/jobValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { CustomResponse } from "../types/responseType";
+import { CustomResponse, JobUpdateResponse } from "../types/responseTypes";
 import { logger } from "../middleware/logger";
 
 const jobsRouter = Router();
@@ -66,7 +66,7 @@ jobsRouter.put(
   validate(updateJobSchema),
   async (
     req: AuthenticatedRequest<UpdateJobValidation>,
-    res: Response<CustomResponse<any>>
+    res: Response<CustomResponse<JobUpdateResponse>>
   ) => {
     const job_id = req.params.job_id;
     const { title, description, budget, deadline } = req.body;
@@ -87,24 +87,55 @@ jobsRouter.put(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
-      const updateData: any = {};
+      const updateData: {
+        title?: string;
+        description?: string;
+        budget?: number;
+        deadline?: Date | null;
+      } = {};
       if (title !== undefined) updateData.title = title;
       if (description !== undefined) updateData.description = description;
       if (budget !== undefined) updateData.budget = budget;
       if (deadline !== undefined)
-        updateData.deadline = deadline
-          ? new Date(deadline).toISOString().slice(0, 10)
-          : null;
+        updateData.deadline = deadline ? new Date(deadline) : null;
 
       await db
         .update(Job)
-        .set(updateData)
+        .set({
+          ...updateData,
+          ...(updateData.deadline !== undefined && updateData.deadline !== null
+            ? { deadline: sql`${updateData.deadline.toISOString()}` }
+            : {}),
+        })
         .where(eq(Job.job_id, job_id))
         .execute();
 
+      const jobAfterUpdate = await db.query.Job.findFirst({
+        where: eq(Job.job_id, job_id),
+      });
+
+      if (!jobAfterUpdate) {
+        return res.status(404).json({ message: "Job not found after update" });
+      }
+
+      const responseJob: JobUpdateResponse = {
+        job_id: Number(jobAfterUpdate.job_id),
+        title: jobAfterUpdate.title,
+        description: jobAfterUpdate.description,
+        budget:
+          jobAfterUpdate.budget === null ? 0 : Number(jobAfterUpdate.budget),
+        deadline: jobAfterUpdate.deadline
+          ? new Date(jobAfterUpdate.deadline).toISOString().slice(0, 10)
+          : null,
+        client_id: Number(jobAfterUpdate.client_id),
+        deleted_at: jobAfterUpdate.deleted_at
+          ? new Date(jobAfterUpdate.deleted_at).toISOString()
+          : null,
+      };
+
       res.status(200).json({
         message: "Job updated successfully",
-        data: updatedJob,
+        data: responseJob,
       });
     } catch (error) {
       console.error("Error updating job:", error);
@@ -167,7 +198,7 @@ jobsRouter.post(
           title,
           description,
           budget: sql`${budget}`,
-          deadline: sql`${deadline}`,
+          deadline: deadline ? sql`${new Date(deadline).toISOString()}` : null,
         })
         .returning({ id: Job.job_id });
 

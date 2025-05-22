@@ -10,7 +10,7 @@ import {
 import { validate } from "../middleware/validate";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
 import { logger } from "../middleware/logger";
-import { CustomResponse } from "../types/responseType";
+import { CustomResponse } from "../types/responseTypes";
 
 const applicationsRouter = Router();
 

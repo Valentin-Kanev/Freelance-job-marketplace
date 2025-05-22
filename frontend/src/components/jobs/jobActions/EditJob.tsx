@@ -24,26 +24,6 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
       Object.entries(updatedJob).filter(([_, v]) => v !== undefined)
     );
 
-    const hasChanged = Object.entries(filteredJob).some(([key, value]) => {
-      if (key === "deadline") {
-        return (
-          new Date(job.deadline).getTime() !== new Date(value as Date).getTime()
-        );
-      }
-      return job[key as keyof Job] !== value;
-    });
-
-    // ✅ ADD THIS: Don't send empty data
-    if (Object.keys(filteredJob).length === 0) {
-      addToast("At least one field must be filled to update.");
-      return;
-    }
-
-    if (!hasChanged) {
-      addToast("No changes detected to update.");
-      return;
-    }
-
     console.log("Sending job update:", filteredJob);
 
     updateJobMutation.mutate(
@@ -52,7 +32,6 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
         onSuccess: () => {
           addToast("Job updated successfully!");
           if (onSuccess) onSuccess();
-          onClose();
         },
         onError: (err) => console.error("Error updating job:", err.message),
       }

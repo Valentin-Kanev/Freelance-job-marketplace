@@ -77,6 +77,7 @@ export const useDeleteJob = () => {
 
 export const useFetchJob = (job_id: number) => {
   return useQuery<Job, Error>(["job", job_id], () => fetchJob(job_id), {
+    enabled: typeof job_id === "number" && job_id > 0,
     retry: 2,
     staleTime: 5 * 60 * 1000,
     onError: (error: Error) => {

@@ -29,7 +29,6 @@ const JobListWithDetails: React.FC<Props> = ({
   const userType = localStorage.getItem("userType") || "";
 
   const {
-    data: selectedJob,
     isLoading: isJobLoading,
     isError: isJobError,
     error: jobError,
@@ -67,14 +66,12 @@ const JobListWithDetails: React.FC<Props> = ({
           {isJobError && (
             <StatusMessage message={`Error: ${jobError?.message}`} />
           )}
-          {selectedJob && (
-            <JobDetails
-              job_id={selectedJob.job_id}
-              userId={userId}
-              userType={userType}
-              onJobUpdate={handleJobUpdate}
-            />
-          )}
+          <JobDetails
+            job_id={parsedJobId ?? -1}
+            userId={userId}
+            userType={userType}
+            onJobUpdate={handleJobUpdate}
+          />
         </div>
       </div>
     </div>

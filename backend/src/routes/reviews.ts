@@ -9,7 +9,7 @@ import {
   CreateReviewValidation,
 } from "../schemas/reviewValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { CustomResponse } from "../types/responseType";
+import { CustomResponse } from "../types/responseTypes";
 
 const reviewsRouter = Router();
 

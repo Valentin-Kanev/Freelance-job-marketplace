@@ -16,7 +16,7 @@ import bcrypt from "bcrypt";
 import { logger } from "../middleware/logger";
 import { sql } from "drizzle-orm";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { CustomResponse } from "../types/responseType";
+import { CustomResponse } from "../types/responseTypes";
 
 const router = express.Router();
 const envPath = path.resolve(__dirname, "../../config/.env");

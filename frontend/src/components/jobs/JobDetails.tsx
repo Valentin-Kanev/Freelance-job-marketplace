@@ -7,6 +7,7 @@ import ApplyForJobModal from "./jobActions/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
 import { useFetchJob } from "../../hooks/useJobs";
+import { HiOutlineClipboardList } from "react-icons/hi";
 
 interface JobDetailsProps {
   job_id: number;
@@ -28,7 +29,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   const [activeModal, setActiveModal] = useState<
     "edit" | "delete" | "apply" | null
   >(null);
-  const { data: job, isLoading, isError } = useFetchJob(job_id);
+  const { data: job, isError } = useFetchJob(job_id);
 
   useEffect(() => {
     if (currentModal !== null) {
@@ -36,18 +37,22 @@ const JobDetails: React.FC<JobDetailsProps> = ({
     }
   }, [currentModal]);
 
-  if (isLoading) {
+  if (isError) {
     return (
-      <div className="text-center mt-10 text-gray-500">
-        Loading job details...
+      <div className="text-center mt-10 text-red-500">
+        Failed to load job details.
       </div>
     );
   }
 
-  if (isError || !job) {
+  if (!job) {
     return (
-      <div className="text-center mt-10 text-red-500">
-        Failed to load job details.
+      <div className="flex flex-col items-center justify-center min-h-[80vh] w-full text-gray-400">
+        <HiOutlineClipboardList className="text-7xl mb-6" />
+        <h3 className="text-2xl font-semibold mb-2">No job selected</h3>
+        <p className="text-md">
+          Please select a job from the list to view its details.
+        </p>
       </div>
     );
   }

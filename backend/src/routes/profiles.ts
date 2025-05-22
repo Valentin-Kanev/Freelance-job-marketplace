@@ -12,7 +12,7 @@ import {
 } from "../schemas/profileValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
 import { JwtPayload } from "jsonwebtoken";
-import { CustomResponse } from "../types/responseType";
+import { CustomResponse } from "../types/responseTypes";
 
 const router = Router();
 
