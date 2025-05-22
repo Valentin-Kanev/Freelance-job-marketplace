@@ -3,13 +3,13 @@ import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJobModal from "./jobActions/EditJob";
 import DeleteJob from "./jobActions/DeleteJob";
-import ApplyForJob from "../jobApplications/ApplyForJob";
+import ApplyForJobModal from "./jobActions/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
-import { Job } from "../../types/JobTypes";
+import { useFetchJob } from "../../hooks/useJobs";
 
 interface JobDetailsProps {
-  job: Job | null;
+  job_id: number;
   userId: string;
   userType: string;
   isInModal?: boolean;
@@ -18,7 +18,7 @@ interface JobDetailsProps {
 }
 
 const JobDetails: React.FC<JobDetailsProps> = ({
-  job,
+  job_id,
   userId,
   userType,
   isInModal = false,
@@ -28,6 +28,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   const [activeModal, setActiveModal] = useState<
     "edit" | "delete" | "apply" | null
   >(null);
+  const { data: job, isLoading, isError } = useFetchJob(job_id);
 
   useEffect(() => {
     if (currentModal !== null) {
@@ -35,15 +36,18 @@ const JobDetails: React.FC<JobDetailsProps> = ({
     }
   }, [currentModal]);
 
-  if (!job) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center text-center text-gray-500 h-screen ">
-        <div className="space-y-4 mt-[-15vh]">
-          <h3 className="text-2xl">Select a job to view details</h3>
-          <p className="text-md">
-            Click on a job from the list to see more information.
-          </p>
-        </div>
+      <div className="text-center mt-10 text-gray-500">
+        Loading job details...
+      </div>
+    );
+  }
+
+  if (isError || !job) {
+    return (
+      <div className="text-center mt-10 text-red-500">
+        Failed to load job details.
       </div>
     );
   }
@@ -114,7 +118,11 @@ const JobDetails: React.FC<JobDetailsProps> = ({
       )}
 
       {activeModal === "edit" && (
-        <EditJobModal job={job} onClose={() => setActiveModal(null)} />
+        <EditJobModal
+          job={job}
+          onClose={() => setActiveModal(null)}
+          onSuccess={onJobUpdate}
+        />
       )}
       {activeModal === "delete" && (
         <DeleteJob
@@ -124,9 +132,11 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           onClose={() => setActiveModal(null)}
         />
       )}
-
       {activeModal === "apply" && (
-        <ApplyForJob job_id={job.job_id} onClose={() => setActiveModal(null)} />
+        <ApplyForJobModal
+          job_id={job.job_id}
+          onClose={() => setActiveModal(null)}
+        />
       )}
     </div>
   );

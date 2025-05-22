@@ -28,7 +28,7 @@ export const useApplyForJob = (
   );
 };
 
-export const useJobApplications = (job_id: number) => {
+export const useFetchJobApplications = (job_id: number) => {
   return useQuery<Application[], Error>(
     ["jobApplications", job_id],
     () => fetchJobApplications(job_id),
@@ -42,7 +42,7 @@ export const useJobApplications = (job_id: number) => {
   );
 };
 
-export const useMyApplications = () => {
+export const useFetchMyApplications = () => {
   return useQuery<MyApplication[], Error>(
     "myApplications",
     fetchMyApplications,

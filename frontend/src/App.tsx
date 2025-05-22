@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import JobManagement from "./components/jobs/JobsManagment";
-import JobDashboard from "./components/jobs/JobDashboard";
+import JobListWithDetails from "./components/jobs/JobListWithDetails";
 import ProtectedRoute from "./components/userAuthentication/Protectedroute";
 import Header from "./components/UI/Header";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -67,7 +67,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/jobs/:job_id"
         element={
-          <JobDashboard
+          <JobListWithDetails
             jobs={jobs || []}
             isLoading={isLoading}
             isError={isError}

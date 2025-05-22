@@ -1,6 +1,6 @@
 {
-  "id": "59a76956-80d0-46c1-b8a7-f4fbedf5b4b9",
-  "prevId": "e84000d7-4eb2-4eab-a887-f7407d2f5a31",
+  "id": "f17b191f-60c3-4df8-89b8-02dc22d65f7d",
+  "prevId": "5fb74548-e4c9-431a-9136-aa1eb69e5398",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -38,23 +38,16 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "applications_job_id_jobs_job_id_fk": {
-          "name": "applications_job_id_jobs_job_id_fk",
-          "tableFrom": "applications",
-          "tableTo": "jobs",
-          "columnsFrom": [
-            "job_id"
-          ],
-          "columnsTo": [
-            "job_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "applications_freelancer_id_users_id_fk": {
           "name": "applications_freelancer_id_users_id_fk",
           "tableFrom": "applications",
@@ -182,15 +175,21 @@
         },
         "budget": {
           "name": "budget",
-          "type": "numeric(12, 2)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "deadline": {
           "name": "deadline",
           "type": "date",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -244,8 +243,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "chat_room_id": {
-          "name": "chat_room_id",
+        "chatRoom_id": {
+          "name": "chatRoom_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -272,12 +271,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_chat_room_id_chat_rooms_id_fk": {
-          "name": "messages_chat_room_id_chat_rooms_id_fk",
+        "messages_chatRoom_id_chat_rooms_id_fk": {
+          "name": "messages_chatRoom_id_chat_rooms_id_fk",
           "tableFrom": "messages",
           "tableTo": "chat_rooms",
           "columnsFrom": [
-            "chat_room_id"
+            "chatRoom_id"
           ],
           "columnsTo": [
             "id"
@@ -343,7 +342,7 @@
           "name": "hourly_rate",
           "type": "numeric(10, 2)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -466,7 +465,7 @@
         },
         "password": {
           "name": "password",
-          "type": "varchar(20)",
+          "type": "varchar(60)",
           "primaryKey": false,
           "notNull": true
         },

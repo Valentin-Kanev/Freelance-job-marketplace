@@ -1,5 +1,5 @@
 export type CustomResponse<T = any> = {
-  data?: T;
+  data?: T | null;
   error?: string;
   message?: string;
 };

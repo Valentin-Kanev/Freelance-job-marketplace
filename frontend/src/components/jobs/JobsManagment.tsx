@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useJobs } from "../../hooks/useJobs";
 import { useAuth } from "../../contexts/AuthContext";
-import JobDashboard from "./JobDashboard";
+import JobListWithDetails from "./JobListWithDetails";
 import Modal from "../UI/Modal";
 import JobForm from "./JobForm";
 
@@ -21,7 +21,7 @@ const JobManagement: React.FC = () => {
 
   return (
     <div className=" bg-gray-50  flex-col items-center overflow-hidden h-screen no-scrollbar">
-      <JobDashboard
+      <JobListWithDetails
         jobs={jobs || []}
         isLoading={isLoading}
         isError={isError}

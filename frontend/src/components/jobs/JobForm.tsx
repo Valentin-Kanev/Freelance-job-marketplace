@@ -7,13 +7,13 @@ import {
 } from "../../schemas/jobValidationSchema";
 import { useJobMutations } from "../../hooks/useJobs";
 import Input from "../UI/Input";
-import { CreateJobData, Job, UpdateJobData } from "../../types/JobTypes";
+import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
   userId: string;
-  initialJobDetails: Partial<CreateJobValidation> & { job_id: number };
+  initialJobDetails: Partial<CreateJobValidation> & { job_id?: number };
   onClose: () => void;
-  onSubmitSuccess: (job: Job | CreateJobData | UpdateJobData) => void;
+  onSubmitSuccess: (job: any) => void; // Ideally, use a concrete type
 }
 
 const JobForm: React.FC<JobFormProps> = ({
@@ -22,6 +22,8 @@ const JobForm: React.FC<JobFormProps> = ({
   onClose,
   onSubmitSuccess,
 }) => {
+  const isUpdate = Boolean(initialJobDetails.job_id);
+
   const {
     register,
     handleSubmit,
@@ -50,15 +52,22 @@ const JobForm: React.FC<JobFormProps> = ({
   );
 
   const onSubmit = (data: CreateJobValidation) => {
-    const isUpdate = Boolean(initialJobDetails.job_id);
-    handleJobSubmit(isUpdate, {
-      ...data,
-      job_id: initialJobDetails.job_id,
-      client_id: userId,
-      client_username: "",
-      budget: Number(data.budget),
-      deadline: new Date(data.deadline),
-    });
+    const payload: CreateJobData | (UpdateJobData & { job_id: number }) =
+      isUpdate
+        ? {
+            ...(data as UpdateJobData),
+            job_id: initialJobDetails.job_id!,
+            budget: Number(data.budget),
+            deadline: data.deadline ? new Date(data.deadline) : undefined,
+          }
+        : {
+            ...data,
+            client_id: userId,
+            budget: Number(data.budget),
+            deadline: new Date(data.deadline),
+          };
+
+    handleJobSubmit(isUpdate, payload);
   };
 
   return (
@@ -114,7 +123,7 @@ const JobForm: React.FC<JobFormProps> = ({
         type="submit"
         className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
       >
-        {initialJobDetails.job_id ? "Update Job" : "Create Job"}
+        {isUpdate ? "Update Job" : "Create Job"}
       </button>
     </form>
   );

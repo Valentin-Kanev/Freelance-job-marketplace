@@ -46,8 +46,8 @@ export const Job = pgTable("jobs", {
     .notNull(),
   title: varchar("title", { length: 90 }).notNull().unique(),
   description: text("description").notNull().unique(),
-  budget: numeric("budget", { precision: 12, scale: 2 }).notNull(),
-  deadline: date("deadline").notNull(),
+  budget: numeric("budget", { precision: 10, scale: 2 }).$type<number>(),
+  deadline: date("deadline").$type<Date>(),
   deleted_at: timestamp("deleted_at"),
 });
 

@@ -6,6 +6,7 @@ import {
   deleteJob,
   fetchJob,
   searchJobsByTitle,
+  UpdateJobArgs,
 } from "../api/jobApi";
 import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
@@ -38,14 +39,14 @@ export const useCreateJob = (
 };
 
 export const useUpdateJob = (
-  onSuccessCallback?: (updatedJob: UpdateJobData) => void,
+  onSuccessCallback?: (updatedJob: Job) => void,
   onErrorCallback?: (errorMessage: string) => void
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation(
     ({ job_id, data }: { job_id: number; data: UpdateJobData }) => {
-      return updateJob(job_id, data);
+      return updateJob({ job_id, data });
     },
     {
       onSuccess: (updatedJob) => {
@@ -74,7 +75,7 @@ export const useDeleteJob = () => {
   });
 };
 
-export const useJob = (job_id: number) => {
+export const useFetchJob = (job_id: number) => {
   return useQuery<Job, Error>(["job", job_id], () => fetchJob(job_id), {
     retry: 2,
     staleTime: 5 * 60 * 1000,
@@ -107,16 +108,32 @@ export const useJobMutations = (
   const createJobMutation = useCreateJob(onSuccess, onError);
   const updateJobMutation = useUpdateJob(onSuccess, onError);
 
-  const handleJobSubmit = (isUpdate: boolean, jobDetails: Job) => {
+  const handleJobSubmit = (
+    isUpdate: boolean,
+    jobDetails: CreateJobData | (UpdateJobData & { job_id: number })
+  ) => {
     if (isUpdate) {
-      updateJobMutation.mutate({ job_id: jobDetails.job_id, data: jobDetails });
+      const { job_id, ...fields } = jobDetails as UpdateJobData & {
+        job_id: number;
+      };
+
+      const updatedData: UpdateJobData = Object.fromEntries(
+        Object.entries(fields).filter(([_, v]) => v !== undefined)
+      );
+
+      if (Object.keys(updatedData).length === 0) {
+        onError?.("At least one field must be provided to update");
+        return;
+      }
+
+      const args: UpdateJobArgs = {
+        job_id,
+        data: updatedData,
+      };
+
+      updateJobMutation.mutate(args);
     } else {
-      createJobMutation.mutate({
-        ...jobDetails,
-        client_id: userId,
-        budget: jobDetails.budget,
-        deadline: jobDetails.deadline,
-      });
+      createJobMutation.mutate(jobDetails as CreateJobData);
     }
   };
 

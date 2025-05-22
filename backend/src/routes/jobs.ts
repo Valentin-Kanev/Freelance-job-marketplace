@@ -66,42 +66,56 @@ jobsRouter.put(
   validate(updateJobSchema),
   async (
     req: AuthenticatedRequest<UpdateJobValidation>,
-    res: Response<CustomResponse<string>>
+    res: Response<CustomResponse<any>>
   ) => {
-    const { job_id } = req.params;
+    const job_id = req.params.job_id;
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.user_id;
 
     try {
-      const job = await db.query.Job.findFirst({
+      const updatedJob = await db.query.Job.findFirst({
         where: eq(Job.job_id, job_id),
       });
 
-      if (!job) {
+      if (!updatedJob) {
         return res.status(404).json({ message: "Job not found" });
       }
 
-      if (job.client_id !== userId) {
+      if (updatedJob.client_id !== userId) {
         return res
           .status(403)
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
+      const updateData: any = {};
+      if (title !== undefined) updateData.title = title;
+      if (description !== undefined) updateData.description = description;
+      if (budget !== undefined) updateData.budget = budget;
+      if (deadline !== undefined)
+        updateData.deadline = deadline
+          ? new Date(deadline).toISOString().slice(0, 10)
+          : null;
+
       await db
         .update(Job)
-        .set({
-          title,
-          description,
-          budget: sql`${budget}`,
-          deadline: sql`${deadline}`,
-        })
+        .set(updateData)
         .where(eq(Job.job_id, job_id))
         .execute();
 
-      res.json({ message: "Job updated successfully" });
+      res.status(200).json({
+        message: "Job updated successfully",
+        data: updatedJob,
+      });
     } catch (error) {
-      logger.error("Error updating job:", error);
-      res.status(500).json({ message: "Error updating job" });
+      console.error("Error updating job:", error);
+      if (error instanceof Error) {
+        console.error("Message:", error.message);
+        console.error("Stack trace:", error.stack);
+      }
+      res.status(500).json({
+        message: "Error updating job",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   }
 );

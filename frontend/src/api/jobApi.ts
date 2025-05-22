@@ -56,17 +56,30 @@ export const createJob = async (jobData: CreateJobData): Promise<Job> => {
   return response.json();
 };
 
-export const updateJob = async (
-  job_id: number,
-  data: UpdateJobData
-): Promise<Job> => {
-  return fetchClient<Job>(`/jobs/${job_id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export interface UpdateJobArgs {
+  job_id: number;
+  data: UpdateJobData;
+}
+
+export const updateJob = async ({
+  job_id,
+  data,
+}: UpdateJobArgs): Promise<Job> => {
+  const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([_, v]) => v !== undefined)
+  );
+  const response = await fetchClient<{ message?: string; data?: any }>(
+    `/jobs/${job_id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filteredData),
+    }
+  );
+  if (response && response.data) {
+    return { ...filteredData, job_id } as Job;
+  }
+  throw new Error(response?.message || "Failed to update job");
 };
 
 export const deleteJob = async (job_id: number): Promise<void> => {

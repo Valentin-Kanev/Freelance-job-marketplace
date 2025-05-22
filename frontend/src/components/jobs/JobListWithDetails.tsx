@@ -1,38 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import JobList from "./JobList";
 import JobDetails from "./JobDetails";
-import { useNavigate } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import { Job } from "../../types/JobTypes";
+import { useFetchJob } from "../../hooks/useJobs";
+import { useQueryClient } from "react-query";
 
-const JobDashboard: React.FC<{
+interface Props {
   jobs: Job[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
-}> = ({ jobs, isLoading, isError, error }) => {
+}
+
+const JobListWithDetails: React.FC<Props> = ({
+  jobs,
+  isLoading,
+  isError,
+  error,
+}) => {
   const navigate = useNavigate();
   const { job_id } = useParams<{ job_id: string }>();
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [jobUpdated, setJobUpdated] = useState(false);
+  const parsedJobId = job_id ? Number(job_id) : null;
+  const queryClient = useQueryClient();
+
   const userId = localStorage.getItem("userId") || "";
   const userType = localStorage.getItem("userType") || "";
 
-  useEffect(() => {
-    const job = Array.isArray(jobs)
-      ? jobs.find((j) => j.job_id === (job_id ? Number(job_id) : null))
-      : null;
-    setSelectedJob(job || null);
-  }, [job_id, jobs, jobUpdated]);
+  const {
+    data: selectedJob,
+    isLoading: isJobLoading,
+    isError: isJobError,
+    error: jobError,
+    refetch,
+  } = useFetchJob(parsedJobId ?? -1);
 
   const handleSelectJob = (job: Job) => {
-    setSelectedJob(job);
     navigate(`/jobs/${job.job_id}`);
   };
 
   const handleJobUpdate = () => {
-    setJobUpdated((prev) => !prev);
+    refetch();
+    queryClient.invalidateQueries(["jobs"]);
   };
 
   if (isLoading) return <StatusMessage message="Loading jobs..." />;
@@ -47,22 +57,28 @@ const JobDashboard: React.FC<{
         <div className="w-[300px] max-h-screen overflow-y-auto p-4">
           <JobList
             jobs={jobs}
-            selectedjob_id={selectedJob?.job_id || null}
+            selectedjob_id={parsedJobId}
             onSelectJob={handleSelectJob}
           />
         </div>
 
         <div className="flex-1 p-6 h-full">
-          <JobDetails
-            job={selectedJob}
-            userId={userId}
-            userType={userType}
-            onJobUpdate={handleJobUpdate}
-          />
+          {isJobLoading && <StatusMessage message="Loading job details..." />}
+          {isJobError && (
+            <StatusMessage message={`Error: ${jobError?.message}`} />
+          )}
+          {selectedJob && (
+            <JobDetails
+              job_id={selectedJob.job_id}
+              userId={userId}
+              userType={userType}
+              onJobUpdate={handleJobUpdate}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default JobDashboard;
+export default JobListWithDetails;

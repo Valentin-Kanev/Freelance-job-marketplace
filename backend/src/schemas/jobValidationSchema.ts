@@ -9,21 +9,22 @@ export const createJobSchema = z.object({
     .string()
     .min(20, "Description must be at least 20 characters")
     .max(1500, "Description is too long. It must be less than 1500 characters"),
-  budget: z
+  budget: z.coerce
     .number()
     .positive("Budget must be a positive number")
     .refine((val) => typeof val === "number", "Budget must be a number"),
-  deadline: z.preprocess(
-    (date) => (typeof date === "string" ? new Date(date) : date),
-    z.date({
-      required_error: "Deadline is required",
-      invalid_type_error: "Invalid date format for deadline",
-    })
-  ),
+  deadline: z
+    .union([z.string().datetime(), z.date()])
+    .transform((val) => (val instanceof Date ? val : new Date(val))),
 });
 export type CreateJobValidation = z.infer<typeof createJobSchema>;
 
-export const updateJobSchema = createJobSchema.partial();
+export const updateJobSchema = createJobSchema
+  .partial()
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: "At least one field must be provided to update",
+  });
+
 export type UpdateJobValidation = z.infer<typeof updateJobSchema>;
 
 export const jobSearchSchema = z.object({

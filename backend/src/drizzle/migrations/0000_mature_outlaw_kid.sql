@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS "applications" (
 	"freelancer_id" uuid NOT NULL,
 	"cover_letter" text NOT NULL,
 	"timestamp" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	CONSTRAINT "applications_application_id_unique" UNIQUE("application_id")
 );
 --> statement-breakpoint
@@ -27,7 +28,8 @@ CREATE TABLE IF NOT EXISTS "jobs" (
 	"title" varchar(90) NOT NULL,
 	"description" text NOT NULL,
 	"budget" numeric(12, 2) NOT NULL,
-	"deadline" timestamp NOT NULL,
+	"deadline" date NOT NULL,
+	"deleted_at" timestamp,
 	CONSTRAINT "jobs_job_id_unique" UNIQUE("job_id"),
 	CONSTRAINT "jobs_title_unique" UNIQUE("title"),
 	CONSTRAINT "jobs_description_unique" UNIQUE("description")
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS "jobs" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "messages" (
 	"message_id" serial PRIMARY KEY NOT NULL,
-	"chat_room_id" uuid NOT NULL,
+	"chatRoom_id" uuid NOT NULL,
 	"sender_id" uuid NOT NULL,
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -47,7 +49,7 @@ CREATE TABLE IF NOT EXISTS "profiles" (
 	"user_id" uuid NOT NULL,
 	"skills" varchar(30) NOT NULL,
 	"description" varchar(800) NOT NULL,
-	"hourly_rate" numeric(10, 2) NOT NULL
+	"hourly_rate" numeric(10, 2)
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reviews" (
@@ -63,19 +65,13 @@ CREATE TABLE IF NOT EXISTS "reviews" (
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" varchar(20) NOT NULL,
-	"password" varchar(20) NOT NULL,
+	"password" varchar(60) NOT NULL,
 	"email" varchar(25) NOT NULL,
 	"user_type" "userRole" NOT NULL,
 	CONSTRAINT "users_username_unique" UNIQUE("username"),
 	CONSTRAINT "users_password_unique" UNIQUE("password"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "applications" ADD CONSTRAINT "applications_job_id_jobs_job_id_fk" FOREIGN KEY ("job_id") REFERENCES "public"."jobs"("job_id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "applications" ADD CONSTRAINT "applications_freelancer_id_users_id_fk" FOREIGN KEY ("freelancer_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
@@ -102,7 +98,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "messages" ADD CONSTRAINT "messages_chat_room_id_chat_rooms_id_fk" FOREIGN KEY ("chat_room_id") REFERENCES "public"."chat_rooms"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_chatRoom_id_chat_rooms_id_fk" FOREIGN KEY ("chatRoom_id") REFERENCES "public"."chat_rooms"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
