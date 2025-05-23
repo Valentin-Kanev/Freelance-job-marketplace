@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createJobSchema,
   CreateJobValidation,
-} from "../../schemas/jobValidationSchema";
+} from "../../validationSchemas/jobValidationSchema";
 import { useJobMutations } from "../../hooks/useJobs";
 import Input from "../UI/Input";
 import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
@@ -13,7 +13,7 @@ interface JobFormProps {
   userId: string;
   initialJobDetails: Partial<CreateJobValidation> & { job_id?: number };
   onClose: () => void;
-  onSubmitSuccess: (job: any) => void; // Ideally, use a concrete type
+  onSubmitSuccess: (job: CreateJobData | UpdateJobData) => void;
 }
 
 const JobForm: React.FC<JobFormProps> = ({
@@ -41,7 +41,6 @@ const JobForm: React.FC<JobFormProps> = ({
   });
 
   const { handleJobSubmit } = useJobMutations(
-    userId,
     (job) => {
       onSubmitSuccess(job);
       onClose();

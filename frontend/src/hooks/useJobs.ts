@@ -6,7 +6,6 @@ import {
   deleteJob,
   fetchJob,
   searchJobsByTitle,
-  UpdateJobArgs,
 } from "../api/jobApi";
 import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
@@ -102,7 +101,6 @@ export const useSearchJobsByTitle = (title: string) => {
 };
 
 export const useJobMutations = (
-  userId: string,
   onSuccess: (job: Job | CreateJobData | UpdateJobData) => void,
   onError?: (errorMessage: string) => void
 ) => {
@@ -122,7 +120,7 @@ export const useJobMutations = (
         Object.entries(fields).filter(([_, v]) => v !== undefined)
       );
 
-      const args: UpdateJobArgs = {
+      const args = {
         job_id,
         data: updatedData,
       };

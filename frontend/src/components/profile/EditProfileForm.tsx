@@ -8,7 +8,7 @@ import { Profile } from "../../types/ProfileTypes";
 import {
   updateProfileSchema,
   UpdateProfileValidation,
-} from "../../schemas/profileValidationSchema";
+} from "../../validationSchemas/profileValidationSchema";
 import { useUpdateProfile } from "../../hooks/useProfiles";
 import { useState } from "react";
 

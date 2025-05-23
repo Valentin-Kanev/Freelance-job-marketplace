@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   loginSchema,
   LoginValidation,
-} from "../../schemas/userManagmentValidationScheema";
+} from "../../validationSchemas/userManagmentValidationScheema";
 import { useLoginUser } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";

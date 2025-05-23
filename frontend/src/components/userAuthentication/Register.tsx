@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserSchema,
   CreateUserValidation,
-} from "../../schemas/userManagmentValidationScheema";
+} from "../../validationSchemas/userManagmentValidationScheema";
 import { useRegisterUser } from "../../hooks/useAuth";
 import Input from "../UI/Input";
 

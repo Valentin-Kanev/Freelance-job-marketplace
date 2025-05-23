@@ -3,7 +3,7 @@ import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJobModal from "./jobActions/EditJob";
 import DeleteJob from "./jobActions/DeleteJob";
-import ApplyForJobModal from "./jobActions/ApplyForJobModal";
+import ApplyForJobModal from "../jobApplications/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
 import { useFetchJob } from "../../hooks/useJobs";

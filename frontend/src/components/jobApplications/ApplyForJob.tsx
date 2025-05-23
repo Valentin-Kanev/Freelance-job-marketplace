@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createApplicationSchema,
   CreateApplicationValidation,
-} from "../../schemas/applicationValidationSchema";
+} from "../../validationSchemas/applicationValidationSchema";
 import { useApplyForJob } from "../../hooks/useApplication";
 import Button from "../UI/Button";
 import { useToast } from "../../contexts/ToastManager";

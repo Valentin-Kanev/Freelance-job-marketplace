@@ -10,7 +10,7 @@ import Button from "../UI/Button";
 import {
   createReviewSchema,
   CreateReviewValidation,
-} from "../../schemas/reviewValidationSchema";
+} from "../../validationSchemas/reviewValidationSchema";
 
 interface CreateReviewProps {
   freelancerId: string;
