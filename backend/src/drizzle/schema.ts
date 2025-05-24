@@ -12,6 +12,7 @@ import {
   date,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { timestamp as pgTimestamp } from "drizzle-orm/pg-core";
 
 export const UserRole = pgEnum("userRole", ["freelancer", "client"]);
 
@@ -101,5 +102,7 @@ export const Message = pgTable("messages", {
     .references(() => User.user_id)
     .notNull(),
   content: text("content").notNull(),
-  created_at: timestamp("created_at").defaultNow().notNull(),
+  created_at: pgTimestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });

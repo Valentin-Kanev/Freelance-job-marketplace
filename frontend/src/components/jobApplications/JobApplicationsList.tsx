@@ -30,14 +30,14 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
       <h2 className="text-2xl font-semibold text-gray-800">Job Applications</h2>
       {applications?.length ? (
         <ul>
-          {applications.map((application) => (
-            <li
-              key={application.application_id}
-              className="border-b border-gray-300 pb-2"
-            >
-              <JobApplicationItem application={application} />
-            </li>
-          ))}
+          {applications.map((application) => {
+            const compositeKey = `${application.job_id}-${application.application_id}`;
+            return (
+              <li key={compositeKey} className="py-4 w-full">
+                <JobApplicationItem application={application} />
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <StatusMessage message="No applications for this job yet." />

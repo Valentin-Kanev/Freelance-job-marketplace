@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 
 const SocketContext = createContext<Socket | null>(null);
@@ -8,7 +8,7 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
-  const socket = useRef<Socket | null>(null);
+  const [socket, setSocket] = React.useState<Socket | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -17,30 +17,23 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       return;
     }
 
-    socket.current = io("http://localhost:3000", {
-      auth: {
-        token,
-      },
+    const newSocket = io("http://localhost:3000", {
+      auth: { token },
     });
 
-    socket.current.on("connect", () => {
-      console.log("WebSocket connected:", socket.current?.id);
-    });
+    setSocket(newSocket);
 
-    socket.current.on("disconnect", () => {
-      console.log("WebSocket disconnected");
-    });
+    newSocket.on("connect", () => {});
+
+    newSocket.on("disconnect", () => {});
 
     return () => {
-      socket.current?.disconnect();
-      console.log("WebSocket connection closed");
+      newSocket.disconnect();
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={socket.current}>
-      {children}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );
 };
 

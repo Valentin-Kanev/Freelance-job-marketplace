@@ -10,9 +10,12 @@ import applicationsRouter from "./routes/applications";
 import reviewsRouter from "./routes/reviews";
 import chatRouter from "./routes/chat";
 import { logger } from "./middleware/logger";
+import { initializeSocket } from "./socket.io/socket";
 
 const app: Application = express();
 const server = http.createServer(app);
+
+initializeSocket(server);
 
 const corsOptions = {
   origin: "http://localhost:3001",

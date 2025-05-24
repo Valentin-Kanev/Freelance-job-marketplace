@@ -83,7 +83,8 @@ applicationsRouter.get(
     try {
       const applications = await db
         .select({
-          id: Application.application_id,
+          application_id: Application.application_id,
+          job_id: Application.job_id,
           cover_letter: Application.cover_letter,
           freelancer_id: Application.freelancer_id,
           username: User.username,
