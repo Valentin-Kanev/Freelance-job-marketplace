@@ -17,12 +17,12 @@ export const useAuthUser = () => {
   return useQuery<{ id: string; userType: string } | null, Error>(
     "authUser",
     () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (token && isTokenValid(token)) {
         const decodedToken: DecodedToken = jwtDecode(token);
         return { id: decodedToken.id, userType: decodedToken.user_type };
       } else {
-        localStorage.removeItem("token");
+        localStorage.removeItem("authToken");
         return null;
       }
     }
@@ -48,8 +48,7 @@ export const useLoginUser = () => {
   >(loginUser, {
     onSuccess: (data) => {
       if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("authToken", data.token);
       } else {
         console.error("No token returned from login");
       }

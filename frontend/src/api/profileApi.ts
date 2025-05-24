@@ -10,7 +10,7 @@ const fetchClient = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
@@ -65,7 +65,7 @@ export const updateProfile = async (
   profileId: string,
   data: UpdateProfileData
 ): Promise<Profile> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
   if (!token) {
     throw new Error("No token provided. Please log in.");

@@ -11,6 +11,7 @@ import {
 } from "../../validationSchemas/profileValidationSchema";
 import { useUpdateProfile } from "../../hooks/useProfiles";
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface EditProfileProps {
   profile: Profile;
@@ -24,7 +25,8 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   isOpen,
   onClose,
 }) => {
-  const isFreelancer = localStorage.getItem("userType") === "freelancer";
+  const { userType } = useAuth();
+  const isFreelancer = userType === "freelancer";
 
   const {
     register,

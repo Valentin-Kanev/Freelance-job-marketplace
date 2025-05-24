@@ -6,7 +6,7 @@ const fetchClient = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers: {
@@ -38,7 +38,7 @@ export const fetchJobs = async (): Promise<Job[]> => {
 };
 
 export const createJob = async (jobData: CreateJobData): Promise<Job> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
   const response = await fetch(`${BASE_URL}/jobs`, {
     method: "POST",
     headers: {

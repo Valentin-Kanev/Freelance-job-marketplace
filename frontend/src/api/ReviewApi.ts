@@ -6,7 +6,7 @@ const fetchClient = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("User is not authenticated");
   }

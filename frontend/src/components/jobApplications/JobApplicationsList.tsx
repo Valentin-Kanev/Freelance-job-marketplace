@@ -1,6 +1,7 @@
 import { useFetchJobApplications } from "../../hooks/useApplication";
 import JobApplicationItem from "./JobApplicationItem";
 import StatusMessage from "../UI/StatusMessage";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface JobApplicationsListProps {
   job_id: number;
@@ -11,7 +12,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
   job_id,
   creatorId,
 }) => {
-  const userId = localStorage.getItem("userId");
+  const { userId } = useAuth();
 
   const {
     data: applications,

@@ -5,8 +5,8 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { jwtDecode } from "jwt-decode";
 import { useQueryClient } from "react-query";
+import { useAuthUser } from "../hooks/useAuth";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -26,75 +26,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userType, setUserType] = useState<string | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
   const queryClient = useQueryClient();
-
-  const isTokenExpired = (token: string): boolean => {
-    try {
-      const { exp } = jwtDecode<{ exp: number }>(token);
-      return Date.now() >= exp * 1000;
-    } catch (error) {
-      console.error("Invalid token:", error);
-      return true;
-    }
-  };
+  const { data: authUser, isLoading } = useAuthUser();
 
   const login = (token: string) => {
-    if (isTokenExpired(token)) {
-      logout();
-      return;
-    }
-
     localStorage.setItem("authToken", token);
-    try {
-      const decodedToken = jwtDecode<{ id: string; user_type: string }>(token);
-      const newUserId = decodedToken.id;
-      const newUserType = decodedToken.user_type;
-      localStorage.setItem("userId", newUserId);
-      localStorage.setItem("userType", newUserType);
-
-      setUserId(newUserId);
-      setUserType(newUserType);
-      setIsLoggedIn(true);
-
-      queryClient.invalidateQueries(["profile", newUserId]);
-    } catch (error) {
-      console.error("Failed to decode token:", error);
-      logout();
-    }
+    // useAuthUser will pick up the new token and update state via useEffect
+    setIsAuthChecked(false); // force re-check
+    queryClient.invalidateQueries(["authUser"]);
   };
 
   const logout = useCallback(() => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("userType");
-
     setUserId(null);
     setUserType(null);
     setIsLoggedIn(false);
-
     queryClient.invalidateQueries("userProfile");
+    queryClient.invalidateQueries(["authUser"]);
   }, [queryClient]);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-
-    if (token && !isTokenExpired(token)) {
-      try {
-        const decodedToken = jwtDecode<{ id: string; user_type: string }>(
-          token
-        );
-        setUserId(decodedToken.id);
-        setUserType(decodedToken.user_type);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Failed to decode token:", error);
-        logout();
-      }
+    if (isLoading) return;
+    if (authUser) {
+      setUserId(authUser.id);
+      setUserType(authUser.userType);
+      setIsLoggedIn(true);
     } else {
-      logout();
+      setUserId(null);
+      setUserType(null);
+      setIsLoggedIn(false);
     }
-
     setIsAuthChecked(true);
-  }, [logout]);
+  }, [authUser, isLoading]);
 
   return (
     <AuthContext.Provider

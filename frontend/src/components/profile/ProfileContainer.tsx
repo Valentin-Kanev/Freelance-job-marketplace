@@ -16,7 +16,7 @@ export function ProfileContainer({
   userId: propUserId,
 }: ProfileContainerProps) {
   const { freelancerId } = useParams<{ freelancerId: string }>();
-  const { userId: loggedInUserId } = useAuth();
+  const { userId: loggedInUserId, userType } = useAuth();
   const userId = propUserId ?? freelancerId ?? loggedInUserId;
 
   const { data: profile, isLoading, isError, refetch } = useUserProfile(userId);
@@ -36,9 +36,7 @@ export function ProfileContainer({
   const handleSave = (updatedData: UpdateProfileData) => {
     const { hourly_rate, ...rest } = updatedData;
     const dataToSend =
-      localStorage.getItem("userType") === "freelancer"
-        ? { ...rest, hourly_rate }
-        : rest;
+      userType === "freelancer" ? { ...rest, hourly_rate } : rest;
 
     updateProfile({ profileId: profile.profileId, data: dataToSend });
     setIsModalOpen(false);

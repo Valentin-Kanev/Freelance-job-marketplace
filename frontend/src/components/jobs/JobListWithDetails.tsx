@@ -6,6 +6,7 @@ import StatusMessage from "../UI/StatusMessage";
 import { Job } from "../../types/JobTypes";
 import { useFetchJob } from "../../hooks/useJobs";
 import { useQueryClient } from "react-query";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface Props {
   jobs: Job[];
@@ -25,8 +26,7 @@ const JobListWithDetails: React.FC<Props> = ({
   const parsedJobId = job_id ? Number(job_id) : null;
   const queryClient = useQueryClient();
 
-  const userId = localStorage.getItem("userId") || "";
-  const userType = localStorage.getItem("userType") || "";
+  const { userId, userType } = useAuth();
 
   const {
     isLoading: isJobLoading,
@@ -68,8 +68,8 @@ const JobListWithDetails: React.FC<Props> = ({
           )}
           <JobDetails
             job_id={parsedJobId ?? -1}
-            userId={userId}
-            userType={userType}
+            userId={userId || ""}
+            userType={userType || ""}
             onJobUpdate={handleJobUpdate}
           />
         </div>

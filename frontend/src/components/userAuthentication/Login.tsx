@@ -8,7 +8,6 @@ import { useLoginUser } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";
-import { jwtDecode } from "jwt-decode";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 
@@ -34,18 +33,6 @@ const Login: React.FC = () => {
   const onSubmit = (data: LoginValidation) => {
     loginMutation.mutate(data, {
       onSuccess: (response: { token: string; userId: string }) => {
-        const decodedToken: {
-          id: string;
-          username: string;
-          user_type: string;
-        } = jwtDecode(response.token);
-
-        const userType = decodedToken.user_type;
-
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("userId", decodedToken.id);
-        localStorage.setItem("userType", userType);
-
         login(response.token);
 
         queryClient.invalidateQueries("profile", { exact: true });

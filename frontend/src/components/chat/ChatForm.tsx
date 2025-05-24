@@ -26,7 +26,7 @@ const ChatForm: React.FC<ChatFormProps> = ({ roomId }) => {
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleSubmit();
     }
