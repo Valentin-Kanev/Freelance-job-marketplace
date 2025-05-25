@@ -8,11 +8,6 @@ export interface Profile {
   username: string;
 }
 
-export type CreateProfileData = Omit<
-  Profile,
-  "userType" | "profileId" | "username"
->;
-
 export type UpdateProfileData = Partial<
   Omit<Profile, "userType" | "profileId" | "userId" | "username"> & {
     hourly_rate?: number;

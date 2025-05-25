@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import {
   fetchProfiles,
-  createProfile,
   updateProfile,
   fetchUserProfile,
   searchProfiles,
@@ -30,19 +29,6 @@ export const useUserProfile = (userId: string | null) => {
       refetchOnMount: true,
     }
   );
-};
-
-export const useCreateProfile = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(createProfile, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("profiles");
-    },
-    onError: (error: Error) => {
-      console.error("Error creating profile:", error.message);
-    },
-  });
 };
 
 export const useUpdateProfile = (

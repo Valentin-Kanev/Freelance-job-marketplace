@@ -1,8 +1,4 @@
-import {
-  CreateProfileData,
-  Profile,
-  UpdateProfileData,
-} from "../types/ProfileTypes";
+import { Profile, UpdateProfileData } from "../types/ProfileTypes";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
@@ -50,15 +46,6 @@ export const fetchUserProfile = async (userId: string): Promise<Profile> => {
   }
 
   return await response.json();
-};
-
-export const createProfile = async (
-  data: CreateProfileData
-): Promise<Profile> => {
-  return fetchClient<Profile>("/profiles", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
 };
 
 export const updateProfile = async (
