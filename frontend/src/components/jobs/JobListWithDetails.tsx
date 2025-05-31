@@ -66,12 +66,14 @@ const JobListWithDetails: React.FC<Props> = ({
           {isJobError && (
             <StatusMessage message={`Error: ${jobError?.message}`} />
           )}
-          <JobDetails
-            job_id={parsedJobId ?? -1}
-            userId={userId || ""}
-            userType={userType || ""}
-            onJobUpdate={handleJobUpdate}
-          />
+          {!isJobLoading && !isJobError && (
+            <JobDetails
+              job_id={parsedJobId ?? -1}
+              userId={userId || ""}
+              userType={userType || ""}
+              onJobUpdate={handleJobUpdate}
+            />
+          )}
         </div>
       </div>
     </div>

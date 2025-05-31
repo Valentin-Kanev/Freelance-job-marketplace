@@ -10,7 +10,7 @@ import { ToastProvider } from "./contexts/ToastManager";
 import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/FreelancerProfilesList";
 import ProfileLoader from "./components/profile/ProfileLoader";
-import { SocketProvider } from "./hooks/useSocket";
+import { SocketProvider } from "./contexts/SocketContext";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";

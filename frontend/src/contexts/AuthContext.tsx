@@ -30,8 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = (token: string) => {
     localStorage.setItem("authToken", token);
-    // useAuthUser will pick up the new token and update state via useEffect
-    setIsAuthChecked(false); // force re-check
+    setIsAuthChecked(false);
     queryClient.invalidateQueries(["authUser"]);
   };
 

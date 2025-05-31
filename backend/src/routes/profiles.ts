@@ -140,13 +140,6 @@ router.put(
           hourly_rate: hourly_rate !== undefined ? sql`${hourly_rate}` : null,
         })
         .where(eq(Profile.profile_id, id));
-      // .returning({
-      //   id: Profile.profile_id,
-      //   userId: Profile.user_id,
-      //   skills: Profile.skills,
-      //   description: Profile.description,
-      //   hourlyRate: Profile.hourly_rate,
-      // });
 
       res.status(200).json({
         message: "Profile updated successfully",
