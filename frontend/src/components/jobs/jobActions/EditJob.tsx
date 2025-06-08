@@ -16,6 +16,7 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const { addToast } = useToast();
   const updateJobMutation = useUpdateJob(
     () => {
       addToast("Job updated successfully!");
@@ -23,17 +24,12 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
       onClose();
     },
     (errMsg) => {
-      addToast("Error updating job");
       console.error("Error updating job:", errMsg);
     }
   );
-  const { addToast } = useToast();
 
   const handleUpdateJob = (updatedJob: UpdateJobData) => {
-    const filteredJob = Object.fromEntries(
-      Object.entries(updatedJob).filter(([_, v]) => v !== undefined)
-    );
-    updateJobMutation.mutate({ job_id: job.job_id, data: filteredJob });
+    updateJobMutation.mutate({ job_id: job.job_id, data: updatedJob });
   };
 
   return (

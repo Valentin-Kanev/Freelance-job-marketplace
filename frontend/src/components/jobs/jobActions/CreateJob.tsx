@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
+import { initialJobDetails } from "../../../types/JobTypes";
 
 interface CreateJobProps {
   userId: string;
@@ -29,13 +30,7 @@ const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
         {isLoggedIn && userId ? (
           <JobForm
             userId={userId}
-            initialJobDetails={{
-              job_id: 0,
-              title: "",
-              description: "",
-              budget: 0,
-              deadline: new Date(),
-            }}
+            initialJobDetails={initialJobDetails}
             onSubmitSuccess={() => {
               addToast("Job created successfully!");
               setIsModalOpen(false);

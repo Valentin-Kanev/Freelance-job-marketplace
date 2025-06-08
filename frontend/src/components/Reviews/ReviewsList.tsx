@@ -26,25 +26,17 @@ export default function ReviewList({
 
   if (!isFreelancer) return null;
 
-  if (!isLoggedIn) {
-    return (
-      <div className="text-gray-500">
-        Please log in or register to view reviews.
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="text-red-500">
-        Error fetching reviews: {error?.message}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      {reviews && reviews.length > 0 ? (
+      {!isLoggedIn ? (
+        <div className="text-gray-500">
+          Please log in or register to view reviews.
+        </div>
+      ) : isError ? (
+        <div className="text-red-500">
+          Error fetching reviews: {error?.message}
+        </div>
+      ) : reviews && reviews.length > 0 ? (
         reviews.map((review) => <ReviewCard key={review.id} review={review} />)
       ) : (
         <div className="text-gray-500">No reviews yet.</div>

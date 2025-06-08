@@ -1,12 +1,12 @@
 import { useState } from "react";
-import ReviewList from "../Reviews/FreelancerReviewsList";
+import ReviewList from "../Reviews/ReviewsList";
 import MyJobs from "./MyJobsList";
 import MyReviews from "../Reviews/ClientMadeReviewsList";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
-import FloatingChatButton from "../chat/ChatButtonExpand";
+import FloatingChatButton from "../chat/ExpandChatButton";
 import { useChat } from "../../contexts/ChatContext";
 import { Profile } from "../../types/ProfileTypes";
 

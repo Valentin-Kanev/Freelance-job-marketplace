@@ -7,7 +7,7 @@ import {
 import { Application, MyApplication } from "../types/ApplicationTypes";
 
 export const useApplyForJob = (
-  onSuccess?: () => void,
+  onSuccess?: (data: Application) => void,
   onError?: (error: Error) => void
 ) => {
   return useMutation(

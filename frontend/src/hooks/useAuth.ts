@@ -46,7 +46,7 @@ export const useLoginUser = () => {
     Error,
     Parameters<typeof loginUser>[0]
   >(loginUser, {
-    onSuccess: (data) => {
+    onSuccess: (data: { token: string; userId: string }) => {
       if (data.token) {
         localStorage.setItem("authToken", data.token);
       } else {

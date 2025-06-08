@@ -25,7 +25,6 @@ const JobListWithDetails: React.FC<Props> = ({
   const { job_id } = useParams<{ job_id: string }>();
   const parsedJobId = job_id ? Number(job_id) : null;
   const queryClient = useQueryClient();
-
   const { userId, userType } = useAuth();
 
   const {
@@ -44,21 +43,24 @@ const JobListWithDetails: React.FC<Props> = ({
     queryClient.invalidateQueries(["jobs"]);
   };
 
-  if (isLoading) return <StatusMessage message="Loading jobs..." />;
-  if (isError) return <StatusMessage message={`Error: ${error?.message}`} />;
-  if (!Array.isArray(jobs) || jobs.length === 0) {
-    return <StatusMessage message="No jobs available." />;
-  }
-
   return (
     <div className="pt-12 flex justify-center min-h-screen bg-gray-50">
       <div className="flex w-[1100px] h-full bg-white shadow-lg rounded-lg">
         <div className="w-[300px] max-h-screen overflow-y-auto p-4">
-          <JobList
-            jobs={jobs}
-            selectedjob_id={parsedJobId}
-            onSelectJob={handleSelectJob}
-          />
+          {isLoading && <StatusMessage message="Loading jobs..." />}
+          {isError && <StatusMessage message={`Error: ${error?.message}`} />}
+          {!isLoading &&
+            !isError &&
+            (!Array.isArray(jobs) || jobs.length === 0) && (
+              <StatusMessage message="No jobs available." />
+            )}
+          {!isLoading && !isError && Array.isArray(jobs) && jobs.length > 0 && (
+            <JobList
+              jobs={jobs}
+              selectedjob_id={parsedJobId}
+              onSelectJob={handleSelectJob}
+            />
+          )}
         </div>
 
         <div className="flex-1 p-6 h-full">

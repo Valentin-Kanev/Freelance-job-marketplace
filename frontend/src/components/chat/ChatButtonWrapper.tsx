@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChat } from "../../contexts/ChatContext";
-import FloatingChatButton from "./ChatButtonExpand";
+import FloatingChatButton from "./ExpandChatButton";
 
 export const ChatButtonWrapper: React.FC = () => {
   const { isChatOpen, chatRoom_id, openChat, closeChat } = useChat();

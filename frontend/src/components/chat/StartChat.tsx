@@ -16,7 +16,6 @@ const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
       alert("User ID is not available. Please log in.");
       return;
     }
-
     try {
       const chatRoom = await createChatRoom.mutateAsync({
         user_1_id: userId,

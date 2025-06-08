@@ -16,15 +16,14 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (isLoading)
-    return <p className="text-center text-gray-500">Loading messages...</p>;
-  if (error)
-    return <p className="text-center text-red-500">Error fetching messages.</p>;
-
   return (
     <div className="flex flex-col h-full bg-white shadow-md rounded-md overflow-hidden">
       <div className="flex-grow p-4 overflow-y-auto">
-        {messages?.length === 0 ? (
+        {isLoading ? (
+          <p className="text-center text-gray-500">Loading messages...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">Error fetching messages.</p>
+        ) : messages?.length === 0 ? (
           <p className="text-center text-gray-500">No messages yet.</p>
         ) : (
           <ul className="space-y-2">

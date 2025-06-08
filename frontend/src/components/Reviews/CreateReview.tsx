@@ -26,7 +26,6 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   const { userId } = useAuth();
   const { addToast } = useToast();
   const [hover, setHover] = useState<number>(0);
-
   const {
     register,
     handleSubmit,
@@ -44,7 +43,6 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   });
 
   const rating = watch("rating");
-
   const submitReviewMutation = useSubmitReview(
     () => {
       reset();
@@ -82,7 +80,6 @@ const CreateReview: React.FC<CreateReviewProps> = ({
             {errors.root.message}
           </div>
         )}
-
         <div>
           <label className="block text-gray-700 font-medium mb-2">Rating</label>
           <div className="flex space-x-1">
@@ -105,7 +102,6 @@ const CreateReview: React.FC<CreateReviewProps> = ({
             <p className="text-sm text-red-600 mt-1">{errors.rating.message}</p>
           )}
         </div>
-
         <div>
           <label className="block text-gray-700 font-medium mb-2">Review</label>
           <textarea
@@ -120,7 +116,6 @@ const CreateReview: React.FC<CreateReviewProps> = ({
             </p>
           )}
         </div>
-
         <Button
           type="submit"
           label="Submit Review"
