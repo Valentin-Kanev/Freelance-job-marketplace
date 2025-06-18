@@ -10,31 +10,26 @@ const ProfileLoader = () => {
     isError,
     error,
   } = useUserProfile(user_id || null);
-
-  if (isLoading) {
-    return <div className="text-center mt-24">Loading profile...</div>;
-  }
-
-  if (isError) {
-    return (
-      <div className="text-center mt-24 text-red-500">
-        Failed to load profile. {error?.message}
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return <div className="text-center mt-24">Profile not found.</div>;
-  }
-
-  const isOwner = profile.userId === localStorage.getItem("userId");
+  const isOwner = profile?.userId === localStorage.getItem("userId");
 
   return (
-    <ProfileDetails
-      profile={profile}
-      isOwner={isOwner}
-      onEdit={() => alert("Redirect to Edit Profile Page")}
-    />
+    <>
+      {isLoading ? (
+        <div className="text-center mt-24">Loading profile...</div>
+      ) : isError ? (
+        <div className="text-center mt-24 text-red-500">
+          Failed to load profile. {error?.message}
+        </div>
+      ) : !profile ? (
+        <div className="text-center mt-24">Profile not found.</div>
+      ) : (
+        <ProfileDetails
+          profile={profile}
+          isOwner={isOwner}
+          onEdit={() => alert("Redirect to Edit Profile Page")}
+        />
+      )}
+    </>
   );
 };
 

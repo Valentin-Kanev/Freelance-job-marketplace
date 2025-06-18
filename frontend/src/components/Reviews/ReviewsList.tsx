@@ -1,6 +1,5 @@
 import { useFreelancerReviews } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
-import { useEffect } from "react";
 import ExpandableText from "../UI/ExpandableText";
 
 interface ReviewListProps {
@@ -13,35 +12,28 @@ export default function ReviewList({
   isFreelancer,
 }: ReviewListProps) {
   const { isLoggedIn } = useAuth();
-  const {
-    data: reviews,
-    error,
-    isError,
-    refetch,
-  } = useFreelancerReviews(freelancerId);
-
-  useEffect(() => {
-    refetch();
-  }, [freelancerId, refetch]);
-
-  if (!isFreelancer) return null;
+  const { data: reviews, error, isError } = useFreelancerReviews(freelancerId);
 
   return (
-    <div className="space-y-6">
-      {!isLoggedIn ? (
-        <div className="text-gray-500">
-          Please log in or register to view reviews.
-        </div>
-      ) : isError ? (
-        <div className="text-red-500">
-          Error fetching reviews: {error?.message}
-        </div>
-      ) : reviews && reviews.length > 0 ? (
-        reviews.map((review) => <ReviewCard key={review.id} review={review} />)
-      ) : (
-        <div className="text-gray-500">No reviews yet.</div>
-      )}
-    </div>
+    isFreelancer && (
+      <div className="space-y-6">
+        {!isLoggedIn ? (
+          <div className="text-gray-500">
+            Please log in or register to view reviews.
+          </div>
+        ) : isError ? (
+          <div className="text-red-500">
+            Error fetching reviews: {error?.message}
+          </div>
+        ) : reviews && reviews.length > 0 ? (
+          reviews.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))
+        ) : (
+          <div className="text-gray-500">No reviews yet.</div>
+        )}
+      </div>
+    )
   );
 }
 

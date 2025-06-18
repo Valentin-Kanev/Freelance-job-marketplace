@@ -3,6 +3,7 @@ import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
 import { initialJobDetails } from "../../../types/JobTypes";
+import StatusMessage from "../../UI/StatusMessage";
 
 interface CreateJobProps {
   userId: string;
@@ -38,9 +39,7 @@ const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
             onClose={() => setIsModalOpen(false)}
           />
         ) : (
-          <p className="text-center text-gray-700">
-            You must be logged in to create a job.
-          </p>
+          <StatusMessage message="You must be logged in to create a job." />
         )}
       </Modal>
     </div>

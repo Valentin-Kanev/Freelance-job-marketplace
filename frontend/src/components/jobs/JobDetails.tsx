@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJobModal from "./jobActions/EditJob";
@@ -28,16 +28,10 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   onJobUpdate,
   onJobDelete,
 }) => {
+  const { data: job, isError } = useFetchJob(job_id);
   const [activeModal, setActiveModal] = useState<
     "edit" | "delete" | "apply" | null
   >(null);
-  const { data: job, isError } = useFetchJob(job_id);
-
-  useEffect(() => {
-    if (currentModal !== null) {
-      setActiveModal(null);
-    }
-  }, [currentModal]);
 
   return (
     <>

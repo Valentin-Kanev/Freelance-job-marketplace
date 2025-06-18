@@ -22,7 +22,7 @@ export const useUserProfile = (userId: string | null) => {
     ["profile", userId],
     () => fetchUserProfile(userId!),
     {
-      enabled: !!userId,
+      enabled: !userId,
       staleTime: 0,
       cacheTime: 0,
       refetchOnWindowFocus: true,

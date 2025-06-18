@@ -62,7 +62,6 @@ const JobListWithDetails: React.FC<Props> = ({
             />
           )}
         </div>
-
         <div className="flex-1 p-6 h-full">
           {isJobLoading && <StatusMessage message="Loading job details..." />}
           {isJobError && (

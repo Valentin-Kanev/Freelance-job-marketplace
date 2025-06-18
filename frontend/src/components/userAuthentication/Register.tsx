@@ -30,7 +30,6 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
   });
 
   const userType = watch("user_type");
-
   const registerMutation = useRegisterUser();
 
   const onSubmit = (data: CreateUserValidation) => {
@@ -108,14 +107,12 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
           </p>
         )}
       </div>
-
       <button
         type="submit"
         className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
       >
         Register
       </button>
-
       {(errors.root?.message || registerMutation.isError) && (
         <p className="text-red-500 mt-2">
           {errors.root?.message || registerMutation.error?.message}

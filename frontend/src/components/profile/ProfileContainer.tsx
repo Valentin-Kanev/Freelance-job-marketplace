@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useUserProfile } from "../../hooks/useProfiles";
 import { ProfileDetails } from "./ProfileDetails";
 import { useUpdateProfile } from "../../hooks/useProfiles";
@@ -18,22 +18,13 @@ export function ProfileContainer({
   const { freelancerId } = useParams<{ freelancerId: string }>();
   const { userId: loggedInUserId, userType } = useAuth();
   const userId = propUserId ?? freelancerId ?? loggedInUserId;
-
-  const { data: profile, isLoading, isError, refetch } = useUserProfile(userId);
+  const { data: profile, isLoading, isError } = useUserProfile(userId);
   const { mutate: updateProfile } = useUpdateProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (userId) refetch();
-  }, [userId, refetch]);
-
-  if (isLoading) return <StatusMessage message="Loading profile..." />;
-  if (isError) return <StatusMessage message="Error loading profile." />;
-  if (!profile) return <StatusMessage message="No profile data available." />;
-
-  const isOwner = loggedInUserId === profile.userId;
+  const isOwner = loggedInUserId === profile?.userId;
 
   const handleSave = (updatedData: UpdateProfileData) => {
+    if (!profile) return;
     const { hourly_rate, ...rest } = updatedData;
     const dataToSend =
       userType === "freelancer" ? { ...rest, hourly_rate } : rest;
@@ -44,18 +35,27 @@ export function ProfileContainer({
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <ProfileDetails
-        profile={profile}
-        onEdit={() => setIsModalOpen(true)}
-        isOwner={isOwner}
-      />
-
-      <EditProfileForm
-        profile={profile}
-        onSave={handleSave}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {isLoading ? (
+        <StatusMessage message="Loading profile..." />
+      ) : isError ? (
+        <StatusMessage message="Error loading profile." />
+      ) : !profile ? (
+        <StatusMessage message="No profile data available." />
+      ) : (
+        <>
+          <ProfileDetails
+            profile={profile}
+            onEdit={() => setIsModalOpen(true)}
+            isOwner={isOwner}
+          />
+          <EditProfileForm
+            profile={profile}
+            onSave={handleSave}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+        </>
+      )}
     </div>
   );
 }

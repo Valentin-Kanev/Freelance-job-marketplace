@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { fetchClientReviews } from "../../api/ReviewApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
-import { useEffect } from "react";
 import ExpandableText from "../UI/ExpandableText";
 
 const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
@@ -10,7 +9,6 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
     data: reviews,
     isLoading,
     error,
-    refetch,
   } = useQuery(
     ["clientReviews", clientId],
     () => fetchClientReviews(clientId),
@@ -18,10 +16,6 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
       enabled: !!clientId,
     }
   );
-
-  useEffect(() => {
-    refetch();
-  }, [clientId, refetch]);
 
   return (
     <div>

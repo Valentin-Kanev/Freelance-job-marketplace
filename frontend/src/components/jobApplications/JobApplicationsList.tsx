@@ -20,16 +20,16 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
     error,
   } = useFetchJobApplications(job_id);
 
-  if (userId !== creatorId)
-    return <StatusMessage message="Unauthorized to view applications" />;
-
-  if (isLoading) return <StatusMessage message="Loading applications..." />;
-  if (error) return <StatusMessage message="Error loading applications" />;
-
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Job Applications</h2>
-      {applications?.length ? (
+      {userId !== creatorId ? (
+        <StatusMessage message="Unauthorized to view applications" />
+      ) : isLoading ? (
+        <StatusMessage message="Loading applications..." />
+      ) : error ? (
+        <StatusMessage message="Error loading applications" />
+      ) : applications?.length ? (
         <ul>
           {applications.map((application) => {
             const compositeKey = `${application.job_id}-${application.application_id}`;

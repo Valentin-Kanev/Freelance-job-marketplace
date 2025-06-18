@@ -25,9 +25,9 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const { userType } = useAuth();
   const isFreelancer = userType === "freelancer";
-
   const {
     register,
     handleSubmit,
@@ -67,8 +67,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
     });
   };
 
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} title="Edit Profile">
@@ -78,13 +76,11 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
               {errors.root.message}
             </div>
           )}
-
           <Input
             label="Skills"
             {...register("skills")}
             error={errors.skills?.message}
           />
-
           <div>
             <label className="block text-gray-700 font-medium mb-2">
               Description
@@ -99,7 +95,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
               </p>
             )}
           </div>
-
           {isFreelancer && (
             <Input
               label="Hourly Rate"
@@ -110,7 +105,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
               error={errors.hourly_rate?.message}
             />
           )}
-
           <div className="flex justify-center">
             <Button
               type="submit"
@@ -120,7 +114,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
           </div>
         </form>
       </Modal>
-
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}

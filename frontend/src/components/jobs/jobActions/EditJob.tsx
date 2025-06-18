@@ -20,7 +20,7 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
   const updateJobMutation = useUpdateJob(
     () => {
       addToast("Job updated successfully!");
-      if (onSuccess) onSuccess();
+      onSuccess?.();
       onClose();
     },
     (errMsg) => {

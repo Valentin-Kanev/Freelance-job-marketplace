@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div
-      className="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-50 min-h-screen"
       role="dialog"
       aria-modal="true"
     >

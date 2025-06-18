@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ChatRoomList from "./ChatList";
+import ChatRoomList from "./ChatsList";
 import MessagesList from "./MessagesList";
 import ChatForm from "./ChatForm";
 

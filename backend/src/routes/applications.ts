@@ -1,7 +1,7 @@
 import authenticateToken from "../middleware/Authentication/authenticateToken";
 import { Application, Job, User } from "../drizzle/schema";
 import { Router, Response } from "express";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, desc } from "drizzle-orm";
 import { db } from "../drizzle/db";
 import {
   createApplicationSchema,
@@ -124,7 +124,8 @@ applicationsRouter.get(
             eq(Application.freelancer_id, freelancerId),
             isNull(Application.deleted_at)
           )
-        );
+        )
+        .orderBy(desc(Application.timestamp));
 
       res.json(applications);
     } catch (error) {

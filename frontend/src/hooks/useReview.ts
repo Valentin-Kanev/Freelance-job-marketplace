@@ -17,7 +17,7 @@ export const useSubmitReview = (
       data: { client_id: string; rating: number; review_text: string };
     }) => submitReview(freelancerId, data),
     {
-      onSuccess: (_, { freelancerId }) => {
+      onSuccess: (freelancerId) => {
         queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
         if (onSuccess) onSuccess();
       },

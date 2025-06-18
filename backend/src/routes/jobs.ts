@@ -87,6 +87,35 @@ jobsRouter.put(
           .json({ message: "Unauthorized: You don't own this job" });
       }
 
+      if (title) {
+        const duplicateTitle = await db.query.Job.findFirst({
+          where: and(
+            isNull(Job.deleted_at),
+            sql`"job_id" != ${job_id}`,
+            eq(Job.title, title)
+          ),
+        });
+        if (duplicateTitle) {
+          return res
+            .status(409)
+            .json({ message: "A job with this title already exists." });
+        }
+      }
+      if (description) {
+        const duplicateDescription = await db.query.Job.findFirst({
+          where: and(
+            isNull(Job.deleted_at),
+            sql`"job_id" != ${job_id}`,
+            eq(Job.description, description)
+          ),
+        });
+        if (duplicateDescription) {
+          return res
+            .status(409)
+            .json({ message: "A job with this description already exists." });
+        }
+      }
+
       const updateData: {
         title?: string;
         description?: string;
@@ -191,6 +220,25 @@ jobsRouter.post(
     const userId = req.user.user_id;
 
     try {
+      // Check for duplicate title
+      const duplicateTitle = await db.query.Job.findFirst({
+        where: and(isNull(Job.deleted_at), eq(Job.title, title)),
+      });
+      if (duplicateTitle) {
+        return res
+          .status(409)
+          .json({ message: "A job with this title already exists." });
+      }
+      // Check for duplicate description
+      const duplicateDescription = await db.query.Job.findFirst({
+        where: and(isNull(Job.deleted_at), eq(Job.description, description)),
+      });
+      if (duplicateDescription) {
+        return res
+          .status(409)
+          .json({ message: "A job with this description already exists." });
+      }
+
       const [newJob] = await db
         .insert(Job)
         .values({

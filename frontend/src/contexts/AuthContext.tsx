@@ -25,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userId, setUserId] = useState<string | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
+
   const queryClient = useQueryClient();
   const { data: authUser, isLoading } = useAuthUser();
 

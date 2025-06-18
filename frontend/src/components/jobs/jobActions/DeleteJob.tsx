@@ -23,7 +23,7 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
     deleteJobMutation.mutate(job_id, {
       onSuccess: () => {
         addToast("Job deleted successfully!");
-        if (onSuccess) onSuccess();
+        onSuccess?.();
         onClose();
       },
       onError: (err) => console.error("Error deleting job:", err.message),

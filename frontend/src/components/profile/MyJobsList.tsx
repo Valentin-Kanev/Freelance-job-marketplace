@@ -12,14 +12,14 @@ const MyJobs = ({ clientId }: { clientId: string }) => {
     enabled: !!clientId,
   });
 
-  if (isLoading) return <StatusMessage message="Loading jobs..." />;
-  if (error instanceof Error)
-    return <StatusMessage message={`Error: ${error.message}`} />;
-
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">My Jobs</h1>
-      {jobs?.length ? (
+      {isLoading ? (
+        <StatusMessage message="Loading jobs..." />
+      ) : error instanceof Error ? (
+        <StatusMessage message={`Error: ${error.message}`} />
+      ) : jobs?.length ? (
         <ul className="list-disc pl-5 space-y-3">
           {jobs.map((job) => (
             <li key={job.job_id}>

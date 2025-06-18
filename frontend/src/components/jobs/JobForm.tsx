@@ -50,20 +50,14 @@ const JobForm: React.FC<JobFormProps> = ({
   );
 
   const onSubmit = (data: CreateJobValidation) => {
-    const budget = Number(data.budget);
-    const deadline = data.deadline ? new Date(data.deadline) : undefined;
     const payload = isUpdate
       ? {
           ...(data as UpdateJobData),
           job_id: initialJobDetails.job_id!,
-          budget,
-          deadline,
         }
       : {
           ...data,
           client_id: userId,
-          budget,
-          deadline: deadline!,
         };
 
     handleJobSubmit(isUpdate, payload);
