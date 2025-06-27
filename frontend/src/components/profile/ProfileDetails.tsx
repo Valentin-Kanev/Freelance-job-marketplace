@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ReviewList from "../Reviews/ReviewsList";
+import ReviewList from "../Reviews/FreelancerReviewList";
 import MyJobs from "./MyJobsList";
-import MyReviews from "../Reviews/ClientMadeReviewsList";
+import MyReviews from "../Reviews/ClientWrittenReviews";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
@@ -136,7 +136,7 @@ export function ProfileDetails({
                   : "text-gray-500"
               } px-4 py-2`}
             >
-              Reviews I've Left
+              Reviews I've Written
             </button>
           </>
         )}

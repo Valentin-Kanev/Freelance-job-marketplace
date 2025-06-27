@@ -53,17 +53,13 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   );
 
   const onSubmit = (data: UpdateProfileValidation) => {
-    const cleanedData = {
+    const fixedData = {
       ...data,
-      hourly_rate:
-        data.hourly_rate === null || !isFreelancer
-          ? undefined
-          : data.hourly_rate,
+      hourly_rate: data.hourly_rate === null ? undefined : data.hourly_rate,
     };
-
     updateProfileMutation.mutate({
       profileId: profile.profileId,
-      data: cleanedData,
+      data: fixedData,
     });
   };
 
@@ -101,6 +97,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
               type="number"
               {...register("hourly_rate", {
                 valueAsNumber: true,
+                setValueAs: (v) => (v === null ? undefined : v),
               })}
               error={errors.hourly_rate?.message}
             />

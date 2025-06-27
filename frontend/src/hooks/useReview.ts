@@ -19,14 +19,14 @@ export const useSubmitReview = (
     {
       onSuccess: (freelancerId) => {
         queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
-        if (onSuccess) onSuccess();
+        onSuccess?.();
       },
       onError: (error: Error) => {
         if (error.message.includes("already submitted")) {
         } else {
           console.error("Error submitting review:", error.message);
         }
-        if (onError) onError(error);
+        onError?.(error);
       },
     }
   );
@@ -37,7 +37,7 @@ export const useFreelancerReviews = (freelancerId: string) => {
     ["freelancerReviews", freelancerId],
     () => fetchFreelancerReviews(freelancerId),
     {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 1 * 30 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching reviews:", error.message);

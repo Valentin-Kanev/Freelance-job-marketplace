@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useFetchMyApplications } from "../../hooks/useApplication";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
@@ -9,12 +8,7 @@ const MyApplications: React.FC = () => {
     isLoading,
     isError,
     error,
-    refetch,
   } = useFetchMyApplications();
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   return (
     <>

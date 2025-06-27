@@ -28,11 +28,11 @@ export const useCreateJob = (
   return useMutation<Job, Error, CreateJobData>(createJob, {
     onSuccess: (newJob) => {
       queryClient.invalidateQueries("jobs");
-      if (onSuccessCallback) onSuccessCallback(newJob);
+      onSuccessCallback?.(newJob);
     },
     onError: (error: Error) => {
       console.error("Error creating job:", error.message);
-      if (onErrorCallback) onErrorCallback(error.message);
+      onErrorCallback?.(error.message);
     },
   });
 };
@@ -51,11 +51,11 @@ export const useUpdateJob = (
       onSuccess: (updatedJob) => {
         queryClient.invalidateQueries(["job", updatedJob.job_id]);
         queryClient.invalidateQueries("jobs");
-        if (onSuccessCallback) onSuccessCallback(updatedJob);
+        onSuccessCallback?.(updatedJob);
       },
       onError: (error: Error) => {
         console.error("Error updating job:", error.message);
-        if (onErrorCallback) onErrorCallback(error.message);
+        onErrorCallback?.(error.message);
       },
     }
   );

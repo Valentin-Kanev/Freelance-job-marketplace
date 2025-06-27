@@ -167,10 +167,7 @@ jobsRouter.put(
         data: responseJob,
       });
     } catch (error) {
-      console.error("Error updating job:", error);
       if (error instanceof Error) {
-        console.error("Message:", error.message);
-        console.error("Stack trace:", error.stack);
       }
       res.status(500).json({
         message: "Error updating job",

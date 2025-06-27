@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import Button from "../../UI/Button";
 import { useDeleteJob } from "../../../hooks/useJobs";
 import { useToast } from "../../../contexts/ToastManager";
+import { useNavigate } from "react-router-dom";
 
 interface DeleteJobModalProps {
   job_id: number;
@@ -18,15 +19,22 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
 }) => {
   const deleteJobMutation = useDeleteJob();
   const { addToast } = useToast();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const handleDelete = () => {
+    setError(null);
     deleteJobMutation.mutate(job_id, {
       onSuccess: () => {
         addToast("Job deleted successfully!");
         onSuccess?.();
         onClose();
+        navigate("/");
       },
-      onError: (err) => console.error("Error deleting job:", err.message),
+      onError: (err: any) => {
+        const message = err?.message || "Error deleting job.";
+        setError(message);
+      },
     });
   };
 
@@ -36,6 +44,7 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
     <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion">
       <div className="space-y-4 text-center">
         <p>Are you sure you want to delete this job?</p>
+        {error && <div className="text-red-600 text-sm">{error}</div>}
         <div className="flex justify-center space-x-4">
           <Button
             label="Delete"

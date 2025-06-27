@@ -1,0 +1,1 @@
+ALTER TABLE "profiles" ALTER COLUMN "skills" SET DATA TYPE varchar(200);

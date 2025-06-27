@@ -7,7 +7,7 @@ interface ReviewListProps {
   isFreelancer: boolean;
 }
 
-export default function ReviewList({
+export default function FreelancerReviewList({
   freelancerId,
   isFreelancer,
 }: ReviewListProps) {

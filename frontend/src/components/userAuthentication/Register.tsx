@@ -25,7 +25,7 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
       username: "",
       email: "",
       password: "",
-      user_type: "client",
+      user_type: undefined,
     },
   });
 

@@ -45,12 +45,6 @@ export const loginUser = async (
   );
 };
 
-export const logoutUser = (): void => {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("userId");
-  localStorage.removeItem("userType");
-};
-
 export const fetchUserProfile = async (): Promise<User> => {
   const token = localStorage.getItem("authToken");
 

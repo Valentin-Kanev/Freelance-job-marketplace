@@ -13,16 +13,9 @@ const ChatForm: React.FC<ChatFormProps> = ({ roomId }) => {
 
   const handleSubmit = async () => {
     if (!message.trim() || !userId) return;
-
-    try {
-      await sendMessage.mutateAsync({
-        sender_id: userId,
-        content: message,
-      });
-      setMessage("");
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
+    await sendMessage
+      .mutateAsync({ sender_id: userId, content: message })
+      .then(() => setMessage(""));
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {

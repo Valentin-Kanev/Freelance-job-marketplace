@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
 
-const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
+const ClientWrittenReviews = ({ clientId }: { clientId: string }) => {
   const {
     data: reviews,
     isLoading,
@@ -52,4 +52,4 @@ const ClientmadeReviews = ({ clientId }: { clientId: string }) => {
   );
 };
 
-export default ClientmadeReviews;
+export default ClientWrittenReviews;

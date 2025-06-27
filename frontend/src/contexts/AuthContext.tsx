@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 import { useQueryClient } from "react-query";
 import { useAuthUser } from "../hooks/useAuth";
 
@@ -18,53 +12,42 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
-  const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
-
   const queryClient = useQueryClient();
   const { data: authUser, isLoading } = useAuthUser();
 
+  const isLoggedIn = !!authUser;
+  const userId = authUser?.id || null;
+  const userType = authUser?.userType || null;
+
   const login = (token: string) => {
     localStorage.setItem("authToken", token);
-    setIsAuthChecked(false);
     queryClient.invalidateQueries(["authUser"]);
   };
 
-  const logout = useCallback(() => {
+  const logout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("userType");
-    setUserId(null);
-    setUserType(null);
-    setIsLoggedIn(false);
     queryClient.invalidateQueries("userProfile");
     queryClient.invalidateQueries(["authUser"]);
-  }, [queryClient]);
-
-  useEffect(() => {
-    if (isLoading) return;
-    if (authUser) {
-      setUserId(authUser.id);
-      setUserType(authUser.userType);
-      setIsLoggedIn(true);
-    } else {
-      setUserId(null);
-      setUserType(null);
-      setIsLoggedIn(false);
-    }
-    setIsAuthChecked(true);
-  }, [authUser, isLoading]);
+  };
 
   return (
     <AuthContext.Provider
       value={{ isLoggedIn, userId, userType, login, logout }}
     >
-      {isAuthChecked && children}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <span className="text-lg text-gray-700 animate-pulse">
+            Loading...
+          </span>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

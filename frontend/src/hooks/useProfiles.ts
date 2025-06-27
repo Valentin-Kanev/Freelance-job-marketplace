@@ -22,7 +22,7 @@ export const useUserProfile = (userId: string | null) => {
     ["profile", userId],
     () => fetchUserProfile(userId!),
     {
-      enabled: !userId,
+      enabled: !!userId,
       staleTime: 0,
       cacheTime: 0,
       refetchOnWindowFocus: true,
@@ -44,11 +44,11 @@ export const useUpdateProfile = (
   >(({ profileId, data }) => updateProfile(profileId, data), {
     onSuccess: () => {
       queryClient.invalidateQueries("profile");
-      if (onSuccessCallback) onSuccessCallback();
+      onSuccessCallback?.();
     },
     onError: (error) => {
       console.error("Error updating profile:", error.message);
-      if (onErrorCallback) onErrorCallback(error.message);
+      onErrorCallback?.(error.message);
     },
   });
 };

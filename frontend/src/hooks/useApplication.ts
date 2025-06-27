@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import {
   applyForJob,
   fetchJobApplications,
@@ -10,6 +10,7 @@ export const useApplyForJob = (
   onSuccess?: (data: Application) => void,
   onError?: (error: Error) => void
 ) => {
+  const queryClient = useQueryClient();
   return useMutation(
     ({
       job_id,
@@ -19,10 +20,13 @@ export const useApplyForJob = (
       data: { freelancer_id: string; cover_letter: string };
     }) => applyForJob(job_id, data),
     {
-      onSuccess,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries("myApplications");
+        onSuccess?.(data);
+      },
       onError: (error: Error) => {
         console.error("Error applying for job:", error.message);
-        if (onError) onError(error);
+        onError?.(error);
       },
     }
   );
@@ -47,7 +51,8 @@ export const useFetchMyApplications = () => {
     "myApplications",
     fetchMyApplications,
     {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 0,
+      cacheTime: 0,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching my applications:", error.message);

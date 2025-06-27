@@ -16,11 +16,11 @@ interface ApplicationItemProps {
 const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
   const [isReviewing, setIsReviewing] = useState(false);
 
-  const handleOpenReview = () => {
+  const handleOpenReviewModal = () => {
     setIsReviewing(true);
   };
 
-  const handleCloseReview = () => {
+  const handleCloseReviewModal = () => {
     setIsReviewing(false);
   };
 
@@ -43,7 +43,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
       <div className="mt-6 flex justify-left">
         <Button
           label="Add Review"
-          onClick={handleOpenReview}
+          onClick={handleOpenReviewModal}
           className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
         />
       </div>
@@ -52,7 +52,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
         <CreateReview
           freelancerId={application.freelancer_id}
           isOpen={isReviewing}
-          onClose={handleCloseReview}
+          onClose={handleCloseReviewModal}
         />
       )}
     </div>

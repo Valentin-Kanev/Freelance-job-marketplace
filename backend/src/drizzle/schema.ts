@@ -31,7 +31,7 @@ export const Profile = pgTable(
     user_id: uuid("user_id")
       .references(() => User.user_id)
       .notNull(),
-    skills: varchar("skills", { length: 30 }).notNull(),
+    skills: varchar("skills", { length: 200 }).notNull(),
     description: varchar("description", { length: 800 }).notNull(),
     hourly_rate: numeric("hourly_rate", { precision: 10, scale: 2 }),
   },

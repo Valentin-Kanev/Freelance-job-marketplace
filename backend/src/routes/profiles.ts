@@ -132,13 +132,26 @@ router.put(
           .json({ message: "Unauthorized: You don't own this profile" });
       }
 
+      const user = await db.query.User.findFirst({
+        where: eq(User.user_id, userId),
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const isFreelancer = user.user_type === "freelancer";
+      const updateData: any = {
+        skills,
+        description,
+        hourly_rate:
+          isFreelancer && hourly_rate !== undefined
+            ? sql`${hourly_rate}`
+            : null,
+      };
+
       const updatedProfile = await db
         .update(Profile)
-        .set({
-          skills,
-          description,
-          hourly_rate: hourly_rate !== undefined ? sql`${hourly_rate}` : null,
-        })
+        .set(updateData)
         .where(eq(Profile.profile_id, id));
 
       res.status(200).json({

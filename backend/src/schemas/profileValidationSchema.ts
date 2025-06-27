@@ -4,7 +4,7 @@ export const createProfileSchema = z.object({
   skills: z
     .string()
     .min(4, "Skills are required to be at least 4 characters")
-    .max(100, "Skills are too long. They must be less than 200 characters"),
+    .max(200, "Skills are too long. They must be less than 200 characters"),
   description: z
     .string()
     .min(20, "Description is required to be at least 20 characters")
