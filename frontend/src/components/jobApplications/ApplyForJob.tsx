@@ -7,6 +7,7 @@ import {
 import { useApplyForJob } from "../../hooks/useApplication";
 import Button from "../UI/Button";
 import { useToast } from "../../contexts/ToastManager";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ApplyForJobProps {
   job_id: number;
@@ -14,7 +15,7 @@ interface ApplyForJobProps {
 }
 
 const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
-  const freelancerId = localStorage.getItem("userId");
+  const { userId } = useAuth();
   const { addToast } = useToast();
 
   const {
@@ -37,10 +38,15 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
   );
 
   const onSubmit = (data: CreateApplicationValidation) => {
+    if (!userId) {
+      setError("root.serverError", { message: "User not authenticated." });
+      return;
+    }
+
     submitApplication({
       job_id,
       data: {
-        freelancer_id: freelancerId!,
+        freelancer_id: userId,
         cover_letter: data.cover_letter,
       },
     });

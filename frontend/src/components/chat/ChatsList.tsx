@@ -28,11 +28,11 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
         <div className="text-gray-500">Loading chat rooms...</div>
       ) : (
         <ul className="space-y-2">
-          {chatRooms?.map((room: ChatRoom, index: number) => {
+          {chatRooms?.map((room: ChatRoom) => {
             const isSelected = room.chatRoom_id === localSelectedRoomId;
             return (
               <li
-                key={room.chatRoom_id || `chat-room-${index}`}
+                key={room.chatRoom_id}
                 className={`p-2 rounded-full cursor-pointer ${
                   isSelected ? "bg-blue-300" : "bg-gray-100 hover:bg-gray-200"
                 }`}

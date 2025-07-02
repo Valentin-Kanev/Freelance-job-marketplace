@@ -1,6 +1,7 @@
 import { useFreelancerReviews } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
 import ExpandableText from "../UI/ExpandableText";
+import { Link } from "react-router-dom";
 
 interface ReviewListProps {
   freelancerId: string;
@@ -42,6 +43,7 @@ function ReviewCard({
 }: {
   review: {
     id: string;
+    client_id: string;
     client_username: string;
     rating: number;
     review_text: string;
@@ -49,9 +51,12 @@ function ReviewCard({
 }) {
   return (
     <div className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
-      <p className="text-lg font-semibold text-gray-800">
-        Client: {review.client_username}
-      </p>
+      <Link
+        to={`/profiles/${review.client_id}`}
+        className="text-lg font-semibold text-blue-600"
+      >
+        {review.client_username}
+      </Link>
       <p className="text-yellow-500 font-semibold">
         Rating: {"⭐".repeat(review.rating)}
       </p>

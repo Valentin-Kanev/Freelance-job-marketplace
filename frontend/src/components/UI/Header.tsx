@@ -71,9 +71,9 @@ const Header: React.FC = () => {
               </>
             ) : (
               <Link
-                to="/auth"
+                to="/auth/login"
                 className={`text-white hover:text-gray-300 pb-1 border-b-2 transform transition-all duration-300 ease-in-out ${
-                  isActive("/auth")
+                  isActive("/auth/login")
                     ? "border-white scale-105"
                     : "border-transparent"
                 }`}

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
@@ -11,12 +10,6 @@ const AuthMode: React.FC = () => {
   const handleRegistrationSuccess = () => {
     navigate("/auth/login");
   };
-
-  useEffect(() => {
-    if (location.pathname === "/auth") {
-      navigate("/auth/login");
-    }
-  }, [location.pathname, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-4">

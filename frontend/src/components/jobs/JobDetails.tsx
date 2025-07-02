@@ -59,12 +59,15 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           <h2 className="text-4xl font-bold mb-4 break-all overflow-hidden">
             {job.title}
           </h2>
-          <Link
-            to={`/profiles/${job.client_id}`}
-            className="text-blue-600 hover:text-blue-800 underline"
-          >
-            {job.client_username}
-          </Link>
+          <p className="text-lg font-semibold mb-2">
+            <span className="text-black">Offered by:</span>{" "}
+            <Link
+              to={`/profiles/${job.client_id}`}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              {job.client_username}
+            </Link>
+          </p>
           <p className="text-lg font-semibold text-green-600 mb-4">
             💵 Budget: {formatBudget(job.budget)}
           </p>

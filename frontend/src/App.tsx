@@ -7,13 +7,13 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProfileContainer } from "./components/profile/ProfileContainer";
 import AuthMode from "./components/userAuthentication/AuthMode";
 import { ToastProvider } from "./contexts/ToastManager";
-import { useJobs } from "./hooks/useJobs";
 import FreelancerProfilesList from "./components/profile/FreelancerProfilesList";
 import ProfileLoader from "./components/profile/ProfileLoader";
 import { SocketProvider } from "./contexts/SocketContext";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";
+import { useJobs } from "./hooks/useJobs";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -21,8 +21,30 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <div className="flex-grow flex flex-col">
         <Header />
         <main className="flex-grow p-4">{children}</main>
+        <ChatButtonWrapper />
       </div>
     </div>
+  );
+};
+
+const ProfileWithUserId = () => {
+  const { userId } = useAuth();
+  return userId ? (
+    <ProfileContainer userId={userId} />
+  ) : (
+    <div>Please log in to view your profile.</div>
+  );
+};
+
+const JobDetailsWrapper = () => {
+  const { data: jobs, isLoading, isError, error } = useJobs();
+  return (
+    <JobListWithDetails
+      jobs={jobs || []}
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+    />
   );
 };
 
@@ -33,73 +55,45 @@ const App: React.FC = () => {
         <BrowserRouter>
           <ToastProvider>
             <SocketProvider>
-              <Routes>
-                <Route
-                  path="*"
-                  element={
-                    <Layout>
-                      <AppRoutes />
-                      <ChatButtonWrapper />
-                    </Layout>
-                  }
-                />
-              </Routes>
+              <Layout>
+                <Routes>
+                  <Route path="/auth/login" element={<AuthMode />} />
+                  <Route path="/auth/register" element={<AuthMode />} />
+                  <Route path="/jobs" element={<JobManagement />} />
+                  <Route path="/jobs/:job_id" element={<JobDetailsWrapper />} />
+                  <Route
+                    path="/profiles"
+                    element={<FreelancerProfilesList />}
+                  />
+                  <Route
+                    path="/profiles/:user_id"
+                    element={<ProfileLoader />}
+                  />
+                  <Route
+                    path="/profile-management"
+                    element={
+                      <ProtectedRoute>
+                        <ProfileWithUserId />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/chat"
+                    element={
+                      <ProtectedRoute>
+                        <ChatContainer />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/" element={<Navigate to="/jobs" replace />} />
+                  <Route path="*" element={<div>Page not found</div>} />
+                </Routes>
+              </Layout>
             </SocketProvider>
           </ToastProvider>
         </BrowserRouter>
       </ChatProvider>
     </AuthProvider>
-  );
-};
-
-const AppRoutes: React.FC = () => {
-  const { userId } = useAuth();
-  const safeUserId = userId ?? "";
-
-  const { data: jobs, isLoading, isError, error } = useJobs();
-
-  return (
-    <Routes>
-      <Route path="/auth" element={<AuthMode />} />
-      <Route path="/auth/login" element={<AuthMode />} />
-      <Route path="/auth/register" element={<AuthMode />} />
-      <Route path="/jobs" element={<JobManagement />} />
-      <Route
-        path="/jobs/:job_id"
-        element={
-          <JobListWithDetails
-            jobs={jobs || []}
-            isLoading={isLoading}
-            isError={isError}
-            error={error}
-          />
-        }
-      />
-      <Route path="/profiles" element={<FreelancerProfilesList />} />
-      <Route path="/profiles/:user_id" element={<ProfileLoader />} />
-      <Route
-        path="/profile-management"
-        element={
-          <ProtectedRoute>
-            {safeUserId ? (
-              <ProfileContainer userId={safeUserId} />
-            ) : (
-              <div>Please log in to view your profile.</div>
-            )}
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/chat"
-        element={
-          <ProtectedRoute>
-            <ChatContainer />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/" element={<Navigate to="/jobs" replace />} />
-      <Route path="*" element={<div>Page not found</div>} />
-    </Routes>
   );
 };
 

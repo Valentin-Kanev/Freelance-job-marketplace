@@ -101,11 +101,17 @@ export const useSearchJobsByTitle = (title: string) => {
 };
 
 export const useJobMutations = (
-  onSuccess: (job: Job | CreateJobData | UpdateJobData) => void,
+  onSuccess: (job: Job | CreateJobData) => void,
   onError?: (errorMessage: string) => void
 ) => {
-  const createJobMutation = useCreateJob(onSuccess, onError);
-  const updateJobMutation = useUpdateJob(onSuccess, onError);
+  const createJobMutation = useCreateJob(
+    (newJob) => onSuccess(newJob),
+    onError
+  );
+  const updateJobMutation = useUpdateJob(
+    (updatedJob) => onSuccess(updatedJob),
+    onError
+  );
 
   const handleJobSubmit = (
     isUpdate: boolean,
@@ -115,17 +121,10 @@ export const useJobMutations = (
       const { job_id, ...fields } = jobDetails as UpdateJobData & {
         job_id: number;
       };
-
-      const updatedData: UpdateJobData = Object.fromEntries(
+      const updatedData = Object.fromEntries(
         Object.entries(fields).filter(([_, v]) => v !== undefined)
       );
-
-      const args = {
-        job_id,
-        data: updatedData,
-      };
-
-      updateJobMutation.mutate(args);
+      updateJobMutation.mutate({ job_id, data: updatedData });
     } else {
       createJobMutation.mutate(jobDetails as CreateJobData);
     }

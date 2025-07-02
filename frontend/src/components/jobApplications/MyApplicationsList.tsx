@@ -1,6 +1,7 @@
 import { useFetchMyApplications } from "../../hooks/useApplication";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
+import { Link } from "react-router-dom";
 
 const MyApplications: React.FC = () => {
   const {
@@ -25,9 +26,12 @@ const MyApplications: React.FC = () => {
               key={`${application.job_id}-${index}`}
               className="p-4 border rounded-lg"
             >
-              <h3 className="text-lg font-semibold">
-                Applied for: {application.jobTitle}
-              </h3>
+              <Link
+                to={`/jobs/${application.job_id}`}
+                className="text-lg font-semibold text-blue-600 "
+              >
+                {application.jobTitle}
+              </Link>
               <div>
                 <ExpandableText text={application.coverLetter} />
               </div>
