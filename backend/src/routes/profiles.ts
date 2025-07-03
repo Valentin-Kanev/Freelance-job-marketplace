@@ -123,20 +123,23 @@ router.put(
       });
 
       if (!profile) {
-        return res.status(404).json({ message: "Profile not found" });
+        res.status(404).json({ message: "Profile not found" });
+        return;
       }
 
       if (profile.user_id !== userId) {
-        return res
+        res
           .status(403)
           .json({ message: "Unauthorized: You don't own this profile" });
+        return;
       }
 
       const user = await db.query.User.findFirst({
         where: eq(User.user_id, userId),
       });
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        res.status(404).json({ message: "User not found" });
+        return;
       }
 
       const isFreelancer = user.user_type === "freelancer";

@@ -37,7 +37,7 @@ export const useFetchJobApplications = (job_id: number) => {
     ["jobApplications", job_id],
     () => fetchJobApplications(job_id),
     {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 30 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching applications:", error.message);
@@ -51,8 +51,6 @@ export const useFetchMyApplications = () => {
     "myApplications",
     fetchMyApplications,
     {
-      staleTime: 0,
-      cacheTime: 0,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching my applications:", error.message);

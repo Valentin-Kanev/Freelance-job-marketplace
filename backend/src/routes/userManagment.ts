@@ -40,9 +40,8 @@ router.post(
       });
 
       if (existingUser) {
-        return res
-          .status(400)
-          .json({ message: "Username or email already exists" });
+        res.status(400).json({ message: "Username or email already exists" });
+        return;
       }
 
       const saltRounds = 10;
@@ -88,17 +87,20 @@ router.post(
       });
 
       if (!user || !user.password) {
-        return res.status(400).json({ message: "Invalid email or password" });
+        res.status(400).json({ message: "Invalid email or password" });
+        return;
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(400).json({ message: "Invalid email or password" });
+        res.status(400).json({ message: "Invalid email or password" });
+        return;
       }
 
       if (!SECRET_KEY) {
         logger.error("SECRET_KEY is not defined in environment variables.");
-        return res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
+        return;
       }
 
       const token = jwt.sign(

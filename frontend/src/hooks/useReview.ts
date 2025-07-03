@@ -37,7 +37,7 @@ export const useFreelancerReviews = (freelancerId: string) => {
     ["freelancerReviews", freelancerId],
     () => fetchFreelancerReviews(freelancerId),
     {
-      staleTime: 1 * 30 * 1000,
+      staleTime: 30 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error fetching reviews:", error.message);

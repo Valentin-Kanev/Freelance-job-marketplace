@@ -34,9 +34,10 @@ reviewsRouter.post(
       });
 
       if (existingReview) {
-        return res.status(400).json({
+        res.status(400).json({
           message: "You have already submitted a review for this freelancer.",
         });
+        return;
       }
 
       await db
@@ -66,9 +67,8 @@ reviewsRouter.get(
       });
 
       if (!profile) {
-        return res
-          .status(404)
-          .json({ message: "Freelancer profile not found" });
+        res.status(404).json({ message: "Freelancer profile not found" });
+        return;
       }
 
       const user_id = profile.user_id;

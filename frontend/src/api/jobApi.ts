@@ -77,7 +77,7 @@ export const updateJob = async ({
   throw new Error(response?.message || "Failed to update job");
 };
 
-export const deleteJob = async (job_id: number): Promise<void> => {
+export const softDeleteJob = async (job_id: number): Promise<void> => {
   return fetchClient<void>(`/jobs/${job_id}`, {
     method: "PATCH",
     body: JSON.stringify({ deleted_at: new Date() }),

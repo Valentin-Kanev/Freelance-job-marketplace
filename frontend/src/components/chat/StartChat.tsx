@@ -11,20 +11,25 @@ const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
   const { userId } = useAuth();
   const createChatRoom = useCreateChatRoom();
 
-  const handleStartChat = async () => {
+  const handleStartChat = () => {
     if (!userId) {
       alert("User ID is not available. Please log in.");
       return;
     }
-    try {
-      const chatRoom = await createChatRoom.mutateAsync({
+    createChatRoom.mutate(
+      {
         user_1_id: userId,
         user_2_id: targetUserId,
-      });
-      onStartChat(chatRoom.chatRoom_id);
-    } catch (error) {
-      alert("Failed to create chat room. Please try again.");
-    }
+      },
+      {
+        onSuccess: (chatRoom) => {
+          onStartChat(chatRoom.chatRoom_id);
+        },
+        onError: () => {
+          alert("Failed to create chat room. Please try again.");
+        },
+      }
+    );
   };
 
   return (

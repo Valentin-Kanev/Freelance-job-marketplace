@@ -9,7 +9,7 @@ import { Profile, UpdateProfileData } from "../types/ProfileTypes";
 
 export const useProfiles = () => {
   return useQuery<Profile[], Error>("profiles", fetchProfiles, {
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000,
     retry: 2,
     onError: (error: Error) => {
       console.error("Error fetching profiles:", error.message);
@@ -23,7 +23,6 @@ export const useUserProfile = (userId: string | null) => {
     () => fetchUserProfile(userId!),
     {
       enabled: !!userId,
-      staleTime: 0,
       cacheTime: 0,
       refetchOnWindowFocus: true,
       refetchOnMount: true,
@@ -59,7 +58,7 @@ export const useSearchProfiles = (query: string) => {
     () => searchProfiles(query),
     {
       enabled: query.trim().length > 0,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 30 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error searching profiles:", error.message);

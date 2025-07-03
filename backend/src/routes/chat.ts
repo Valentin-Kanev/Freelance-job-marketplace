@@ -112,7 +112,8 @@ chatRouter.post(
       });
 
       if (existingRoom) {
-        return res.json({ chatRoom_id: existingRoom.chatRoom_id });
+        res.json({ chatRoom_id: existingRoom.chatRoom_id });
+        return;
       }
 
       const newRoom = await db
@@ -151,9 +152,10 @@ chatRouter.post(
 
       if (!chatRoom) {
         logger.error("User not authorized to send messages in this chat room");
-        return res.status(403).json({
+        res.status(403).json({
           error: "User not authorized to send messages in this chat room.",
         });
+        return;
       }
 
       const message = await db

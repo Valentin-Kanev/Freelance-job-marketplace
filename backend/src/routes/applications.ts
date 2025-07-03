@@ -31,9 +31,8 @@ applicationsRouter.post(
         job_id,
         freelancer_id,
       });
-      return res
-        .status(400)
-        .json({ message: "Invalid job ID or freelancer ID" });
+      res.status(400).json({ message: "Invalid job ID or freelancer ID" });
+      return;
     }
 
     try {
@@ -49,9 +48,10 @@ applicationsRouter.post(
           job_id,
           freelancer_id,
         });
-        return res
+        res
           .status(400)
           .json({ message: "You have already applied for this job" });
+        return;
       }
 
       await db.transaction(async (trx) => {

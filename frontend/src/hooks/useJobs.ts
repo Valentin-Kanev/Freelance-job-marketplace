@@ -3,7 +3,7 @@ import {
   fetchJobs,
   createJob,
   updateJob,
-  deleteJob,
+  softDeleteJob,
   fetchJob,
   searchJobsByTitle,
 } from "../api/jobApi";
@@ -11,7 +11,7 @@ import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
 
 export const useJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {
-    staleTime: 5 * 30 * 1000,
+    staleTime: 30 * 1000,
     retry: 2,
     onError: (error: Error) => {
       console.error("Error fetching jobs:", error.message);
@@ -64,7 +64,7 @@ export const useUpdateJob = (
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((job_id: number) => deleteJob(job_id), {
+  return useMutation((job_id: number) => softDeleteJob(job_id), {
     onSuccess: () => {
       queryClient.invalidateQueries("jobs");
     },
@@ -78,7 +78,7 @@ export const useFetchJob = (job_id: number) => {
   return useQuery<Job, Error>(["job", job_id], () => fetchJob(job_id), {
     enabled: typeof job_id === "number" && job_id > 0,
     retry: 2,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000,
     onError: (error: Error) => {
       console.error("Error fetching job:", error.message);
     },
@@ -91,7 +91,7 @@ export const useSearchJobsByTitle = (title: string) => {
     () => (title ? searchJobsByTitle(title) : Promise.resolve([])),
     {
       enabled: Boolean(title),
-      staleTime: 5 * 60 * 1000,
+      staleTime: 30 * 1000,
       retry: 2,
       onError: (error: Error) => {
         console.error("Error searching jobs:", error.message);
