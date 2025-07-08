@@ -16,7 +16,7 @@ import { CustomResponse } from "../types/responseTypes";
 
 const router = Router();
 
-router.get("/profiles", async (req: Request, res: Response) => {
+router.get("/profiles", async (req, res) => {
   try {
     const profiles = await db
       .select({
@@ -35,13 +35,18 @@ router.get("/profiles", async (req: Request, res: Response) => {
       .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(eq(User.user_type, "freelancer"));
 
+    req.logger.info(
+      { count: profiles.length },
+      "Profiles retrieved successfully"
+    );
     res.status(200).json(profiles);
   } catch (error) {
+    req.logger.error({ error }, "Failed to retrieve profiles");
     res.status(500).json({ error: "Failed to retrieve profiles" });
   }
 });
 
-router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
+router.get("/profiles/user/:user_id", async (req, res) => {
   const { user_id: userId } = req.params;
 
   try {
@@ -62,8 +67,10 @@ router.get("/profiles/user/:user_id", async (req: Request, res: Response) => {
       .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(eq(Profile.user_id, userId));
 
+    req.logger.info({ userId }, "Profile retrieved for user");
     res.status(200).json(profile[0]);
   } catch (error) {
+    req.logger.error({ error, userId }, "Failed to retrieve user profile");
     res.status(500).json({ message: "Internal server error" });
   }
 });

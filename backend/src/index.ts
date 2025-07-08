@@ -10,6 +10,7 @@ import applicationsRouter from "./routes/applications";
 import reviewsRouter from "./routes/reviews";
 import chatRouter from "./routes/chat";
 import { logger } from "./middleware/logger";
+import { requestLogger } from "./middleware/requestLogger";
 import { initializeSocket } from "./socket.io/socket";
 
 const app: Application = express();
@@ -28,6 +29,7 @@ const envPath = path.resolve(__dirname, "../config/.env");
 dotenv.config({ path: envPath });
 
 app.use(express.json());
+app.use(requestLogger);
 app.use(userManagmentRouter);
 app.use("/applications", applicationsRouter);
 app.use(profilesRouter);
