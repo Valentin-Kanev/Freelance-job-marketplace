@@ -67,7 +67,8 @@ router.get("/profiles/user/:user_id", async (req, res) => {
       .leftJoin(User, eq(Profile.user_id, User.user_id))
       .where(eq(Profile.user_id, userId));
 
-    req.logger.info({ userId }, "Profile retrieved for user");
+    const username = profile[0]?.username;
+    req.logger.info({ userId, username }, "Profile retrieved for user");
     res.status(200).json(profile[0]);
   } catch (error) {
     req.logger.error({ error, userId }, "Failed to retrieve user profile");

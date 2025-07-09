@@ -48,7 +48,10 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
             return;
           }
           req.user = { ...(decodedToken as JwtPayload), ...user };
-          logger.info("Authenticated user:", req.user);
+          logger.info(
+            { username: user.username, user_id: user.user_id },
+            "Authenticated user:"
+          );
           next();
         } catch (dbError) {
           logger.error("Database error:", dbError);
