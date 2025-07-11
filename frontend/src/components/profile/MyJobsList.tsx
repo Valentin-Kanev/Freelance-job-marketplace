@@ -1,16 +1,9 @@
-import { useQuery } from "react-query";
-import { fetchJobsByClient } from "../../api/jobApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
+import { useFetchMyJobs } from "../../hooks/useJobs";
 
 const MyJobs = ({ clientId }: { clientId: string }) => {
-  const {
-    data: jobs,
-    isLoading,
-    error,
-  } = useQuery(["jobsByClient", clientId], () => fetchJobsByClient(clientId), {
-    enabled: !!clientId,
-  });
+  const { data: jobs, isLoading, error } = useFetchMyJobs(clientId);
 
   return (
     <div>

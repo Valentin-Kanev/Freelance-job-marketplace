@@ -1,5 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { submitReview, fetchFreelancerReviews } from "../api/ReviewApi";
+import {
+  submitReview,
+  fetchFreelancerReviews,
+  fetchClientReviews,
+} from "../api/ReviewApi";
 import { Review } from "../types/ReviewTypes";
 
 export const useSubmitReview = (
@@ -42,6 +46,16 @@ export const useFreelancerReviews = (freelancerId: string) => {
       onError: (error: Error) => {
         console.error("Error fetching reviews:", error.message);
       },
+    }
+  );
+};
+
+export const useClientWrittenReviews = (clientId: string) => {
+  return useQuery(
+    ["clientReviews", clientId],
+    () => fetchClientReviews(clientId),
+    {
+      enabled: !!clientId,
     }
   );
 };

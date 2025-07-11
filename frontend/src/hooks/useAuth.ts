@@ -4,7 +4,7 @@ import { registerUser, loginUser } from "../api/userAuthenticationApi";
 import { User } from "../types/AuthenticationTypes";
 import { DecodedToken } from "../types/DecodedToken";
 
-export const isTokenValid = (token: string): boolean => {
+const isTokenValid = (token: string): boolean => {
   try {
     const decodedToken: DecodedToken = jwtDecode(token);
     return decodedToken.exp * 1000 > Date.now();

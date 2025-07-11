@@ -1,21 +1,10 @@
-import { useQuery } from "react-query";
-import { fetchClientReviews } from "../../api/ReviewApi";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
+import { useClientWrittenReviews } from "../../hooks/useReview";
 
 const ClientWrittenReviews = ({ clientId }: { clientId: string }) => {
-  const {
-    data: reviews,
-    isLoading,
-    error,
-  } = useQuery(
-    ["clientReviews", clientId],
-    () => fetchClientReviews(clientId),
-    {
-      enabled: !!clientId,
-    }
-  );
+  const { data: reviews, isLoading, error } = useClientWrittenReviews(clientId);
 
   return (
     <div>

@@ -6,8 +6,19 @@ import {
   softDeleteJob,
   fetchJob,
   searchJobsByTitle,
+  fetchJobsByClient,
 } from "../api/jobApi";
 import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
+
+export const useFetchMyJobs = (clientId: string) => {
+  return useQuery(
+    ["jobsByClient", clientId],
+    () => fetchJobsByClient(clientId),
+    {
+      enabled: !!clientId,
+    }
+  );
+};
 
 export const useJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {

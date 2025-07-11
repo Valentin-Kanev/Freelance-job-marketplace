@@ -38,22 +38,10 @@ export const fetchJobs = async (): Promise<Job[]> => {
 };
 
 export const createJob = async (jobData: CreateJobData): Promise<Job> => {
-  const token = localStorage.getItem("authToken");
-  const response = await fetch(`${BASE_URL}/jobs`, {
+  return fetchClient<Job>("/jobs", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(jobData),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to create job");
-  }
-
-  return response.json();
 };
 
 export const updateJob = async ({
