@@ -36,10 +36,10 @@ const FreelancerProfilesList = () => {
                     text={profile.description || "No description provided"}
                   />
                 </div>
-                <p className="text-sm text-gray-600 mt-2 text-center">
+                <div className="text-sm text-gray-600 mt-2 text-center w-full break-words">
                   <span className="font-medium">Skills:</span>{" "}
-                  {profile.skills || "Not specified"}
-                </p>
+                  <ExpandableText text={profile.skills || "Not specified"} />
+                </div>
                 <p className="text-sm text-gray-600 mt-2 text-center">
                   <span className="font-medium">Hourly Rate:</span>{" "}
                   {profile.hourlyRate

@@ -11,13 +11,12 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  if (text.length <= limit)
-    return (
-      <p className="text-gray-700 break-words whitespace-pre-line">{text}</p>
-    );
-
-  return (
-    <div className="text-gray-700 break-words whitespace-pre-line">
+  return text.length <= limit ? (
+    <span className="break-words whitespace-pre-line w-full inline-block">
+      {text}
+    </span>
+  ) : (
+    <span className="break-words whitespace-pre-line w-full inline-block">
       {expanded ? text : text.slice(0, limit) + "..."}
       <button
         className="text-blue-500 hover:underline ml-2"
@@ -25,7 +24,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
       >
         {expanded ? "Show Less" : "Show More"}
       </button>
-    </div>
+    </span>
   );
 };
 

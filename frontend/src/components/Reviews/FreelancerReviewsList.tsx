@@ -2,6 +2,7 @@ import { useFreelancerReviews } from "../../hooks/useReview";
 import { useAuth } from "../../contexts/AuthContext";
 import ExpandableText from "../UI/ExpandableText";
 import { Link } from "react-router-dom";
+import StatusMessage from "../UI/StatusMessage";
 
 interface ReviewListProps {
   freelancerId: string;
@@ -19,19 +20,17 @@ export default function FreelancerReviewList({
     isFreelancer && (
       <div className="space-y-6">
         {!isLoggedIn ? (
-          <div className="text-gray-500">
-            Please log in or register to view reviews.
-          </div>
+          <StatusMessage message="Please log in or register to view reviews." />
         ) : isError ? (
-          <div className="text-red-500">
-            Error fetching reviews: {error?.message}
-          </div>
+          <StatusMessage
+            message={`Error fetching reviews: ${error?.message}`}
+          />
         ) : reviews && reviews.length > 0 ? (
           reviews.map((review) => (
             <ReviewCard key={review.id} review={review} />
           ))
         ) : (
-          <div className="text-gray-500">No reviews yet.</div>
+          <StatusMessage message="No reviews yet." />
         )}
       </div>
     )

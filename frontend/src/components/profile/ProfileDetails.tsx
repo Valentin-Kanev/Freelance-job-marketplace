@@ -1,12 +1,12 @@
 import { useState } from "react";
-import ReviewList from "../Reviews/FreelancerReviewList";
+import ReviewList from "../Reviews/FreelancerReviewsList";
 import MyJobs from "./MyJobsList";
-import MyReviews from "../Reviews/ClientWrittenReviews";
+import MyReviews from "../Reviews/ClientWrittenReviewsList";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
 import { useAuth } from "../../contexts/AuthContext";
-import FloatingChatButton from "../chat/ExpandChatButton";
+import FloatingChatButton from "../chat/FloatingChatButton";
 import { useChat } from "../../contexts/ChatContext";
 import { Profile } from "../../types/ProfileTypes";
 
@@ -23,7 +23,7 @@ export function ProfileDetails({
 }: ProfileDetailsProps) {
   const { loggedInUserId, isLoggedIn } = useAuth();
   const isFreelancer = profile.userType === "freelancer";
-  const isProfileOwner = String(loggedInUserId) === String(profile.userId);
+  const isProfileOwner = loggedInUserId === profile.userId;
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
@@ -49,7 +49,7 @@ export function ProfileDetails({
       <div className="space-y-4">
         <div>
           <strong className="font-medium">Skills:</strong>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg break-words whitespace-pre-line text-gray-600">
             {profile.skills || "No skills listed."}
           </p>
         </div>

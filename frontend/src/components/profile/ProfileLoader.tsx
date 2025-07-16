@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUserProfile } from "../../hooks/useProfiles";
 import { ProfileDetails } from "./ProfileDetails";
 import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileLoader = () => {
   const { user_id } = useParams();
+  const navigate = useNavigate();
   const {
     data: profile,
     isLoading,
@@ -28,7 +29,7 @@ const ProfileLoader = () => {
         <ProfileDetails
           profile={profile}
           isOwner={isOwner}
-          onEdit={() => alert("Redirect to Edit Profile Page")}
+          onEdit={() => navigate("/profile-management")}
         />
       )}
     </>
