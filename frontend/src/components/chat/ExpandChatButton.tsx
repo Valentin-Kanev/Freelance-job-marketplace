@@ -14,9 +14,9 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   chatRoom_id,
   isVisible,
 }) => {
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
 
-  if (!userId || !isVisible) return null;
+  if (!loggedInUserId || !isVisible) return null;
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (

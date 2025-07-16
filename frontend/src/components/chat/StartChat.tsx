@@ -8,17 +8,17 @@ interface StartChatProps {
 }
 
 const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
   const createChatRoom = useCreateChatRoom();
 
   const handleStartChat = () => {
-    if (!userId) {
+    if (!loggedInUserId) {
       alert("User ID is not available. Please log in.");
       return;
     }
     createChatRoom.mutate(
       {
-        user_1_id: userId,
+        user_1_id: loggedInUserId,
         user_2_id: targetUserId,
       },
       {

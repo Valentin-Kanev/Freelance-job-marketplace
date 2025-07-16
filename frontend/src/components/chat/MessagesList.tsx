@@ -9,7 +9,7 @@ interface MessagesListProps {
 
 const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
   const { data: messages, isLoading, error } = useMessages(roomId);
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
         ) : (
           <ul className="space-y-2">
             {messages?.map((message: Message, index: number) => {
-              const isLoggedUser = message.sender_id === userId;
+              const isLoggedUser = message.sender_id === loggedInUserId;
 
               return (
                 <li

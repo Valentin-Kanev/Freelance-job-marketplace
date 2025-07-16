@@ -15,7 +15,7 @@ interface ApplyForJobProps {
 }
 
 const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
   const { addToast } = useToast();
 
   const {
@@ -38,7 +38,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
   );
 
   const onSubmit = (data: CreateApplicationValidation) => {
-    if (!userId) {
+    if (!loggedInUserId) {
       setError("root.serverError", { message: "User not authenticated." });
       return;
     }
@@ -46,7 +46,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
     submitApplication({
       job_id,
       data: {
-        freelancer_id: userId,
+        freelancer_id: loggedInUserId,
         cover_letter: data.cover_letter,
       },
     });

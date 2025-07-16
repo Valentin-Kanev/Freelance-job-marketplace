@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Modal from "../UI/Modal";
-import Toast from "../UI/Toast";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { Profile } from "../../types/ProfileTypes";
@@ -10,8 +9,8 @@ import {
   UpdateProfileValidation,
 } from "../../validationSchemas/profileValidationSchema";
 import { useUpdateProfile } from "../../hooks/useProfiles";
-import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastManager";
 
 interface EditProfileProps {
   profile: Profile;
@@ -25,8 +24,8 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const { userType } = useAuth();
+  const { addToast } = useToast();
   const isFreelancer = userType === "freelancer";
   const {
     register,
@@ -44,7 +43,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
 
   const updateProfileMutation = useUpdateProfile(
     () => {
-      setToastMessage("Profile updated successfully!");
+      addToast("Profile updated successfully!");
       onClose();
     },
     (errorMessage: string) => {
@@ -111,9 +110,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
           </div>
         </form>
       </Modal>
-      {toastMessage && (
-        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
-      )}
     </>
   );
 };

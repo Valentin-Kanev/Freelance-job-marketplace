@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useUserProfile } from "../../hooks/useProfiles";
 import { ProfileDetails } from "./ProfileDetails";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileLoader = () => {
   const { user_id } = useParams();
@@ -10,7 +11,8 @@ const ProfileLoader = () => {
     isError,
     error,
   } = useUserProfile(user_id || null);
-  const isOwner = profile?.userId === localStorage.getItem("userId");
+  const { loggedInUserId } = useAuth();
+  const isOwner = profile?.userId === loggedInUserId;
 
   return (
     <>

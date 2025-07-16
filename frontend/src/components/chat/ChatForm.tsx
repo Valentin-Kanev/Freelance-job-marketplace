@@ -9,12 +9,12 @@ interface ChatFormProps {
 const ChatForm: React.FC<ChatFormProps> = ({ roomId }) => {
   const [message, setMessage] = useState("");
   const sendMessage = useSendMessage(roomId);
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
 
   const handleSubmit = async () => {
-    if (!message.trim() || !userId) return;
+    if (!message.trim() || !loggedInUserId) return;
     await sendMessage
-      .mutateAsync({ sender_id: userId, content: message })
+      .mutateAsync({ sender_id: loggedInUserId, content: message })
       .then(() => setMessage(""));
   };
 

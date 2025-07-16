@@ -21,9 +21,9 @@ export function ProfileDetails({
   isOwner,
   onEdit,
 }: ProfileDetailsProps) {
-  const { userId, isLoggedIn } = useAuth();
+  const { loggedInUserId, isLoggedIn } = useAuth();
   const isFreelancer = profile.userType === "freelancer";
-  const isProfileOwner = String(userId) === String(profile.userId);
+  const isProfileOwner = String(loggedInUserId) === String(profile.userId);
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );

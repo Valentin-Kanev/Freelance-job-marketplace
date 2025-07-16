@@ -25,7 +25,7 @@ const JobListWithDetails: React.FC<Props> = ({
   const { job_id } = useParams<{ job_id: string }>();
   const parsedJobId = job_id ? Number(job_id) : null;
   const queryClient = useQueryClient();
-  const { userId, userType } = useAuth();
+  const { loggedInUserId, userType } = useAuth();
 
   const {
     isLoading: isJobLoading,
@@ -70,7 +70,7 @@ const JobListWithDetails: React.FC<Props> = ({
           {!isJobLoading && !isJobError && (
             <JobDetails
               job_id={parsedJobId ?? -1}
-              userId={userId || ""}
+              userId={loggedInUserId || ""}
               userType={userType || ""}
               onJobUpdate={handleJobUpdate}
             />

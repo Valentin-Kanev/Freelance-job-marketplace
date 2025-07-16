@@ -4,7 +4,7 @@ import { useAuthUser } from "../hooks/useAuth";
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  userId: string | null;
+  loggedInUserId: string | null;
   userType: string | null;
   login: (token: string) => void;
   logout: () => void;
@@ -19,7 +19,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const { data: authUser, isLoading } = useAuthUser();
 
   const isLoggedIn = !!authUser;
-  const userId = authUser?.id || null;
+  const loggedInUserId = authUser?.id || null;
   const userType = authUser?.userType || null;
 
   const login = (token: string) => {
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, userId, userType, login, logout }}
+      value={{ isLoggedIn, loggedInUserId, userType, login, logout }}
     >
       {isLoading ? (
         <div className="flex justify-center items-center h-screen">

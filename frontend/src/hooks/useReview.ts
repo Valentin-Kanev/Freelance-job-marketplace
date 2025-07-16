@@ -6,6 +6,11 @@ import {
 } from "../api/ReviewApi";
 import { Review } from "../types/ReviewTypes";
 
+type SubmitReviewArgs = {
+  freelancerId: string;
+  data: { client_id: string; rating: number; review_text: string };
+};
+
 export const useSubmitReview = (
   onSuccess?: () => void,
   onError?: (error: Error) => void
@@ -13,23 +18,15 @@ export const useSubmitReview = (
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({
-      freelancerId,
-      data,
-    }: {
-      freelancerId: string;
-      data: { client_id: string; rating: number; review_text: string };
-    }) => submitReview(freelancerId, data),
+    ({ freelancerId, data }: SubmitReviewArgs) =>
+      submitReview(freelancerId, data),
     {
       onSuccess: (freelancerId) => {
         queryClient.invalidateQueries(["freelancerReviews", freelancerId]);
         onSuccess?.();
       },
       onError: (error: Error) => {
-        if (error.message.includes("already submitted")) {
-        } else {
-          console.error("Error submitting review:", error.message);
-        }
+        console.error("Error submitting review:", error.message);
         onError?.(error);
       },
     }

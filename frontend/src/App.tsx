@@ -28,9 +28,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const ProfileWithUserId = () => {
-  const { userId } = useAuth();
-  return userId ? (
-    <ProfileContainer userId={userId} />
+  const { loggedInUserId } = useAuth();
+  return loggedInUserId ? (
+    <ProfileContainer userId={loggedInUserId} />
   ) : (
     <div>Please log in to view your profile.</div>
   );

@@ -16,10 +16,12 @@ export function ProfileContainer({
   userId: propUserId,
 }: ProfileContainerProps) {
   const { freelancerId } = useParams<{ freelancerId: string }>();
-  const { userId: loggedInUserId, userType } = useAuth();
+  const { loggedInUserId, userType } = useAuth();
   const userId = propUserId ?? freelancerId ?? loggedInUserId;
+
   const { data: profile, isLoading, isError } = useUserProfile(userId);
   const { mutate: updateProfile } = useUpdateProfile();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isOwner = loggedInUserId === profile?.userId;
 

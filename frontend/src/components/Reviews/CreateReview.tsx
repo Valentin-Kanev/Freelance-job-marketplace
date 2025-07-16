@@ -23,7 +23,7 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
   const { addToast } = useToast();
   const [hover, setHover] = useState<number>(0);
   const {
@@ -55,7 +55,7 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   );
 
   const onSubmit = (data: CreateReviewValidation) => {
-    if (!userId) {
+    if (!loggedInUserId) {
       setError("root", {
         message: "You need to be logged in to leave a review.",
       });
@@ -65,7 +65,7 @@ const CreateReview: React.FC<CreateReviewProps> = ({
     submitReviewMutation.mutate({
       freelancerId,
       data: {
-        client_id: userId,
+        client_id: loggedInUserId,
         rating: data.rating,
         review_text: data.review_text,
       },

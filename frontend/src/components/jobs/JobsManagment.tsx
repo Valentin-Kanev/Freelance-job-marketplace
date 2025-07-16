@@ -8,7 +8,7 @@ import { initialJobDetails } from "../../types/JobTypes";
 
 const JobManagement: React.FC = () => {
   const { data: jobs, isLoading, isError, error } = useJobs();
-  const { isLoggedIn, userId } = useAuth();
+  const { isLoggedIn, loggedInUserId } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -25,9 +25,9 @@ const JobManagement: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         title="Create Job"
       >
-        {isLoggedIn && userId && (
+        {isLoggedIn && loggedInUserId && (
           <JobForm
-            userId={userId}
+            userId={loggedInUserId}
             initialJobDetails={initialJobDetails}
             onSubmitSuccess={() => setIsModalOpen(false)}
             onClose={() => setIsModalOpen(false)}

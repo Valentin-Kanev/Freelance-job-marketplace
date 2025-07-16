@@ -4,7 +4,7 @@ import CreateJob from "../jobs/jobActions/CreateJob";
 import SearchBar from "./SearchBar";
 
 const Header: React.FC = () => {
-  const { isLoggedIn, userType, userId, logout } = useAuth();
+  const { isLoggedIn, userType, loggedInUserId, logout } = useAuth();
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -59,7 +59,10 @@ const Header: React.FC = () => {
                 </Link>
                 {userType === "client" && (
                   <div className="pb-1">
-                    <CreateJob userId={userId || ""} isLoggedIn={isLoggedIn} />
+                    <CreateJob
+                      userId={loggedInUserId || ""}
+                      isLoggedIn={isLoggedIn}
+                    />
                   </div>
                 )}
                 <button

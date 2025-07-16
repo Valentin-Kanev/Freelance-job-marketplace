@@ -12,7 +12,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
   job_id,
   creatorId,
 }) => {
-  const { userId } = useAuth();
+  const { loggedInUserId } = useAuth();
 
   const {
     data: applications,
@@ -23,7 +23,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Job Applications</h2>
-      {userId !== creatorId ? (
+      {loggedInUserId !== creatorId ? (
         <StatusMessage message="Unauthorized to view applications" />
       ) : isLoading ? (
         <StatusMessage message="Loading applications..." />
