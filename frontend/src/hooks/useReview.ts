@@ -3,12 +3,12 @@ import {
   submitReview,
   fetchFreelancerReviews,
   fetchClientReviews,
-} from "../api/ReviewApi";
+} from "../api/reviewApi";
 import { Review } from "../types/ReviewTypes";
 
 type SubmitReviewArgs = {
   freelancerId: string;
-  data: { client_id: string; rating: number; review_text: string };
+  data: { clientId: string; rating: number; reviewText: string };
 };
 
 export const useSubmitReview = (

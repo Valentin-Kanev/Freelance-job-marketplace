@@ -11,7 +11,7 @@ import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
   userId: string;
-  initialJobDetails: Partial<CreateJobValidation> & { job_id?: number };
+  initialJobDetails: Partial<CreateJobValidation> & { jobId?: number };
   onClose: () => void;
   onSubmitSuccess: (job: CreateJobData | UpdateJobData) => void;
 }
@@ -22,7 +22,7 @@ const JobForm: React.FC<JobFormProps> = ({
   onClose,
   onSubmitSuccess,
 }) => {
-  const isUpdate = Boolean(initialJobDetails.job_id);
+  const isUpdate = Boolean(initialJobDetails.jobId);
   const {
     register,
     handleSubmit,
@@ -53,11 +53,11 @@ const JobForm: React.FC<JobFormProps> = ({
     const payload = isUpdate
       ? {
           ...(data as UpdateJobData),
-          job_id: initialJobDetails.job_id!,
+          jobId: initialJobDetails.jobId!,
         }
       : {
           ...data,
-          client_id: userId,
+          clientId: userId,
         };
 
     handleJobSubmit(isUpdate, payload);

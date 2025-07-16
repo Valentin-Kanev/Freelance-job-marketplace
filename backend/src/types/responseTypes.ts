@@ -5,11 +5,11 @@ export type CustomResponse<T = any> = {
 };
 
 export type JobUpdateResponse = {
-  job_id: number;
+  jobId: number;
   title: string;
   description: string;
   budget: number;
   deadline: string | null;
-  client_id: number;
-  deleted_at: string | null;
+  clientId: number;
+  deletedAt: string | null;
 };

@@ -18,29 +18,29 @@ chatRouter.get(
   "/chat-rooms",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const userId = (req.user as JwtPayload)?.user_id;
+    const userId = (req.user as JwtPayload)?.userId;
 
     try {
       const chatRooms = await db
         .select()
         .from(ChatRoom)
         .where(
-          or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
+          or(eq(ChatRoom.userOneId, userId), eq(ChatRoom.userTwoId, userId))
         );
 
       const chatRoomsWithDetails = await Promise.all(
         chatRooms.map(async (room) => {
           const otherUserId =
-            room.user_1_id === userId ? room.user_2_id : room.user_1_id;
+            room.userOneId === userId ? room.userTwoId : room.userOneId;
 
           const otherUser = await db.query.User.findFirst({
-            where: eq(User.user_id, otherUserId),
+            where: eq(User.userId, otherUserId),
           });
 
           return {
             ...room,
             otherUser: {
-              id: otherUser?.user_id,
+              id: otherUser?.userId,
               username: otherUser?.username,
             },
           };
@@ -59,25 +59,25 @@ chatRouter.get(
   "/chat-rooms/:id/messages",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const { id: chatRoom_id } = req.params;
+    const { id: chatRoomId } = req.params;
 
     try {
       const messages = await db
         .select()
         .from(Message)
-        .where(eq(Message.chatRoom_id, chatRoom_id))
-        .orderBy(asc(Message.created_at));
+        .where(eq(Message.chatRoomId, chatRoomId))
+        .orderBy(asc(Message.createdAt));
 
       const messagesWithUsernames = await Promise.all(
         messages.map(async (message) => {
           const sender = await db.query.User.findFirst({
-            where: eq(User.user_id, message.sender_id),
+            where: eq(User.userId, message.senderId),
           });
 
           return {
             ...message,
-            sender_username: sender?.username,
-            timestamp: message.created_at.toISOString(),
+            senderUsername: sender?.username,
+            timestamp: message.createdAt.toISOString(),
           };
         })
       );
@@ -94,35 +94,35 @@ chatRouter.post(
   "/chat-rooms",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const user_1_id = req.user.user_id;
-    const { user_2_id } = req.body;
+    const userOneId = req.user.userId;
+    const { userTwoId } = req.body;
 
     try {
       const existingRoom = await db.query.ChatRoom.findFirst({
         where: or(
           and(
-            eq(ChatRoom.user_1_id, user_1_id),
-            eq(ChatRoom.user_2_id, user_2_id)
+            eq(ChatRoom.userOneId, userOneId),
+            eq(ChatRoom.userTwoId, userTwoId)
           ),
           and(
-            eq(ChatRoom.user_1_id, user_2_id),
-            eq(ChatRoom.user_2_id, user_1_id)
+            eq(ChatRoom.userOneId, userTwoId),
+            eq(ChatRoom.userTwoId, userOneId)
           )
         ),
       });
 
       if (existingRoom) {
-        res.json({ chatRoom_id: existingRoom.chatRoom_id });
+        res.json({ chatRoomId: existingRoom.chatRoomId });
         return;
       }
 
       const newRoom = await db
         .insert(ChatRoom)
-        .values({ user_1_id, user_2_id })
+        .values({ userOneId, userTwoId })
         .returning()
         .then((rooms) => rooms[0]);
 
-      res.json({ chatRoom_id: newRoom.chatRoom_id });
+      res.json({ chatRoomId: newRoom.chatRoomId });
     } catch (error) {
       logger.error("Error creating chat room:", error);
       res
@@ -137,16 +137,16 @@ chatRouter.post(
   validate(createMessageSchema),
   authenticateToken,
   async (req: AuthenticatedRequest<CreateMessageValidation>, res: Response) => {
-    const { id: chatRoom_id } = req.params;
+    const { id: chatRoomId } = req.params;
     const { content } = req.body;
-    const userId = req.user.user_id;
-    const sender_id = req.user.user_id;
+    const userId = req.user.userId;
+    const senderId = req.user.userId;
 
     try {
       const chatRoom = await db.query.ChatRoom.findFirst({
         where: and(
-          eq(ChatRoom.chatRoom_id, chatRoom_id),
-          or(eq(ChatRoom.user_1_id, userId), eq(ChatRoom.user_2_id, userId))
+          eq(ChatRoom.chatRoomId, chatRoomId),
+          or(eq(ChatRoom.userOneId, userId), eq(ChatRoom.userTwoId, userId))
         ),
       });
 
@@ -160,7 +160,7 @@ chatRouter.post(
 
       const message = await db
         .insert(Message)
-        .values({ chatRoom_id, sender_id, content })
+        .values({ chatRoomId, senderId, content })
         .returning()
         .then((messages) => messages[0]);
 

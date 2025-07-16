@@ -6,13 +6,13 @@ import { useToast } from "../../../contexts/ToastManager";
 import { useNavigate } from "react-router-dom";
 
 interface DeleteJobModalProps {
-  job_id: number;
+  jobId: number;
   onSuccess?: () => void;
   onClose: () => void;
 }
 
 const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
-  job_id,
+  jobId,
   onSuccess,
   onClose,
   isOpen,
@@ -24,7 +24,7 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
 
   const handleDelete = () => {
     setError(null);
-    deleteJobMutation.mutate(job_id, {
+    deleteJobMutation.mutate(jobId, {
       onSuccess: () => {
         addToast("Job deleted successfully!");
         onSuccess?.();

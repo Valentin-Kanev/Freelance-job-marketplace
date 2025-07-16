@@ -41,7 +41,7 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
       (async () => {
         try {
           const user = await db.query.User.findFirst({
-            where: eq(User.user_id, (decodedToken as JwtPayload).id),
+            where: eq(User.userId, (decodedToken as JwtPayload).id),
           });
           if (!user) {
             res.status(404).json({ message: "User not found" });
@@ -49,7 +49,7 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
           }
           req.user = { ...(decodedToken as JwtPayload), ...user };
           logger.info(
-            { username: user.username, user_id: user.user_id },
+            { username: user.username, userId: user.userId },
             "Authenticated user:"
           );
           next();

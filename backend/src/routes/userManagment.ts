@@ -31,7 +31,7 @@ router.post(
     req: AuthenticatedRequest<CreateUserValidation>,
     res: Response<CustomResponse<CreateUserValidation>>
   ) => {
-    const { username, password, email, user_type } =
+    const { username, password, email, userType } =
       req.body as CreateUserValidation;
 
     try {
@@ -49,14 +49,14 @@ router.post(
 
       const newUser = await db
         .insert(User)
-        .values({ username, password: hashedPassword, email, user_type })
+        .values({ username, password: hashedPassword, email, userType })
         .returning();
 
       await db.insert(Profile).values({
-        user_id: newUser[0].user_id,
+        userId: newUser[0].userId,
         skills: "",
         description: "",
-        hourly_rate: user_type === "freelancer" ? sql`0` : null,
+        hourlyRate: userType === "freelancer" ? sql`0` : null,
       });
 
       res.status(201).json({
@@ -79,9 +79,9 @@ router.post(
       const user = await db.query.User.findFirst({
         where: eq(User.email, email),
         columns: {
-          user_id: true,
+          userId: true,
           username: true,
-          user_type: true,
+          userType: true,
           password: true,
         },
       });
@@ -105,9 +105,9 @@ router.post(
 
       const token = jwt.sign(
         {
-          id: user.user_id,
+          id: user.userId,
           username: user.username,
-          user_type: user.user_type,
+          userType: user.userType,
         },
         SECRET_KEY,
         { expiresIn: "1h" }
@@ -115,7 +115,7 @@ router.post(
 
       res
         .status(200)
-        .json({ message: "Login successful", token, userId: user.user_id });
+        .json({ message: "Login successful", token, userId: user.userId });
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }

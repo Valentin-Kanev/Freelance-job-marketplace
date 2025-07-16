@@ -20,20 +20,20 @@ router.get("/profiles", async (req, res) => {
   try {
     const profiles = await db
       .select({
-        profileId: Profile.profile_id,
-        userId: Profile.user_id,
+        profileId: Profile.profileId,
+        userId: Profile.userId,
         skills: Profile.skills,
         description: Profile.description,
         hourlyRate:
-          sql`CASE WHEN ${User.user_type} = 'freelancer' THEN ${Profile.hourly_rate} ELSE NULL END`.as(
+          sql`CASE WHEN ${User.userType} = 'freelancer' THEN ${Profile.hourlyRate} ELSE NULL END`.as(
             "hourlyRate"
           ),
         username: User.username,
-        userType: User.user_type,
+        userType: User.userType,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.user_id))
-      .where(eq(User.user_type, "freelancer"));
+      .leftJoin(User, eq(Profile.userId, User.userId))
+      .where(eq(User.userType, "freelancer"));
 
     req.logger.info(
       { count: profiles.length },
@@ -46,26 +46,26 @@ router.get("/profiles", async (req, res) => {
   }
 });
 
-router.get("/profiles/user/:user_id", async (req, res) => {
-  const { user_id: userId } = req.params;
+router.get("/profiles/user/:userId", async (req, res) => {
+  const { userId: userId } = req.params;
 
   try {
     const profile = await db
       .select({
-        profileId: Profile.profile_id,
-        userId: Profile.user_id,
+        profileId: Profile.profileId,
+        userId: Profile.userId,
         skills: Profile.skills,
         description: Profile.description,
         hourlyRate:
-          sql`CASE WHEN ${User.user_type} = 'freelancer' THEN ${Profile.hourly_rate} ELSE NULL END`.as(
+          sql`CASE WHEN ${User.userType} = 'freelancer' THEN ${Profile.hourlyRate} ELSE NULL END`.as(
             "hourlyRate"
           ),
         username: User.username,
-        userType: User.user_type,
+        userType: User.userType,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.user_id))
-      .where(eq(Profile.user_id, userId));
+      .leftJoin(User, eq(Profile.userId, User.userId))
+      .where(eq(Profile.userId, userId));
 
     const username = profile[0]?.username;
     req.logger.info({ userId, username }, "Profile retrieved for user");
@@ -84,29 +84,39 @@ router.post(
     req: AuthenticatedRequest<CreateProfileValidation>,
     res: Response<CustomResponse<UpdateProfileValidation>>
   ) => {
-    const { skills, description, hourly_rate } = req.body;
-    const { id: user_id } = req.user as JwtPayload;
+    const { skills, description, hourlyRate } = req.body;
+    const { id: userId } = req.user as JwtPayload;
 
     try {
       const newProfile = await db
         .insert(Profile)
         .values({
-          user_id,
+          userId,
           skills,
           description,
-          hourly_rate: sql`${hourly_rate}`,
+          hourlyRate: sql`${hourlyRate}`,
         })
         .returning({
-          id: Profile.profile_id,
-          userId: Profile.user_id,
+          id: Profile.profileId,
+          userId: Profile.userId,
           skills: Profile.skills,
           description: Profile.description,
-          hourlyRate: Profile.hourly_rate,
+          hourlyRate: Profile.hourlyRate,
         });
+
+      const profileData = newProfile[0]
+        ? {
+            ...newProfile[0],
+            hourlyRate:
+              newProfile[0].hourlyRate !== null
+                ? Number(newProfile[0].hourlyRate)
+                : null,
+          }
+        : undefined;
 
       res
         .status(201)
-        .json({ message: "Profile created successfully", data: newProfile[0] });
+        .json({ message: "Profile created successfully", data: profileData });
     } catch (error) {
       res.status(500).json({ error: "Failed to create profile" });
     }
@@ -122,12 +132,12 @@ router.put(
     res: Response<CustomResponse<UpdateProfileValidation>>
   ) => {
     const { id } = req.params;
-    const { skills, description, hourly_rate } = req.body;
+    const { skills, description, hourlyRate } = req.body;
     const userId = req.user.id;
 
     try {
       const profile = await db.query.Profile.findFirst({
-        where: eq(Profile.profile_id, id),
+        where: eq(Profile.profileId, id),
       });
 
       if (!profile) {
@@ -135,7 +145,7 @@ router.put(
         return;
       }
 
-      if (profile.user_id !== userId) {
+      if (profile.userId !== userId) {
         res
           .status(403)
           .json({ message: "Unauthorized: You don't own this profile" });
@@ -143,27 +153,25 @@ router.put(
       }
 
       const user = await db.query.User.findFirst({
-        where: eq(User.user_id, userId),
+        where: eq(User.userId, userId),
       });
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
       }
 
-      const isFreelancer = user.user_type === "freelancer";
+      const isFreelancer = user.userType === "freelancer";
       const updateData: any = {
         skills,
         description,
-        hourly_rate:
-          isFreelancer && hourly_rate !== undefined
-            ? sql`${hourly_rate}`
-            : null,
+        hourlyRate:
+          isFreelancer && hourlyRate !== undefined ? sql`${hourlyRate}` : null,
       };
 
       const updatedProfile = await db
         .update(Profile)
         .set(updateData)
-        .where(eq(Profile.profile_id, id));
+        .where(eq(Profile.profileId, id));
 
       res.status(200).json({
         message: "Profile updated successfully",
@@ -181,19 +189,19 @@ router.get("/profiles/search", async (req: Request, res: Response) => {
   try {
     const profiles = await db
       .select({
-        profileId: Profile.profile_id,
-        userId: Profile.user_id,
+        profileId: Profile.profileId,
+        userId: Profile.userId,
         skills: Profile.skills,
         description: Profile.description,
-        hourlyRate: Profile.hourly_rate,
+        hourlyRate: Profile.hourlyRate,
         username: User.username,
-        userType: User.user_type,
+        userType: User.userType,
       })
       .from(Profile)
-      .leftJoin(User, eq(Profile.user_id, User.user_id))
+      .leftJoin(User, eq(Profile.userId, User.userId))
       .where(
         and(
-          eq(User.user_type, "freelancer"),
+          eq(User.userType, "freelancer"),
           or(ilike(User.username, `%${query}%`))
         )
       );

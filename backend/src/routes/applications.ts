@@ -22,14 +22,14 @@ applicationsRouter.post(
     req: AuthenticatedRequest<CreateApplicationValidation>,
     res: Response<CustomResponse<CreateApplicationValidation>>
   ) => {
-    const job_id = Number(req.params.id);
-    const { cover_letter } = req.body;
-    const freelancer_id = req.user.user_id;
+    const jobId = Number(req.params.id);
+    const { coverLetter } = req.body;
+    const freelancerId = req.user.userId;
 
-    if (!job_id || !freelancer_id) {
-      logger.error("Missing job_id or freelancer_id", {
-        job_id,
-        freelancer_id,
+    if (!jobId || !freelancerId) {
+      logger.error("Missing jobId or freelancerId", {
+        jobId,
+        freelancerId,
       });
       res.status(400).json({ message: "Invalid job ID or freelancer ID" });
       return;
@@ -38,15 +38,15 @@ applicationsRouter.post(
     try {
       const existingApplication = await db.query.Application.findFirst({
         where: and(
-          eq(Application.job_id, job_id),
-          eq(Application.freelancer_id, freelancer_id)
+          eq(Application.jobId, jobId),
+          eq(Application.freelancerId, freelancerId)
         ),
       });
 
       if (existingApplication) {
         logger.warn("User has already applied for this job:", {
-          job_id,
-          freelancer_id,
+          jobId,
+          freelancerId,
         });
         res
           .status(400)
@@ -56,9 +56,9 @@ applicationsRouter.post(
 
       await db.transaction(async (trx) => {
         await trx.insert(Application).values({
-          job_id,
-          freelancer_id,
-          cover_letter,
+          jobId,
+          freelancerId,
+          coverLetter,
           timestamp: new Date(),
         });
       });
@@ -78,21 +78,21 @@ applicationsRouter.get(
   "/jobs/:id/applications",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    const { id: job_id } = req.params;
+    const { id: jobId } = req.params;
 
     try {
       const applications = await db
         .select({
-          application_id: Application.application_id,
-          job_id: Application.job_id,
-          cover_letter: Application.cover_letter,
-          freelancer_id: Application.freelancer_id,
+          applicationId: Application.applicationId,
+          jobId: Application.jobId,
+          coverLetter: Application.coverLetter,
+          freelancerId: Application.freelancerId,
           username: User.username,
         })
         .from(Application)
-        .innerJoin(User, eq(Application.freelancer_id, User.user_id))
+        .innerJoin(User, eq(Application.freelancerId, User.userId))
         .where(
-          and(eq(Application.job_id, job_id), isNull(Application.deleted_at))
+          and(eq(Application.jobId, jobId), isNull(Application.deletedAt))
         );
 
       res.json(applications);
@@ -107,22 +107,22 @@ applicationsRouter.get(
   "/applications/my-applications",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    const freelancerId = req.user.user_id;
+    const freelancerId = req.user.userId;
 
     try {
       const applications = await db
         .select({
-          job_id: Application.job_id,
+          jobId: Application.jobId,
           jobTitle: Job.title,
-          coverLetter: Application.cover_letter,
+          coverLetter: Application.coverLetter,
           applicationDate: Application.timestamp,
         })
         .from(Application)
-        .innerJoin(Job, eq(Application.job_id, Job.job_id))
+        .innerJoin(Job, eq(Application.jobId, Job.jobId))
         .where(
           and(
-            eq(Application.freelancer_id, freelancerId),
-            isNull(Application.deleted_at)
+            eq(Application.freelancerId, freelancerId),
+            isNull(Application.deletedAt)
           )
         )
         .orderBy(desc(Application.timestamp));

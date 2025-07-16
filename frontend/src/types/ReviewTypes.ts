@@ -1,16 +1,13 @@
 export interface Review {
   id: string;
-  freelancer_id: string;
-  client_id: string;
+  freelancerId: string;
+  clientId: string;
   rating: number;
-  review_text: string;
-  client_username: string;
-  freelancer_username: string;
+  reviewText: string;
+  clientUsername: string;
+  freelancerUsername: string;
 }
 
 export type SubmitReviewData = Required<
-  Omit<
-    Review,
-    "id" | "freelancer_id" | "client_username" | "freelancer_username"
-  >
+  Omit<Review, "id" | "freelancerId" | "clientUsername" | "freelancerUsername">
 >;

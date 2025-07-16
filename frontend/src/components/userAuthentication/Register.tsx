@@ -25,11 +25,11 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
       username: "",
       email: "",
       password: "",
-      user_type: undefined,
+      userType: undefined,
     },
   });
 
-  const userType = watch("user_type");
+  const userType = watch("userType");
   const registerMutation = useRegisterUser();
 
   const onSubmit = (data: CreateUserValidation) => {
@@ -84,7 +84,7 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
             <input
               type="radio"
               value="freelancer"
-              {...register("user_type")}
+              {...register("userType")}
               checked={userType === "freelancer"}
               className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
             />
@@ -94,17 +94,15 @@ const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
             <input
               type="radio"
               value="client"
-              {...register("user_type")}
+              {...register("userType")}
               checked={userType === "client"}
               className="form-radio text-blue-500 hover:ring hover:ring-blue-500"
             />
             <span className="ml-2">Client</span>
           </label>
         </div>
-        {errors.user_type && (
-          <p className="text-sm text-red-600 mt-1">
-            {errors.user_type.message}
-          </p>
+        {errors.userType && (
+          <p className="text-sm text-red-600 mt-1">{errors.userType.message}</p>
         )}
       </div>
       <button

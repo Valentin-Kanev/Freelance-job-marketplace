@@ -29,14 +29,14 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
       ) : (
         <ul className="space-y-2">
           {chatRooms?.map((room: ChatRoom) => {
-            const isSelected = room.chatRoom_id === localSelectedRoomId;
+            const isSelected = room.chatRoomId === localSelectedRoomId;
             return (
               <li
-                key={room.chatRoom_id}
+                key={room.chatRoomId}
                 className={`p-2 rounded-full cursor-pointer ${
                   isSelected ? "bg-blue-300" : "bg-gray-100 hover:bg-gray-200"
                 }`}
-                onClick={() => handleSelectRoom(room.chatRoom_id)}
+                onClick={() => handleSelectRoom(room.chatRoomId)}
               >
                 {room.otherUser?.username || "Unknown User"}
               </li>

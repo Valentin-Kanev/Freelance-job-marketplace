@@ -20,7 +20,7 @@ export const useAuthUser = () => {
       const token = localStorage.getItem("authToken");
       if (token && isTokenValid(token)) {
         const decodedToken: DecodedToken = jwtDecode(token);
-        return { id: decodedToken.id, userType: decodedToken.user_type };
+        return { id: decodedToken.id, userType: decodedToken.userType };
       } else {
         localStorage.removeItem("authToken");
         return null;

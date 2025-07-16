@@ -22,8 +22,8 @@ const JobListWithDetails: React.FC<Props> = ({
   error,
 }) => {
   const navigate = useNavigate();
-  const { job_id } = useParams<{ job_id: string }>();
-  const parsedJobId = job_id ? Number(job_id) : null;
+  const { jobId } = useParams<{ jobId: string }>();
+  const parsedJobId = jobId ? Number(jobId) : null;
   const queryClient = useQueryClient();
   const { loggedInUserId, userType } = useAuth();
 
@@ -35,7 +35,7 @@ const JobListWithDetails: React.FC<Props> = ({
   } = useFetchJob(parsedJobId ?? -1);
 
   const handleSelectJob = (job: Job) => {
-    navigate(`/jobs/${job.job_id}`);
+    navigate(`/jobs/${job.jobId}`);
   };
 
   const handleJobUpdate = () => {
@@ -57,7 +57,7 @@ const JobListWithDetails: React.FC<Props> = ({
           {!isLoading && !isError && Array.isArray(jobs) && jobs.length > 0 && (
             <JobList
               jobs={jobs}
-              selectedjob_id={parsedJobId}
+              selectedJobId={parsedJobId}
               onSelectJob={handleSelectJob}
             />
           )}
@@ -69,7 +69,7 @@ const JobListWithDetails: React.FC<Props> = ({
           )}
           {!isJobLoading && !isJobError && (
             <JobDetails
-              job_id={parsedJobId ?? -1}
+              jobId={parsedJobId ?? -1}
               userId={loggedInUserId || ""}
               userType={userType || ""}
               onJobUpdate={handleJobUpdate}

@@ -10,11 +10,11 @@ import { useToast } from "../../contexts/ToastManager";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface ApplyForJobProps {
-  job_id: number;
+  jobId: number;
   onClose: () => void;
 }
 
-const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
+const ApplyForJob: React.FC<ApplyForJobProps> = ({ jobId, onClose }) => {
   const { loggedInUserId } = useAuth();
   const { addToast } = useToast();
 
@@ -44,10 +44,10 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
     }
 
     submitApplication({
-      job_id,
+      jobId,
       data: {
-        freelancer_id: loggedInUserId,
-        cover_letter: data.cover_letter,
+        freelancerId: loggedInUserId,
+        coverLetter: data.coverLetter,
       },
     });
   };
@@ -62,21 +62,21 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ job_id, onClose }) => {
 
       <div>
         <label
-          htmlFor="cover_letter"
+          htmlFor="coverLetter"
           className="block text-sm font-medium text-gray-700"
         >
           Cover Letter
         </label>
         <textarea
-          id="cover_letter"
-          {...register("cover_letter")}
+          id="coverLetter"
+          {...register("coverLetter")}
           className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Write your cover letter here..."
           rows={5}
         />
-        {errors.cover_letter && (
+        {errors.coverLetter && (
           <p className="text-red-500 text-sm mt-1">
-            {errors.cover_letter.message}
+            {errors.coverLetter.message}
           </p>
         )}
       </div>

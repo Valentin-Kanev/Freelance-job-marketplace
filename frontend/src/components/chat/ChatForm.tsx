@@ -14,7 +14,7 @@ const ChatForm: React.FC<ChatFormProps> = ({ roomId }) => {
   const handleSubmit = async () => {
     if (!message.trim() || !loggedInUserId) return;
     await sendMessage
-      .mutateAsync({ sender_id: loggedInUserId, content: message })
+      .mutateAsync({ senderId: loggedInUserId, content: message })
       .then(() => setMessage(""));
   };
 

@@ -4,14 +4,14 @@ import { ProfileDetails } from "./ProfileDetails";
 import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileLoader = () => {
-  const { user_id } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
   const {
     data: profile,
     isLoading,
     isError,
     error,
-  } = useUserProfile(user_id || null);
+  } = useUserProfile(userId || null);
   const { loggedInUserId } = useAuth();
   const isOwner = profile?.userId === loggedInUserId;
 

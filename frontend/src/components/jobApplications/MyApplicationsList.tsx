@@ -23,11 +23,11 @@ const MyApplications: React.FC = () => {
         <ul className="space-y-2">
           {applications.map((application, index) => (
             <li
-              key={`${application.job_id}-${index}`}
+              key={`${application.jobId}-${index}`}
               className="p-4 border rounded-lg"
             >
               <Link
-                to={`/jobs/${application.job_id}`}
+                to={`/jobs/${application.jobId}`}
                 className="text-lg font-semibold text-blue-600 "
               >
                 {application.jobTitle}

@@ -21,15 +21,15 @@ reviewsRouter.post(
     req: AuthenticatedRequest<CreateReviewValidation>,
     res: Response<CustomResponse<CreateReviewValidation>>
   ) => {
-    const { id: freelancer_id } = req.params;
-    const { rating, review_text } = req.body;
-    const { id: client_id } = req.user;
+    const { id: freelancerId } = req.params;
+    const { rating, reviewText } = req.body;
+    const { id: clientId } = req.user;
 
     try {
       const existingReview = await db.query.Review.findFirst({
         where: and(
-          eq(Review.freelancer_id, freelancer_id),
-          eq(Review.client_id, client_id)
+          eq(Review.freelancerId, freelancerId),
+          eq(Review.clientId, clientId)
         ),
       });
 
@@ -42,7 +42,7 @@ reviewsRouter.post(
 
       await db
         .insert(Review)
-        .values({ freelancer_id, client_id, rating, review_text });
+        .values({ freelancerId, clientId, rating, reviewText });
 
       res.status(201).json({ message: "Review posted successfully" });
     } catch (error) {
@@ -59,11 +59,11 @@ reviewsRouter.get(
   "/:id/reviews",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const { id: profile_id } = req.params;
+    const { id: profileId } = req.params;
 
     try {
       const profile = await db.query.Profile.findFirst({
-        where: eq(Profile.profile_id, profile_id),
+        where: eq(Profile.profileId, profileId),
       });
 
       if (!profile) {
@@ -71,21 +71,21 @@ reviewsRouter.get(
         return;
       }
 
-      const user_id = profile.user_id;
+      const userId = profile.userId;
 
       const reviews = await db
         .select({
-          id: Review.review_id,
-          freelancer_id: Review.freelancer_id,
-          client_id: Review.client_id,
+          id: Review.reviewId,
+          freelancerId: Review.freelancerId,
+          clientId: Review.clientId,
           rating: Review.rating,
-          review_text: Review.review_text,
-          client_username: User.username,
+          reviewText: Review.reviewText,
+          clientUsername: User.username,
         })
         .from(Review)
-        .innerJoin(Profile, eq(Review.client_id, Profile.user_id))
-        .innerJoin(User, eq(Profile.user_id, User.user_id))
-        .where(eq(Review.freelancer_id, user_id));
+        .innerJoin(Profile, eq(Review.clientId, Profile.userId))
+        .innerJoin(User, eq(Profile.userId, User.userId))
+        .where(eq(Review.freelancerId, userId));
 
       res.json(reviews);
     } catch (error) {
@@ -103,17 +103,17 @@ reviewsRouter.get(
     try {
       const reviews = await db
         .select({
-          id: Review.review_id,
-          freelancer_id: Review.freelancer_id,
-          client_id: Review.client_id,
+          id: Review.reviewId,
+          freelancerId: Review.freelancerId,
+          clientId: Review.clientId,
           rating: Review.rating,
-          review_text: Review.review_text,
-          freelancer_username: User.username,
+          reviewText: Review.reviewText,
+          freelancerUsername: User.username,
         })
         .from(Review)
-        .innerJoin(Profile, eq(Review.freelancer_id, Profile.user_id))
-        .innerJoin(User, eq(Profile.user_id, User.user_id))
-        .where(eq(Review.client_id, clientId));
+        .innerJoin(Profile, eq(Review.freelancerId, Profile.userId))
+        .innerJoin(User, eq(Profile.userId, User.userId))
+        .where(eq(Review.clientId, clientId));
 
       res.json(reviews);
     } catch (error) {

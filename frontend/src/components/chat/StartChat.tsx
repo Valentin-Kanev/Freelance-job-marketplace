@@ -18,12 +18,12 @@ const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
     }
     createChatRoom.mutate(
       {
-        user_1_id: loggedInUserId,
-        user_2_id: targetUserId,
+        userOneId: loggedInUserId,
+        userTwoId: targetUserId,
       },
       {
         onSuccess: (chatRoom) => {
-          onStartChat(chatRoom.chatRoom_id);
+          onStartChat(chatRoom.chatRoomId);
         },
         onError: () => {
           alert("Failed to create chat room. Please try again.");

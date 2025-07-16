@@ -3,9 +3,9 @@ export type User = {
   username: string;
 };
 export type ChatRoom = {
-  chatRoom_id: string;
-  user_1_id: string;
-  user_2_id: string;
-  created_at: string;
+  chatRoomId: string;
+  userOneId: string;
+  userTwoId: string;
+  createdAt: string;
   otherUser: User;
 };

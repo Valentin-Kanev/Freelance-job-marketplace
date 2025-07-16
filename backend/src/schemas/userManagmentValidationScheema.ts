@@ -12,7 +12,7 @@ export const createUserSchema = z.object({
     .string()
     .min(4, "Username is required")
     .max(18, "Username is too long. It must be less than 18 characters"),
-  user_type: UserRole,
+  userType: UserRole,
 });
 
 export type CreateUserValidation = z.infer<typeof createUserSchema>;

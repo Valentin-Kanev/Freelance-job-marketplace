@@ -1,6 +1,6 @@
 {
-  "id": "952b966a-667c-4b18-8046-24224d71fa03",
-  "prevId": "f17b191f-60c3-4df8-89b8-02dc22d65f7d",
+  "id": "ac32d75c-73d6-497f-8930-8439223cb123",
+  "prevId": "e62f4bde-c36b-4a15-b118-ee3b8d92833e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -48,22 +48,28 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "applications_freelancer_id_users_id_fk": {
-          "name": "applications_freelancer_id_users_id_fk",
+        "applications_freelancerId_users_id_fk": {
+          "name": "applications_freelancerId_users_id_fk",
           "tableFrom": "applications",
           "tableTo": "users",
-          "columnsFrom": ["freelancerId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "freelancerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "applications_application_id_unique": {
-          "name": "applications_application_id_unique",
+        "applications_applicationId_unique": {
+          "name": "applications_applicationId_unique",
           "nullsNotDistinct": false,
-          "columns": ["applicationId"]
+          "columns": [
+            "applicationId"
+          ]
         }
       }
     },
@@ -100,21 +106,29 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "chatRooms_user_1_id_users_id_fk": {
-          "name": "chatRooms_user_1_id_users_id_fk",
+        "chatRooms_userOneId_users_id_fk": {
+          "name": "chatRooms_userOneId_users_id_fk",
           "tableFrom": "chatRooms",
           "tableTo": "users",
-          "columnsFrom": ["userOneId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userOneId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "chatRooms_user_2_id_users_id_fk": {
-          "name": "chatRooms_user_2_id_users_id_fk",
+        "chatRooms_userTwoId_users_id_fk": {
+          "name": "chatRooms_userTwoId_users_id_fk",
           "tableFrom": "chatRooms",
           "tableTo": "users",
-          "columnsFrom": ["userTwoId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userTwoId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -124,7 +138,10 @@
         "uniqueUsers": {
           "name": "uniqueUsers",
           "nullsNotDistinct": false,
-          "columns": ["userOneId", "userTwoId"]
+          "columns": [
+            "userOneId",
+            "userTwoId"
+          ]
         }
       }
     },
@@ -177,32 +194,42 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "jobs_client_id_users_id_fk": {
-          "name": "jobs_client_id_users_id_fk",
+        "jobs_clientId_users_id_fk": {
+          "name": "jobs_clientId_users_id_fk",
           "tableFrom": "jobs",
           "tableTo": "users",
-          "columnsFrom": ["clientId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "jobs_job_id_unique": {
-          "name": "jobs_job_id_unique",
+        "jobs_jobId_unique": {
+          "name": "jobs_jobId_unique",
           "nullsNotDistinct": false,
-          "columns": ["jobId"]
+          "columns": [
+            "jobId"
+          ]
         },
         "jobs_title_unique": {
           "name": "jobs_title_unique",
           "nullsNotDistinct": false,
-          "columns": ["title"]
+          "columns": [
+            "title"
+          ]
         },
         "jobs_description_unique": {
           "name": "jobs_description_unique",
           "nullsNotDistinct": false,
-          "columns": ["description"]
+          "columns": [
+            "description"
+          ]
         }
       }
     },
@@ -244,31 +271,41 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_chatRoom_id_chatRooms_id_fk": {
-          "name": "messages_chatRoom_id_chatRooms_id_fk",
+        "messages_chatRoomId_chatRooms_id_fk": {
+          "name": "messages_chatRoomId_chatRooms_id_fk",
           "tableFrom": "messages",
           "tableTo": "chatRooms",
-          "columnsFrom": ["chatRoomId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "chatRoomId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "messages_sender_id_users_id_fk": {
-          "name": "messages_sender_id_users_id_fk",
+        "messages_senderId_users_id_fk": {
+          "name": "messages_senderId_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
-          "columnsFrom": ["senderId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "senderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "messages_message_id_unique": {
-          "name": "messages_message_id_unique",
+        "messages_messageId_unique": {
+          "name": "messages_messageId_unique",
           "nullsNotDistinct": false,
-          "columns": ["messageId"]
+          "columns": [
+            "messageId"
+          ]
         }
       }
     },
@@ -291,7 +328,7 @@
         },
         "skills": {
           "name": "skills",
-          "type": "varchar(30)",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
         },
@@ -310,12 +347,16 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "profiles_user_id_users_id_fk": {
-          "name": "profiles_user_id_users_id_fk",
+        "profiles_userId_users_id_fk": {
+          "name": "profiles_userId_users_id_fk",
           "tableFrom": "profiles",
           "tableTo": "users",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -367,31 +408,41 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "reviews_freelancer_id_users_id_fk": {
-          "name": "reviews_freelancer_id_users_id_fk",
+        "reviews_freelancerId_users_id_fk": {
+          "name": "reviews_freelancerId_users_id_fk",
           "tableFrom": "reviews",
           "tableTo": "users",
-          "columnsFrom": ["freelancerId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "freelancerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "reviews_client_id_users_id_fk": {
-          "name": "reviews_client_id_users_id_fk",
+        "reviews_clientId_users_id_fk": {
+          "name": "reviews_clientId_users_id_fk",
           "tableFrom": "reviews",
           "tableTo": "users",
-          "columnsFrom": ["clientId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "reviews_review_id_unique": {
-          "name": "reviews_review_id_unique",
+        "reviews_reviewId_unique": {
+          "name": "reviews_reviewId_unique",
           "nullsNotDistinct": false,
-          "columns": ["reviewId"]
+          "columns": [
+            "reviewId"
+          ]
         }
       }
     },
@@ -439,17 +490,23 @@
         "users_username_unique": {
           "name": "users_username_unique",
           "nullsNotDistinct": false,
-          "columns": ["username"]
+          "columns": [
+            "username"
+          ]
         },
         "users_password_unique": {
           "name": "users_password_unique",
           "nullsNotDistinct": false,
-          "columns": ["password"]
+          "columns": [
+            "password"
+          ]
         },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       }
     }
@@ -458,7 +515,10 @@
     "public.userRole": {
       "name": "userRole",
       "schema": "public",
-      "values": ["freelancer", "client"]
+      "values": [
+        "freelancer",
+        "client"
+      ]
     }
   },
   "schemas": {},

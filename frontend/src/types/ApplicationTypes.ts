@@ -1,13 +1,13 @@
 export interface Application {
-  application_id: number;
-  job_id: number;
-  freelancer_id: string;
+  applicationId: number;
+  jobId: number;
+  freelancerId: string;
   username: string;
-  cover_letter: string;
+  coverLetter: string;
 }
 
 export interface MyApplication {
-  job_id: number;
+  jobId: number;
   jobTitle: string;
   coverLetter: string;
   applicationDate: string;

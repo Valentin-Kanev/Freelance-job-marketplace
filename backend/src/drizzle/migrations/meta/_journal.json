@@ -29,6 +29,48 @@
       "when": 1750999197896,
       "tag": "0003_outgoing_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752663258500,
+      "tag": "0004_fearless_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752664411315,
+      "tag": "0005_salty_lightspeed",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752664542408,
+      "tag": "0006_military_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1752664604717,
+      "tag": "0007_reflective_gauntlet",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1752665383173,
+      "tag": "0008_stormy_vanisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1752665654161,
+      "tag": "0009_optimal_living_mummy",
+      "breakpoints": true
     }
   ]
 }

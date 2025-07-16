@@ -21,14 +21,14 @@ export const useCreateChatRoom = () => {
 
 export const useMessages = (roomId: string, page = 1) => {
   return useQuery(["messages", roomId, page], () =>
-    fetchMessages({ chatRoom_id: roomId, page })
+    fetchMessages({ chatRoomId: roomId, page })
   );
 };
 
 export const useSendMessage = (roomId: string) => {
   const queryClient = useQueryClient();
   return useMutation(
-    (data: { sender_id: string; content: string }) =>
+    (data: { senderId: string; content: string }) =>
       sendMessage({ roomId, ...data }),
     {
       onSuccess: () => {

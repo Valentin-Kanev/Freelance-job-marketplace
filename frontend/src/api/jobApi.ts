@@ -45,38 +45,38 @@ export const createJob = async (jobData: CreateJobData): Promise<Job> => {
 };
 
 export const updateJob = async ({
-  job_id,
+  jobId,
   data,
 }: {
-  job_id: number;
+  jobId: number;
   data: UpdateJobData;
 }): Promise<Job> => {
   const response = await fetchClient<{
     message?: string;
     data?: UpdateJobData;
-  }>(`/jobs/${job_id}`, {
+  }>(`/jobs/${jobId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (response && response.data) {
-    return { ...data, job_id } as Job;
+    return { ...data, jobId } as Job;
   }
   throw new Error(response?.message || "Failed to update job");
 };
 
-export const softDeleteJob = async (job_id: number): Promise<void> => {
-  return fetchClient<void>(`/jobs/${job_id}`, {
+export const softDeleteJob = async (jobId: number): Promise<void> => {
+  return fetchClient<void>(`/jobs/${jobId}`, {
     method: "PATCH",
-    body: JSON.stringify({ deleted_at: new Date() }),
+    body: JSON.stringify({ deletedAt: new Date() }),
     headers: {
       "Content-Type": "application/json",
     },
   });
 };
 
-export const fetchJob = async (job_id: number): Promise<Job> => {
-  return fetchClient<Job>(`/jobs/${job_id}`);
+export const fetchJob = async (jobId: number): Promise<Job> => {
+  return fetchClient<Job>(`/jobs/${jobId}`);
 };
 
 export const fetchJobsByClient = async (clientId: string): Promise<Job[]> => {

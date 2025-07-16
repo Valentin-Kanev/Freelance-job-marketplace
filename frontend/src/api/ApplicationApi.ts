@@ -33,10 +33,10 @@ const fetchClient = async <T>(
 };
 
 export const applyForJob = async (
-  job_id: number,
-  data: { freelancer_id: string; cover_letter: string }
+  jobId: number,
+  data: { freelancerId: string; coverLetter: string }
 ): Promise<Application> => {
-  return fetchClient<Application>(`/jobs/${job_id}/apply`, {
+  return fetchClient<Application>(`/jobs/${jobId}/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -46,9 +46,9 @@ export const applyForJob = async (
 };
 
 export const fetchJobApplications = async (
-  job_id: number
+  jobId: number
 ): Promise<Application[]> => {
-  return fetchClient<Application[]>(`/jobs/${job_id}/applications`);
+  return fetchClient<Application[]>(`/jobs/${jobId}/applications`);
 };
 
 export const fetchMyApplications = async (): Promise<MyApplication[]> => {

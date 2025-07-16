@@ -3,17 +3,17 @@ import Modal from "../UI/Modal";
 import ApplyForJob from "./ApplyForJob";
 
 interface ApplyForJobModalProps {
-  job_id: number;
+  jobId: number;
   onClose: () => void;
 }
 
 const ApplyForJobModal: React.FC<ApplyForJobModalProps> = ({
-  job_id,
+  jobId,
   onClose,
 }) => {
   return (
     <Modal isOpen={true} onClose={onClose} title="Apply for Job">
-      <ApplyForJob job_id={job_id} onClose={onClose} />
+      <ApplyForJob jobId={jobId} onClose={onClose} />
     </Modal>
   );
 };

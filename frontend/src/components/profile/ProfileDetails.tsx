@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ReviewList from "../Reviews/FreelancerReviewsList";
+import ReviewList from "../reviews/FreelancerReviewsList";
 import MyJobs from "./MyJobsList";
-import MyReviews from "../Reviews/ClientWrittenReviewsList";
+import MyReviews from "../reviews/ClientWrittenReviewsList";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
 import StartChat from "../chat/StartChat";
@@ -27,7 +27,7 @@ export function ProfileDetails({
   const [activeTab, setActiveTab] = useState(
     isFreelancer ? "reviews" : isOwner ? "jobs" : "reviews"
   );
-  const { isChatOpen, chatRoom_id, openChat, closeChat } = useChat();
+  const { isChatOpen, chatRoomId, openChat, closeChat } = useChat();
   const [isFloatingChatButtonVisible, setIsFloatingChatButtonVisible] =
     useState(true);
 
@@ -38,7 +38,7 @@ export function ProfileDetails({
 
   const handleSetIsOpen = (isOpen: boolean) => {
     if (!isOpen) setIsFloatingChatButtonVisible(true);
-    isOpen ? openChat(chatRoom_id!) : closeChat();
+    isOpen ? openChat(chatRoomId!) : closeChat();
   };
 
   return (
@@ -159,7 +159,7 @@ export function ProfileDetails({
       <FloatingChatButton
         isOpen={isChatOpen}
         setIsOpen={handleSetIsOpen}
-        chatRoom_id={chatRoom_id}
+        chatRoomId={chatRoomId}
         isVisible={isFloatingChatButtonVisible}
       />
     </div>

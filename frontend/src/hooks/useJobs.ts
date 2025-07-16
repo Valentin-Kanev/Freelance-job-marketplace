@@ -55,12 +55,12 @@ export const useUpdateJob = (
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ job_id, data }: { job_id: number; data: UpdateJobData }) => {
-      return updateJob({ job_id, data });
+    ({ jobId, data }: { jobId: number; data: UpdateJobData }) => {
+      return updateJob({ jobId, data });
     },
     {
       onSuccess: (updatedJob) => {
-        queryClient.invalidateQueries(["job", updatedJob.job_id]);
+        queryClient.invalidateQueries(["job", updatedJob.jobId]);
         queryClient.invalidateQueries("jobs");
         onSuccessCallback?.(updatedJob);
       },
@@ -75,7 +75,7 @@ export const useUpdateJob = (
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((job_id: number) => softDeleteJob(job_id), {
+  return useMutation((jobId: number) => softDeleteJob(jobId), {
     onSuccess: () => {
       queryClient.invalidateQueries("jobs");
     },
@@ -85,9 +85,9 @@ export const useDeleteJob = () => {
   });
 };
 
-export const useFetchJob = (job_id: number) => {
-  return useQuery<Job, Error>(["job", job_id], () => fetchJob(job_id), {
-    enabled: typeof job_id === "number" && job_id > 0,
+export const useFetchJob = (jobId: number) => {
+  return useQuery<Job, Error>(["job", jobId], () => fetchJob(jobId), {
+    enabled: typeof jobId === "number" && jobId > 0,
     retry: 2,
     staleTime: 30 * 1000,
     onError: (error: Error) => {
@@ -126,16 +126,16 @@ export const useJobMutations = (
 
   const handleJobSubmit = (
     isUpdate: boolean,
-    jobDetails: CreateJobData | (UpdateJobData & { job_id: number })
+    jobDetails: CreateJobData | (UpdateJobData & { jobId: number })
   ) => {
     if (isUpdate) {
-      const { job_id, ...fields } = jobDetails as UpdateJobData & {
-        job_id: number;
+      const { jobId, ...fields } = jobDetails as UpdateJobData & {
+        jobId: number;
       };
       const updatedData = Object.fromEntries(
         Object.entries(fields).filter(([_, v]) => v !== undefined)
       );
-      updateJobMutation.mutate({ job_id, data: updatedData });
+      updateJobMutation.mutate({ jobId, data: updatedData });
     } else {
       createJobMutation.mutate(jobDetails as CreateJobData);
     }

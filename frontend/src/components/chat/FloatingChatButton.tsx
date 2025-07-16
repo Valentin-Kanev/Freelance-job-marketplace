@@ -4,14 +4,14 @@ import { useAuth } from "../../contexts/AuthContext";
 interface FloatingChatButtonProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  chatRoom_id: string | null;
+  chatRoomId: string | null;
   isVisible: boolean;
 }
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   isOpen,
   setIsOpen,
-  chatRoom_id,
+  chatRoomId,
   isVisible,
 }) => {
   const { loggedInUserId } = useAuth();
@@ -27,7 +27,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
               ✕
             </button>
           </div>
-          <ChatContainer initialRoomId={chatRoom_id} />
+          <ChatContainer initialRoomId={chatRoomId} />
         </div>
       ) : (
         <button

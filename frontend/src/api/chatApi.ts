@@ -25,10 +25,10 @@ export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
 };
 
 export const fetchMessages = async ({
-  chatRoom_id,
+  chatRoomId,
   page,
 }: {
-  chatRoom_id: string;
+  chatRoomId: string;
   page?: number;
 }): Promise<Message[]> => {
   const token = localStorage.getItem("authToken");
@@ -37,7 +37,7 @@ export const fetchMessages = async ({
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/chat-rooms/${chatRoom_id}/messages?page=${page}`,
+    `${API_BASE_URL}/chat-rooms/${chatRoomId}/messages?page=${page}`,
     {
       method: "GET",
       headers: {
@@ -56,11 +56,11 @@ export const fetchMessages = async ({
 
 export const sendMessage = async ({
   roomId,
-  sender_id,
+  senderId,
   content,
 }: {
   roomId: string;
-  sender_id: string;
+  senderId: string;
   content: string;
 }): Promise<Message> => {
   const token = localStorage.getItem("authToken");
@@ -76,7 +76,7 @@ export const sendMessage = async ({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ sender_id, content }),
+      body: JSON.stringify({ senderId, content }),
     }
   );
 
@@ -88,11 +88,11 @@ export const sendMessage = async ({
 };
 
 export const createChatRoom = async ({
-  user_1_id,
-  user_2_id,
+  userOneId,
+  userTwoId,
 }: {
-  user_1_id: string;
-  user_2_id: string;
+  userOneId: string;
+  userTwoId: string;
 }): Promise<ChatRoom> => {
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -105,7 +105,7 @@ export const createChatRoom = async ({
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ user_1_id, user_2_id }),
+    body: JSON.stringify({ userOneId, userTwoId }),
   });
 
   if (!response.ok) {

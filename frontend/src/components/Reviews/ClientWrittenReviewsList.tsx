@@ -20,16 +20,16 @@ const ClientWrittenReviews = ({ clientId }: { clientId: string }) => {
               <div className="border rounded p-4 shadow-sm hover:shadow-md transition-shadow">
                 <h2 className="text-lg font-bold">
                   <Link
-                    to={`/profiles/${review.freelancer_id}`}
+                    to={`/profiles/${review.freelancerId}`}
                     className="text-blue-600 hover:text-blue-700"
                   >
-                    {review.freelancer_username}
+                    {review.freelancerUsername}
                   </Link>
                 </h2>
                 <p className="text-gray-800">
                   <strong>Rating:</strong> {review.rating} / 5
                 </p>
-                <ExpandableText text={review.review_text} />
+                <ExpandableText text={review.reviewText} />
               </div>
             </li>
           ))}

@@ -22,9 +22,9 @@ jobsRouter.get("/jobs/search", async (req: Request, res: Response) => {
 
   try {
     const job = await db
-      .select({ job_id: Job.job_id, title: Job.title })
+      .select({ jobId: Job.jobId, title: Job.title })
       .from(Job)
-      .where(and(ilike(Job.title, `%${title}%`), isNull(Job.deleted_at)));
+      .where(and(ilike(Job.title, `%${title}%`), isNull(Job.deletedAt)));
 
     res.status(200).json(job);
   } catch (error) {
@@ -40,18 +40,18 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
   try {
     const jobs = await db
       .select({
-        job_id: Job.job_id,
+        jobId: Job.jobId,
         title: Job.title,
         description: Job.description,
         budget: Job.budget,
         deadline: Job.deadline,
-        client_id: Job.client_id,
-        client_username: User.username,
-        deleted_at: Job.deleted_at,
+        clientId: Job.clientId,
+        clientUsername: User.username,
+        deletedAt: Job.deletedAt,
       })
       .from(Job)
-      .leftJoin(User, eq(User.user_id, Job.client_id))
-      .where(isNull(Job.deleted_at));
+      .leftJoin(User, eq(User.userId, Job.clientId))
+      .where(isNull(Job.deletedAt));
 
     res.json(jobs);
   } catch (error) {
@@ -61,20 +61,20 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
 });
 
 jobsRouter.put(
-  "/jobs/:job_id",
+  "/jobs/:jobId",
   authenticateToken,
   validate(updateJobSchema),
   async (
     req: AuthenticatedRequest<UpdateJobValidation>,
     res: Response<CustomResponse<JobUpdateResponse>>
   ) => {
-    const job_id = req.params.job_id;
+    const jobId = req.params.jobId;
     const { title, description, budget, deadline } = req.body;
-    const userId = req.user.user_id;
+    const userId = req.user.userId;
 
     try {
       const updatedJob = await db.query.Job.findFirst({
-        where: eq(Job.job_id, job_id),
+        where: eq(Job.jobId, jobId),
       });
 
       if (!updatedJob) {
@@ -82,7 +82,7 @@ jobsRouter.put(
         return;
       }
 
-      if (updatedJob.client_id !== userId) {
+      if (updatedJob.clientId !== userId) {
         res
           .status(403)
           .json({ message: "Unauthorized: You don't own this job" });
@@ -92,8 +92,8 @@ jobsRouter.put(
       if (title) {
         const duplicateTitle = await db.query.Job.findFirst({
           where: and(
-            isNull(Job.deleted_at),
-            sql`"job_id" != ${job_id}`,
+            isNull(Job.deletedAt),
+            sql`"jobId" != ${jobId}`,
             eq(Job.title, title)
           ),
         });
@@ -107,8 +107,8 @@ jobsRouter.put(
       if (description) {
         const duplicateDescription = await db.query.Job.findFirst({
           where: and(
-            isNull(Job.deleted_at),
-            sql`"job_id" != ${job_id}`,
+            isNull(Job.deletedAt),
+            sql`"jobId" != ${jobId}`,
             eq(Job.description, description)
           ),
         });
@@ -140,11 +140,11 @@ jobsRouter.put(
             ? { deadline: sql`${updateData.deadline.toISOString()}` }
             : {}),
         })
-        .where(eq(Job.job_id, job_id))
+        .where(eq(Job.jobId, jobId))
         .execute();
 
       const jobAfterUpdate = await db.query.Job.findFirst({
-        where: eq(Job.job_id, job_id),
+        where: eq(Job.jobId, jobId),
       });
 
       if (!jobAfterUpdate) {
@@ -153,7 +153,7 @@ jobsRouter.put(
       }
 
       const responseJob: JobUpdateResponse = {
-        job_id: Number(jobAfterUpdate.job_id),
+        jobId: Number(jobAfterUpdate.jobId),
         title: jobAfterUpdate.title,
         description: jobAfterUpdate.description,
         budget:
@@ -161,9 +161,9 @@ jobsRouter.put(
         deadline: jobAfterUpdate.deadline
           ? new Date(jobAfterUpdate.deadline).toISOString().slice(0, 10)
           : null,
-        client_id: Number(jobAfterUpdate.client_id),
-        deleted_at: jobAfterUpdate.deleted_at
-          ? new Date(jobAfterUpdate.deleted_at).toISOString()
+        clientId: Number(jobAfterUpdate.clientId),
+        deletedAt: jobAfterUpdate.deletedAt
+          ? new Date(jobAfterUpdate.deletedAt).toISOString()
           : null,
       };
 
@@ -182,11 +182,11 @@ jobsRouter.put(
   }
 );
 
-jobsRouter.get("/jobs/:job_id", async (req: Request, res: Response) => {
-  const { job_id } = req.params;
+jobsRouter.get("/jobs/:jobId", async (req: Request, res: Response) => {
+  const { jobId } = req.params;
   try {
     const job = await db.query.Job.findFirst({
-      where: and(eq(Job.job_id, Number(job_id)), isNull(Job.deleted_at)),
+      where: and(eq(Job.jobId, Number(jobId)), isNull(Job.deletedAt)),
     });
 
     if (!job) {
@@ -195,13 +195,13 @@ jobsRouter.get("/jobs/:job_id", async (req: Request, res: Response) => {
     }
 
     const client = await db.query.User.findFirst({
-      where: eq(User.user_id, job.client_id),
+      where: eq(User.userId, job.clientId),
       columns: { username: true },
     });
 
     const jobWithUsername = {
       ...job,
-      client_username: client?.username,
+      clientUsername: client?.username,
     };
 
     res.json(jobWithUsername);
@@ -220,11 +220,11 @@ jobsRouter.post(
     res: Response<CustomResponse<number>>
   ) => {
     const { title, description, budget, deadline } = req.body;
-    const userId = req.user.user_id;
+    const userId = req.user.userId;
 
     try {
       const duplicateTitle = await db.query.Job.findFirst({
-        where: and(isNull(Job.deleted_at), eq(Job.title, title)),
+        where: and(isNull(Job.deletedAt), eq(Job.title, title)),
       });
       if (duplicateTitle) {
         res
@@ -233,7 +233,7 @@ jobsRouter.post(
         return;
       }
       const duplicateDescription = await db.query.Job.findFirst({
-        where: and(isNull(Job.deleted_at), eq(Job.description, description)),
+        where: and(isNull(Job.deletedAt), eq(Job.description, description)),
       });
       if (duplicateDescription) {
         res
@@ -245,13 +245,13 @@ jobsRouter.post(
       const [newJob] = await db
         .insert(Job)
         .values({
-          client_id: userId,
+          clientId: userId,
           title,
           description,
           budget: sql`${budget}`,
           deadline: deadline ? sql`${new Date(deadline).toISOString()}` : null,
         })
-        .returning({ id: Job.job_id });
+        .returning({ id: Job.jobId });
 
       res
         .status(201)
@@ -265,15 +265,15 @@ jobsRouter.post(
 );
 
 jobsRouter.patch(
-  "/jobs/:job_id",
+  "/jobs/:jobId",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response<CustomResponse<string>>) => {
-    const { job_id } = req.params;
-    const userId = req.user.user_id;
+    const { jobId } = req.params;
+    const userId = req.user.userId;
 
     try {
       const job = await db.query.Job.findFirst({
-        where: eq(Job.job_id, job_id),
+        where: eq(Job.jobId, jobId),
       });
 
       if (!job) {
@@ -281,7 +281,7 @@ jobsRouter.patch(
         return;
       }
 
-      if (job.client_id !== userId) {
+      if (job.clientId !== userId) {
         res
           .status(403)
           .json({ message: "Unauthorized: You don't own this job" });
@@ -291,13 +291,13 @@ jobsRouter.patch(
       await db.transaction(async (trx) => {
         await trx
           .update(Job)
-          .set({ deleted_at: new Date() })
-          .where(eq(Job.job_id, job_id));
+          .set({ deletedAt: new Date() })
+          .where(eq(Job.jobId, jobId));
 
         await trx
           .update(Application)
-          .set({ deleted_at: new Date() })
-          .where(eq(Application.job_id, job_id));
+          .set({ deletedAt: new Date() })
+          .where(eq(Application.jobId, jobId));
       });
 
       res.json({
@@ -319,17 +319,17 @@ jobsRouter.get(
     try {
       const jobs = await db
         .select({
-          job_id: Job.job_id,
+          jobId: Job.jobId,
           title: Job.title,
           description: Job.description,
           budget: Job.budget,
           deadline: Job.deadline,
-          client_id: Job.client_id,
-          client_username: User.username,
+          clientId: Job.clientId,
+          clientUsername: User.username,
         })
         .from(Job)
-        .leftJoin(User, eq(User.user_id, Job.client_id))
-        .where(and(eq(Job.client_id, clientId), isNull(Job.deleted_at)));
+        .leftJoin(User, eq(User.userId, Job.clientId))
+        .where(and(eq(Job.clientId, clientId), isNull(Job.deletedAt)));
 
       res.json(jobs);
     } catch (error) {

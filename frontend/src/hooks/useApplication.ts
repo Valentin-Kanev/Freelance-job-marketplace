@@ -3,7 +3,7 @@ import {
   applyForJob,
   fetchJobApplications,
   fetchMyApplications,
-} from "../api/ApplicationApi";
+} from "../api/applicationApi";
 import { Application, MyApplication } from "../types/ApplicationTypes";
 
 export const useApplyForJob = (
@@ -13,12 +13,12 @@ export const useApplyForJob = (
   const queryClient = useQueryClient();
   return useMutation(
     ({
-      job_id,
+      jobId,
       data,
     }: {
-      job_id: number;
-      data: { freelancer_id: string; cover_letter: string };
-    }) => applyForJob(job_id, data),
+      jobId: number;
+      data: { freelancerId: string; coverLetter: string };
+    }) => applyForJob(jobId, data),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries("myApplications");
@@ -32,10 +32,10 @@ export const useApplyForJob = (
   );
 };
 
-export const useFetchJobApplications = (job_id: number) => {
+export const useFetchJobApplications = (jobId: number) => {
   return useQuery<Application[], Error>(
-    ["jobApplications", job_id],
-    () => fetchJobApplications(job_id),
+    ["jobApplications", jobId],
+    () => fetchJobApplications(jobId),
     {
       staleTime: 30 * 1000,
       retry: 2,

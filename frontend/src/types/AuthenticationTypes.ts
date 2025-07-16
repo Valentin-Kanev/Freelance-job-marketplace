@@ -2,14 +2,14 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  user_type: string;
+  userType: string;
 }
 
 export interface RegisterUserData {
   username: string;
   password: string;
   email: string;
-  user_type: string;
+  userType: string;
 }
 
 export interface LoginUserData {

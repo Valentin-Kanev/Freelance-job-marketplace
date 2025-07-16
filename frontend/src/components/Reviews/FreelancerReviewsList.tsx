@@ -42,24 +42,24 @@ function ReviewCard({
 }: {
   review: {
     id: string;
-    client_id: string;
-    client_username: string;
+    clientId: string;
+    clientUsername: string;
     rating: number;
-    review_text: string;
+    reviewText: string;
   };
 }) {
   return (
     <div className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
       <Link
-        to={`/profiles/${review.client_id}`}
+        to={`/profiles/${review.clientId}`}
         className="text-lg font-semibold text-blue-600"
       >
-        {review.client_username}
+        {review.clientUsername}
       </Link>
       <p className="text-yellow-500 font-semibold">
         Rating: {"⭐".repeat(review.rating)}
       </p>
-      <ExpandableText text={review.review_text} />
+      <ExpandableText text={review.reviewText} />
     </div>
   );
 }

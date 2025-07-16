@@ -3,13 +3,13 @@ import { formatBudget } from "../../utils/formatBudget";
 
 interface JobListProps {
   jobs: Job[];
-  selectedjob_id: number | null;
+  selectedJobId: number | null;
   onSelectJob: (job: Job) => void;
 }
 
 const JobList: React.FC<JobListProps> = ({
   jobs,
-  selectedjob_id,
+  selectedJobId,
   onSelectJob,
 }) => {
   const handleJobClick = (job: Job) => {
@@ -27,9 +27,9 @@ const JobList: React.FC<JobListProps> = ({
         Array.isArray(jobs) &&
         jobs.map((job, index) => (
           <div
-            key={job.job_id}
+            key={job.jobId}
             className={`py-2 px-2 group transition-all cursor-pointer ${
-              selectedjob_id === job.job_id ? "border-l-4 border-blue-500" : ""
+              selectedJobId === job.jobId ? "border-l-4 border-blue-500" : ""
             }`}
             onClick={() => handleJobClick(job)}
           >
@@ -37,7 +37,7 @@ const JobList: React.FC<JobListProps> = ({
               {job.title}
             </h3>
             <p className="text-sm text-gray-600">
-              Offered by: {job.client_username || "Unknown"}
+              Offered by: {job.clientUsername || "Unknown"}
             </p>
             <p className="text-lg font-medium text-green-600">
               💵 Budget: {formatBudget(job.budget)}

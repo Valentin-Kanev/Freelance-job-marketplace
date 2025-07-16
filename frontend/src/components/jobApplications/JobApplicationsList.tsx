@@ -4,12 +4,12 @@ import StatusMessage from "../UI/StatusMessage";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface JobApplicationsListProps {
-  job_id: number;
+  jobId: number;
   creatorId: string;
 }
 
 const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
-  job_id,
+  jobId,
   creatorId,
 }) => {
   const { loggedInUserId } = useAuth();
@@ -18,7 +18,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
     data: applications,
     isLoading,
     error,
-  } = useFetchJobApplications(job_id);
+  } = useFetchJobApplications(jobId);
 
   return (
     <div>
@@ -32,7 +32,7 @@ const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
       ) : applications?.length ? (
         <ul>
           {applications.map((application) => {
-            const compositeKey = `${application.job_id}-${application.application_id}`;
+            const compositeKey = `${application.jobId}-${application.applicationId}`;
             return (
               <li key={compositeKey} className="py-4 w-full">
                 <JobApplicationItem application={application} />

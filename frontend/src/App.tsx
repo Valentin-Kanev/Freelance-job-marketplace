@@ -60,15 +60,12 @@ const App: React.FC = () => {
                   <Route path="/auth/login" element={<AuthMode />} />
                   <Route path="/auth/register" element={<AuthMode />} />
                   <Route path="/jobs" element={<JobManagement />} />
-                  <Route path="/jobs/:job_id" element={<JobDetailsWrapper />} />
+                  <Route path="/jobs/:jobId" element={<JobDetailsWrapper />} />
                   <Route
                     path="/profiles"
                     element={<FreelancerProfilesList />}
                   />
-                  <Route
-                    path="/profiles/:user_id"
-                    element={<ProfileLoader />}
-                  />
+                  <Route path="/profiles/:userId" element={<ProfileLoader />} />
                   <Route
                     path="/profile-management"
                     element={

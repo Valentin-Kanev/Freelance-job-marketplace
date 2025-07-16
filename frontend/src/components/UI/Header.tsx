@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import CreateJob from "../jobs/jobActions/CreateJob";
+import CreateJob from "../jobs/JobActions/CreateJob";
 import SearchBar from "./SearchBar";
 
 const Header: React.FC = () => {
@@ -28,7 +28,7 @@ const Header: React.FC = () => {
             <Link
               to="/jobs"
               className={`text-white hover:text-gray-300 pb-1 border-b-2 transform transition-all duration-300 ease-in-out ${
-                isActive("/jobs") || isActive("/jobs/:job_id")
+                isActive("/jobs") || isActive("/jobs/:jobId")
                   ? "border-white scale-105"
                   : "border-transparent"
               }`}

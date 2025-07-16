@@ -38,7 +38,7 @@ const CreateReview: React.FC<CreateReviewProps> = ({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
       rating: 0,
-      review_text: "",
+      reviewText: "",
     },
   });
 
@@ -65,9 +65,9 @@ const CreateReview: React.FC<CreateReviewProps> = ({
     submitReviewMutation.mutate({
       freelancerId,
       data: {
-        client_id: loggedInUserId,
+        clientId: loggedInUserId,
         rating: data.rating,
-        review_text: data.review_text,
+        reviewText: data.reviewText,
       },
     });
   };
@@ -105,14 +105,14 @@ const CreateReview: React.FC<CreateReviewProps> = ({
         <div>
           <label className="block text-gray-700 font-medium mb-2">Review</label>
           <textarea
-            {...register("review_text")}
+            {...register("reviewText")}
             rows={4}
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
             placeholder="Write your review here..."
           />
-          {errors.review_text && (
+          {errors.reviewText && (
             <p className="text-sm text-red-600 mt-1">
-              {errors.review_text.message}
+              {errors.reviewText.message}
             </p>
           )}
         </div>

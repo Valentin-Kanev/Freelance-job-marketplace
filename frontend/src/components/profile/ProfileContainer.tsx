@@ -27,9 +27,9 @@ export function ProfileContainer({
 
   const handleSave = (updatedData: UpdateProfileData) => {
     if (!profile) return;
-    const { hourly_rate, ...rest } = updatedData;
+    const { hourlyRate, ...rest } = updatedData;
     const dataToSend =
-      userType === "freelancer" ? { ...rest, hourly_rate } : rest;
+      userType === "freelancer" ? { ...rest, hourlyRate } : rest;
 
     updateProfile({ profileId: profile.profileId, data: dataToSend });
     setIsModalOpen(false);

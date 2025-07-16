@@ -37,7 +37,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
     defaultValues: {
       skills: profile.skills,
       description: profile.description,
-      hourly_rate: profile.hourlyRate ?? undefined,
+      hourlyRate: profile.hourlyRate ?? undefined,
     },
   });
 
@@ -54,7 +54,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   const onSubmit = (data: UpdateProfileValidation) => {
     const fixedData = {
       ...data,
-      hourly_rate: data.hourly_rate === null ? undefined : data.hourly_rate,
+      hourlyRate: data.hourlyRate === null ? undefined : data.hourlyRate,
     };
     updateProfileMutation.mutate({
       profileId: profile.profileId,
@@ -94,11 +94,11 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
             <Input
               label="Hourly Rate"
               type="number"
-              {...register("hourly_rate", {
+              {...register("hourlyRate", {
                 valueAsNumber: true,
                 setValueAs: (v) => (v === null ? undefined : v),
               })}
-              error={errors.hourly_rate?.message}
+              error={errors.hourlyRate?.message}
             />
           )}
           <div className="flex justify-center">

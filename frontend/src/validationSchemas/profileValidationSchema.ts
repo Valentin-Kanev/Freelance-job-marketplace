@@ -9,7 +9,7 @@ export const createProfileSchema = z.object({
     .string()
     .min(20, "Description is required to be at least 20 characters")
     .max(500, "Description is too long. It must be less than 500 characters"),
-  hourly_rate: z
+  hourlyRate: z
     .number()
     .positive("Hourly rate must be a positive number")
     .nullable(),

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
-import EditJobModal from "./jobActions/EditJob";
-import DeleteJob from "./jobActions/DeleteJob";
+import EditJobModal from "./JobActions/EditJob";
+import DeleteJob from "./JobActions/DeleteJob";
 import ApplyForJobModal from "../jobApplications/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
@@ -10,7 +10,7 @@ import { useFetchJob } from "../../hooks/useJobs";
 import { HiOutlineClipboardList } from "react-icons/hi";
 
 interface JobDetailsProps {
-  job_id: number;
+  jobId: number;
   userId: string;
   userType: string;
   isInModal?: boolean;
@@ -20,7 +20,7 @@ interface JobDetailsProps {
 }
 
 const JobDetails: React.FC<JobDetailsProps> = ({
-  job_id,
+  jobId,
   userId,
   userType,
   isInModal = false,
@@ -28,7 +28,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   onJobUpdate,
   onJobDelete,
 }) => {
-  const { data: job, isError } = useFetchJob(job_id);
+  const { data: job, isError } = useFetchJob(jobId);
   const [activeModal, setActiveModal] = useState<
     "edit" | "delete" | "apply" | null
   >(null);
@@ -62,10 +62,10 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           <p className="text-lg font-semibold mb-2">
             <span className="text-black">Offered by:</span>{" "}
             <Link
-              to={`/profiles/${job.client_id}`}
+              to={`/profiles/${job.clientId}`}
               className="text-blue-600 hover:text-blue-800"
             >
-              {job.client_username}
+              {job.clientUsername}
             </Link>
           </p>
           <p className="text-lg font-semibold text-green-600 mb-4">
@@ -78,7 +78,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
             {!isInModal &&
               currentModal === null &&
               userType === "client" &&
-              userId === job.client_id && (
+              userId === job.clientId && (
                 <>
                   <Button
                     label="Edit"
@@ -107,11 +107,8 @@ const JobDetails: React.FC<JobDetailsProps> = ({
             {job.description}
           </p>
 
-          {userId === job.client_id && !isInModal && (
-            <JobApplicationsList
-              job_id={job.job_id}
-              creatorId={job.client_id}
-            />
+          {userId === job.clientId && !isInModal && (
+            <JobApplicationsList jobId={job.jobId} creatorId={job.clientId} />
           )}
 
           {activeModal === "edit" && (
@@ -123,7 +120,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           )}
           {activeModal === "delete" && (
             <DeleteJob
-              job_id={job.job_id}
+              jobId={job.jobId}
               isOpen={activeModal === "delete"}
               onSuccess={onJobDelete}
               onClose={() => setActiveModal(null)}
@@ -131,7 +128,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           )}
           {activeModal === "apply" && (
             <ApplyForJobModal
-              job_id={job.job_id}
+              jobId={job.jobId}
               onClose={() => setActiveModal(null)}
             />
           )}

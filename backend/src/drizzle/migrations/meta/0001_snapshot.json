@@ -8,26 +8,26 @@
       "name": "applications",
       "schema": "",
       "columns": {
-        "application_id": {
-          "name": "application_id",
+        "applicationId": {
+          "name": "applicationId",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "job_id": {
-          "name": "job_id",
+        "jobId": {
+          "name": "jobId",
           "type": "serial",
           "primaryKey": false,
           "notNull": true
         },
-        "freelancer_id": {
-          "name": "freelancer_id",
+        "freelancerId": {
+          "name": "freelancerId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "cover_letter": {
-          "name": "cover_letter",
+        "coverLetter": {
+          "name": "coverLetter",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -39,8 +39,8 @@
           "notNull": true,
           "default": "now()"
         },
-        "deleted_at": {
-          "name": "deleted_at",
+        "deletedAt": {
+          "name": "deletedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -52,12 +52,8 @@
           "name": "applications_freelancer_id_users_id_fk",
           "tableFrom": "applications",
           "tableTo": "users",
-          "columnsFrom": [
-            "freelancer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["freelancerId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -67,14 +63,12 @@
         "applications_application_id_unique": {
           "name": "applications_application_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "application_id"
-          ]
+          "columns": ["applicationId"]
         }
       }
     },
-    "public.chat_rooms": {
-      "name": "chat_rooms",
+    "public.chatRooms": {
+      "name": "chatRooms",
       "schema": "",
       "columns": {
         "id": {
@@ -84,20 +78,20 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "user_1_id": {
-          "name": "user_1_id",
+        "userOneId": {
+          "name": "userOneId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "user_2_id": {
-          "name": "user_2_id",
+        "userTwoId": {
+          "name": "userTwoId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -106,42 +100,31 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "chat_rooms_user_1_id_users_id_fk": {
-          "name": "chat_rooms_user_1_id_users_id_fk",
-          "tableFrom": "chat_rooms",
+        "chatRooms_user_1_id_users_id_fk": {
+          "name": "chatRooms_user_1_id_users_id_fk",
+          "tableFrom": "chatRooms",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_1_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userOneId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "chat_rooms_user_2_id_users_id_fk": {
-          "name": "chat_rooms_user_2_id_users_id_fk",
-          "tableFrom": "chat_rooms",
+        "chatRooms_user_2_id_users_id_fk": {
+          "name": "chatRooms_user_2_id_users_id_fk",
+          "tableFrom": "chatRooms",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_2_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userTwoId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "unique_users": {
-          "name": "unique_users",
+        "uniqueUsers": {
+          "name": "uniqueUsers",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_1_id",
-            "user_2_id"
-          ]
+          "columns": ["userOneId", "userTwoId"]
         }
       }
     },
@@ -149,14 +132,14 @@
       "name": "jobs",
       "schema": "",
       "columns": {
-        "job_id": {
-          "name": "job_id",
+        "jobId": {
+          "name": "jobId",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "client_id": {
-          "name": "client_id",
+        "clientId": {
+          "name": "clientId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -185,8 +168,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "deleted_at": {
-          "name": "deleted_at",
+        "deletedAt": {
+          "name": "deletedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -198,12 +181,8 @@
           "name": "jobs_client_id_users_id_fk",
           "tableFrom": "jobs",
           "tableTo": "users",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clientId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -213,23 +192,17 @@
         "jobs_job_id_unique": {
           "name": "jobs_job_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "job_id"
-          ]
+          "columns": ["jobId"]
         },
         "jobs_title_unique": {
           "name": "jobs_title_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "title"
-          ]
+          "columns": ["title"]
         },
         "jobs_description_unique": {
           "name": "jobs_description_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "description"
-          ]
+          "columns": ["description"]
         }
       }
     },
@@ -237,20 +210,20 @@
       "name": "messages",
       "schema": "",
       "columns": {
-        "message_id": {
-          "name": "message_id",
+        "messageId": {
+          "name": "messageId",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "chatRoom_id": {
-          "name": "chatRoom_id",
+        "chatRoomId": {
+          "name": "chatRoomId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "sender_id": {
-          "name": "sender_id",
+        "senderId": {
+          "name": "senderId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -261,8 +234,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -271,16 +244,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_chatRoom_id_chat_rooms_id_fk": {
-          "name": "messages_chatRoom_id_chat_rooms_id_fk",
+        "messages_chatRoom_id_chatRooms_id_fk": {
+          "name": "messages_chatRoom_id_chatRooms_id_fk",
           "tableFrom": "messages",
-          "tableTo": "chat_rooms",
-          "columnsFrom": [
-            "chatRoom_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "tableTo": "chatRooms",
+          "columnsFrom": ["chatRoomId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -288,12 +257,8 @@
           "name": "messages_sender_id_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
-          "columnsFrom": [
-            "sender_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["senderId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -303,9 +268,7 @@
         "messages_message_id_unique": {
           "name": "messages_message_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "message_id"
-          ]
+          "columns": ["messageId"]
         }
       }
     },
@@ -320,8 +283,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -338,8 +301,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "hourly_rate": {
-          "name": "hourly_rate",
+        "hourlyRate": {
+          "name": "hourlyRate",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
@@ -351,12 +314,8 @@
           "name": "profiles_user_id_users_id_fk",
           "tableFrom": "profiles",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -368,20 +327,20 @@
       "name": "reviews",
       "schema": "",
       "columns": {
-        "review_id": {
-          "name": "review_id",
+        "reviewId": {
+          "name": "reviewId",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "freelancer_id": {
-          "name": "freelancer_id",
+        "freelancerId": {
+          "name": "freelancerId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "client_id": {
-          "name": "client_id",
+        "clientId": {
+          "name": "clientId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -392,8 +351,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "review_text": {
-          "name": "review_text",
+        "reviewText": {
+          "name": "reviewText",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -412,12 +371,8 @@
           "name": "reviews_freelancer_id_users_id_fk",
           "tableFrom": "reviews",
           "tableTo": "users",
-          "columnsFrom": [
-            "freelancer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["freelancerId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -425,12 +380,8 @@
           "name": "reviews_client_id_users_id_fk",
           "tableFrom": "reviews",
           "tableTo": "users",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clientId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -440,9 +391,7 @@
         "reviews_review_id_unique": {
           "name": "reviews_review_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "review_id"
-          ]
+          "columns": ["reviewId"]
         }
       }
     },
@@ -475,8 +424,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "user_type": {
-          "name": "user_type",
+        "userType": {
+          "name": "userType",
           "type": "userRole",
           "typeSchema": "public",
           "primaryKey": false,
@@ -490,23 +439,17 @@
         "users_username_unique": {
           "name": "users_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         },
         "users_password_unique": {
           "name": "users_password_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "password"
-          ]
+          "columns": ["password"]
         },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     }
@@ -515,10 +458,7 @@
     "public.userRole": {
       "name": "userRole",
       "schema": "public",
-      "values": [
-        "freelancer",
-        "client"
-      ]
+      "values": ["freelancer", "client"]
     }
   },
   "schemas": {},

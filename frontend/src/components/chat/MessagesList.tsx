@@ -28,7 +28,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
         ) : (
           <ul className="space-y-2">
             {messages?.map((message: Message, index: number) => {
-              const isLoggedUser = message.sender_id === loggedInUserId;
+              const isLoggedUser = message.senderId === loggedInUserId;
 
               return (
                 <li
@@ -40,7 +40,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
                   }`}
                 >
                   {!isLoggedUser && (
-                    <p className="font-bold mb-1">{message.sender_username}</p>
+                    <p className="font-bold mb-1">{message.senderUsername}</p>
                   )}
                   <p>{message.content}</p>
                   <p

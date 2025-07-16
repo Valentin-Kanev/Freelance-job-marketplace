@@ -26,16 +26,16 @@ const SearchBar: React.FC = () => {
     setTitle("");
   };
 
-  const handleProfileSuggestionClick = (profile_id: string) => {
+  const handleProfileSuggestionClick = (profileId: string) => {
     if (searchType === "freelancers") {
-      navigate(`/profiles/${profile_id}`);
+      navigate(`/profiles/${profileId}`);
       setTitle("");
     }
   };
 
-  const handleJobSuggestionClick = (job_id: number) => {
+  const handleJobSuggestionClick = (jobId: number) => {
     if (searchType === "jobs") {
-      navigate(`/jobs/${job_id}`);
+      navigate(`/jobs/${jobId}`);
       setTitle("");
     }
   };
@@ -78,7 +78,7 @@ const SearchBar: React.FC = () => {
                 <li
                   key={job.title}
                   className="px-4 py-2 text-white hover:bg-gray-700 cursor-pointer"
-                  onClick={() => handleJobSuggestionClick(job.job_id)}
+                  onClick={() => handleJobSuggestionClick(job.jobId)}
                 >
                   {job.title}
                 </li>

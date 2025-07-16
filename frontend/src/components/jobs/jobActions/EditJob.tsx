@@ -29,15 +29,15 @@ const EditJobModal: React.FC<EditJobModalProps> = ({
   );
 
   const handleUpdateJob = (updatedJob: UpdateJobData) => {
-    updateJobMutation.mutate({ job_id: job.job_id, data: updatedJob });
+    updateJobMutation.mutate({ jobId: job.jobId, data: updatedJob });
   };
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Edit Job">
       <JobForm
-        userId={job.client_id}
+        userId={job.clientId}
         initialJobDetails={{
-          job_id: job.job_id,
+          jobId: job.jobId,
           title: job.title,
           description: job.description,
           budget: job.budget,

@@ -15,9 +15,9 @@ const MyJobs = ({ clientId }: { clientId: string }) => {
       ) : jobs?.length ? (
         <ul className="list-disc pl-5 space-y-3">
           {jobs.map((job) => (
-            <li key={job.job_id}>
+            <li key={job.jobId}>
               <Link
-                to={`/jobs/${job.job_id}`}
+                to={`/jobs/${job.jobId}`}
                 className="text-lg font-semibold text-blue-600 transition-transform transform hover:translate-y-[-2px] hover:text-blue-700"
               >
                 {job.title}

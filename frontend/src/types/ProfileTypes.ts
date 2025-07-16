@@ -10,6 +10,6 @@ export interface Profile {
 
 export type UpdateProfileData = Partial<
   Omit<Profile, "userType" | "profileId" | "userId" | "username"> & {
-    hourly_rate?: number;
+    hourlyRate?: number;
   }
 >;

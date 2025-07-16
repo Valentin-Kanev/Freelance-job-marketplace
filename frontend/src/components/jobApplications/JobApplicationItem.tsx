@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CreateReview from "../Reviews/CreateReview";
+import CreateReview from "../reviews/CreateReview";
 import Button from "../UI/Button";
 import ExpandableText from "../UI/ExpandableText";
 
 interface ApplicationItemProps {
   application: {
-    application_id: number;
-    freelancer_id: string;
+    applicationId: number;
+    freelancerId: string;
     username: string;
-    cover_letter: string;
+    coverLetter: string;
   };
 }
 
@@ -29,7 +29,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
       <p className="text-lg font-medium text-gray-800">
         <strong>Applicant:</strong>{" "}
         <Link
-          to={`/profiles/${application.freelancer_id}`}
+          to={`/profiles/${application.freelancerId}`}
           className="text-blue-600 hover:text-blue-800 underline"
         >
           {application.username}
@@ -37,7 +37,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
       </p>
 
       <div className="w-full max-w-full break-all whitespace-normal">
-        <ExpandableText text={application.cover_letter} />
+        <ExpandableText text={application.coverLetter} />
       </div>
 
       <div className="mt-6 flex justify-left">
@@ -50,7 +50,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
 
       {isReviewing && (
         <CreateReview
-          freelancerId={application.freelancer_id}
+          freelancerId={application.freelancerId}
           isOpen={isReviewing}
           onClose={handleCloseReviewModal}
         />
