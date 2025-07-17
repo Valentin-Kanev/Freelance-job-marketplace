@@ -1,34 +1,5 @@
 import { Review, SubmitReviewData } from "../types/ReviewTypes";
-
-const BASE_URL = "http://localhost:3001";
-
-const fetchClient = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<T> => {
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    throw new Error("User is not authenticated");
-  }
-
-  const response = await fetch(`${BASE_URL}${url}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const errorData = await response
-      .json()
-      .catch(() => ({ message: response.statusText }));
-    throw new Error(errorData?.message || "Something went wrong");
-  }
-
-  return response.json();
-};
+import { fetchClient } from "./utils/fetchClientApi";
 
 export const submitReview = async (
   freelancerId: string,

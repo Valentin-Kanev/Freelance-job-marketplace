@@ -2,7 +2,12 @@ import { jwtDecode } from "jwt-decode";
 import { useMutation, useQuery } from "react-query";
 import { registerUser, loginUser } from "../api/userAuthenticationApi";
 import { User } from "../types/AuthenticationTypes";
-import { DecodedToken } from "../types/DecodedToken";
+
+export type DecodedToken = {
+  id: string;
+  userType: string;
+  exp: number;
+};
 
 const isTokenValid = (token: string): boolean => {
   try {

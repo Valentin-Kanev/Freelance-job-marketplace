@@ -1,37 +1,5 @@
 import { CreateJobData, Job, UpdateJobData } from "../types/JobTypes";
-
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
-
-const fetchClient = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<T> => {
-  const token = localStorage.getItem("authToken");
-  const response = await fetch(`${BASE_URL}${url}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const contentType = response.headers.get("Content-Type");
-    let errorMessage = "Something went wrong";
-
-    if (contentType && contentType.includes("application/json")) {
-      const errorData = await response.json();
-      errorMessage = errorData?.message || errorMessage;
-    } else {
-      errorMessage = `Error ${response.status}: ${response.statusText}`;
-    }
-
-    throw new Error(errorMessage);
-  }
-
-  return response.json();
-};
+import { fetchClient } from "./utils/fetchClientApi";
 
 export const fetchJobs = async (): Promise<Job[]> => {
   return fetchClient<Job[]>("/jobs");

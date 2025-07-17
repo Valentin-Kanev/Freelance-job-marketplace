@@ -3,28 +3,7 @@ import {
   RegisterUserData,
   LoginUserData,
 } from "../types/AuthenticationTypes";
-
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
-
-const fetchClient = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<T> => {
-  const response = await fetch(`${BASE_URL}${url}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData?.message || "Something went wrong");
-  }
-
-  return response.json();
-};
+import { fetchClient } from "./utils/fetchClientApi";
 
 export const registerUser = async (data: RegisterUserData): Promise<User> => {
   return fetchClient<User>("/register", {

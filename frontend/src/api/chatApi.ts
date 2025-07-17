@@ -1,57 +1,17 @@
 import { ChatRoom } from "../types/chatType";
 import { Message } from "../types/MessageTypes";
-
-const API_BASE_URL = "http://localhost:3000";
+import { fetchClient } from "./utils/fetchClientApi";
 
 export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    throw new Error("No auth token found");
-  }
-
-  const response = await fetch(`${API_BASE_URL}/chat-rooms`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch chat rooms");
-  }
-
-  return response.json();
+  return fetchClient<ChatRoom[]>("/chat-rooms");
 };
 
 export const fetchMessages = async ({
-  chatRoomId,
-  page,
+  roomId,
 }: {
-  chatRoomId: string;
-  page?: number;
+  roomId: string;
 }): Promise<Message[]> => {
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    throw new Error("No auth token found");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/chat-rooms/${chatRoomId}/messages?page=${page}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch messages");
-  }
-
-  return response.json();
+  return fetchClient<Message[]>(`/chat-rooms/${roomId}/messages`);
 };
 
 export const sendMessage = async ({
@@ -67,24 +27,14 @@ export const sendMessage = async ({
   if (!token) {
     throw new Error("No auth token found");
   }
-
-  const response = await fetch(
-    `${API_BASE_URL}/chat-rooms/${roomId}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ senderId, content }),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to send message");
-  }
-
-  return response.json();
+  return fetchClient<Message>(`/chat-rooms/${roomId}/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ senderId, content }),
+  });
 };
 
 export const createChatRoom = async ({
@@ -99,7 +49,7 @@ export const createChatRoom = async ({
     throw new Error("No auth token found");
   }
 
-  const response = await fetch(`${API_BASE_URL}/chat-rooms`, {
+  return fetchClient<ChatRoom>("/chat-rooms", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -107,10 +57,4 @@ export const createChatRoom = async ({
     },
     body: JSON.stringify({ userOneId, userTwoId }),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create or fetch chat room");
-  }
-
-  return response.json();
 };

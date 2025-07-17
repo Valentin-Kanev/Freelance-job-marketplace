@@ -1,36 +1,5 @@
 import { Application, MyApplication } from "../types/ApplicationTypes";
-
-const BASE_URL = "/applications";
-
-const fetchClient = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<T> => {
-  const token = localStorage.getItem("authToken");
-
-  const response = await fetch(
-    `${BASE_URL}${url.startsWith("/") ? url : `/${url}`}`,
-    {
-      ...options,
-      headers: {
-        ...options?.headers,
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      const errorData = await response.json();
-      throw new Error(errorData?.message || "Something went wrong");
-    } else {
-      throw new Error("Unexpected response from the server");
-    }
-  }
-
-  return response.json();
-};
+import { fetchClient } from "./utils/fetchClientApi";
 
 export const applyForJob = async (
   jobId: number,
@@ -52,5 +21,5 @@ export const fetchJobApplications = async (
 };
 
 export const fetchMyApplications = async (): Promise<MyApplication[]> => {
-  return fetchClient<MyApplication[]>(`${BASE_URL}/my-applications`);
+  return fetchClient<MyApplication[]>(`/applications/my-applications`);
 };

@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import JobListWithDetails from "./JobListWithDetails";
 import Modal from "../UI/Modal";
 import JobForm from "./JobForm";
-import { initialJobDetails } from "../../types/JobTypes";
+import { initialJobDetails } from "../../utils/initialJobDetails";
 
 const JobManagement: React.FC = () => {
   const { data: jobs, isLoading, isError, error } = useJobs();

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
-import { initialJobDetails } from "../../../types/JobTypes";
+import { initialJobDetails } from "../../../utils/initialJobDetails";
 import StatusMessage from "../../UI/StatusMessage";
 
 interface CreateJobProps {

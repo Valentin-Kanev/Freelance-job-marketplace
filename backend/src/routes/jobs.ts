@@ -68,7 +68,7 @@ jobsRouter.put(
     req: AuthenticatedRequest<UpdateJobValidation>,
     res: Response<CustomResponse<JobUpdateResponse>>
   ) => {
-    const jobId = req.params.jobId;
+    const jobId = Number(req.params.jobId);
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.userId;
 

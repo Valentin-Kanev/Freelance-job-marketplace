@@ -48,14 +48,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           </p>
         </div>
       ) : (
-        <div
-          className="w-full overflow-y-auto p-4 scroll-smooth"
-          style={{
-            maxHeight: "85vh",
-            scrollbarWidth: "thin",
-            scrollbarColor: "#4A5568 #E2E8F0",
-          }}
-        >
+        <div className="w-full overflow-y-auto p-4 scroll-smooth max-h-[80vh]">
           <h2 className="text-4xl font-bold mb-4 break-all overflow-hidden">
             {job.title}
           </h2>

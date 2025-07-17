@@ -31,7 +31,7 @@ dotenv.config({ path: envPath });
 app.use(express.json());
 app.use(requestLogger);
 app.use(userManagmentRouter);
-app.use("/applications", applicationsRouter);
+app.use(applicationsRouter);
 app.use(profilesRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/profiles", reviewsRouter);
