@@ -19,13 +19,13 @@ export const createJobSchema = z.object({
 });
 export type CreateJobValidation = z.infer<typeof createJobSchema>;
 
-export const updateJobSchema = createJobSchema
+export const editJobSchema = createJobSchema
   .partial()
   .refine((data) => Object.values(data).some((value) => value !== undefined), {
     message: "At least one field must be provided to update",
   });
 
-export type UpdateJobValidation = z.infer<typeof updateJobSchema>;
+export type editJobValidation = z.infer<typeof editJobSchema>;
 
 export const jobSearchSchema = z.object({
   title: z.string().min(1, "Title query parameter is required"),

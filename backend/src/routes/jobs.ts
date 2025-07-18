@@ -7,12 +7,12 @@ import { validate } from "../middleware/validate";
 import {
   SearchJobValidation,
   CreateJobValidation,
-  UpdateJobValidation,
+  editJobValidation,
   createJobSchema,
-  updateJobSchema,
+  editJobSchema,
 } from "../schemas/jobValidationSchema";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { CustomResponse, JobUpdateResponse } from "../types/responseTypes";
+import { CustomResponse, jobEditResponse } from "../types/responseTypes";
 import { logger } from "../middleware/logger";
 
 const jobsRouter = Router();
@@ -63,26 +63,26 @@ jobsRouter.get("/jobs", async (req: Request, res: Response) => {
 jobsRouter.put(
   "/jobs/:jobId",
   authenticateToken,
-  validate(updateJobSchema),
+  validate(editJobSchema),
   async (
-    req: AuthenticatedRequest<UpdateJobValidation>,
-    res: Response<CustomResponse<JobUpdateResponse>>
+    req: AuthenticatedRequest<editJobValidation>,
+    res: Response<CustomResponse<jobEditResponse>>
   ) => {
     const jobId = Number(req.params.jobId);
     const { title, description, budget, deadline } = req.body;
     const userId = req.user.userId;
 
     try {
-      const updatedJob = await db.query.Job.findFirst({
+      const editedJob = await db.query.Job.findFirst({
         where: eq(Job.jobId, jobId),
       });
 
-      if (!updatedJob) {
+      if (!editedJob) {
         res.status(404).json({ message: "Job not found" });
         return;
       }
 
-      if (updatedJob.clientId !== userId) {
+      if (editedJob.clientId !== userId) {
         res
           .status(403)
           .json({ message: "Unauthorized: You don't own this job" });
@@ -93,7 +93,7 @@ jobsRouter.put(
         const duplicateTitle = await db.query.Job.findFirst({
           where: and(
             isNull(Job.deletedAt),
-            sql`"jobId" != ${jobId}`,
+            sql`"job_id" != ${jobId}`,
             eq(Job.title, title)
           ),
         });
@@ -108,7 +108,7 @@ jobsRouter.put(
         const duplicateDescription = await db.query.Job.findFirst({
           where: and(
             isNull(Job.deletedAt),
-            sql`"jobId" != ${jobId}`,
+            sql`"job_id" != ${jobId}`,
             eq(Job.description, description)
           ),
         });
@@ -152,7 +152,7 @@ jobsRouter.put(
         return;
       }
 
-      const responseJob: JobUpdateResponse = {
+      const responseJob: jobEditResponse = {
         jobId: Number(jobAfterUpdate.jobId),
         title: jobAfterUpdate.title,
         description: jobAfterUpdate.description,

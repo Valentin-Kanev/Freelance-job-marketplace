@@ -13,7 +13,7 @@ import { SocketProvider } from "./contexts/SocketContext";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";
-import { useJobs } from "./hooks/useJobs";
+import { useJobs } from "./hooks/jobs/useJobs";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

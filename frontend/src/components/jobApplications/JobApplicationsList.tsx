@@ -1,4 +1,4 @@
-import { useFetchJobApplications } from "../../hooks/useApplication";
+import { useFetchJobApplications } from "../../hooks/application/useApplication";
 import JobApplicationItem from "./JobApplicationItem";
 import StatusMessage from "../UI/StatusMessage";
 import { useAuth } from "../../contexts/AuthContext";

@@ -1,53 +1,51 @@
-import React from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
-import { useUpdateJob } from "../../../hooks/useJobs";
 import { useToast } from "../../../contexts/ToastManager";
-import { Job, UpdateJobData } from "../../../types/JobTypes";
+import { Job, editJobData } from "../../../types/JobTypes";
+import { useEditJob } from "../../../hooks/jobs/useEditJob";
+import { useState } from "react";
 
-interface EditJobModalProps {
+const EditJob: React.FC<{
   job: Job;
   onSuccess?: () => void;
   onClose: () => void;
-}
-
-const EditJobModal: React.FC<EditJobModalProps> = ({
-  job,
-  onClose,
-  onSuccess,
-}) => {
+}> = ({ job, onSuccess, onClose }) => {
+  const [serverError, setServerError] = useState<string | undefined>();
   const { addToast } = useToast();
-  const updateJobMutation = useUpdateJob(
+
+  const mutation = useEditJob(
     () => {
       addToast("Job updated successfully!");
       onSuccess?.();
       onClose();
     },
-    (errMsg) => {
-      console.error("Error updating job:", errMsg);
-    }
+    (msg) => setServerError(msg)
   );
 
-  const handleUpdateJob = (updatedJob: UpdateJobData) => {
-    updateJobMutation.mutate({ jobId: job.jobId, data: updatedJob });
-  };
-
   return (
-    <Modal isOpen={true} onClose={onClose} title="Edit Job">
+    <Modal isOpen={true} onClose={onClose} title="Update Job">
       <JobForm
-        userId={job.clientId}
-        initialJobDetails={{
-          jobId: job.jobId,
+        isUpdate={true}
+        defaultValues={{
           title: job.title,
           description: job.description,
           budget: job.budget,
           deadline: new Date(job.deadline),
         }}
-        onSubmitSuccess={handleUpdateJob}
+        onSubmit={(data) =>
+          mutation.mutate({
+            jobId: job.jobId,
+            data: Object.fromEntries(
+              Object.entries(data).filter(([_, v]) => v !== undefined)
+            ) as editJobData,
+          })
+        }
+        isLoading={mutation.isLoading}
+        serverError={serverError}
         onClose={onClose}
       />
     </Modal>
   );
 };
 
-export default EditJobModal;
+export default EditJob;

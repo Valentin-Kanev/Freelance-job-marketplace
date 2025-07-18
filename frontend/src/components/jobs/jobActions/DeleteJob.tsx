@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import Button from "../../UI/Button";
-import { useDeleteJob } from "../../../hooks/useJobs";
+import { useSoftDeleteJob } from "../../../hooks/jobs/useSoftDeleteJob";
 import { useToast } from "../../../contexts/ToastManager";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +17,7 @@ const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
   onClose,
   isOpen,
 }) => {
-  const deleteJobMutation = useDeleteJob();
+  const deleteJobMutation = useSoftDeleteJob();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);

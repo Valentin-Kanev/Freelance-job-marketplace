@@ -4,7 +4,7 @@ export type CustomResponse<T = any> = {
   message?: string;
 };
 
-export type JobUpdateResponse = {
+export type jobEditResponse = {
   jobId: number;
   title: string;
   description: string;

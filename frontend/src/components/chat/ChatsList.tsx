@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useChatRooms } from "../../hooks/useChat";
+import { useChatRooms } from "../../hooks/chat/useChatRooms";
 import { ChatRoom } from "../../types/chatType";
 
 interface ChatRoomListProps {

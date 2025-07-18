@@ -4,7 +4,7 @@ import JobList from "./JobList";
 import JobDetails from "./JobDetails";
 import StatusMessage from "../UI/StatusMessage";
 import { Job } from "../../types/JobTypes";
-import { useFetchJob } from "../../hooks/useJobs";
+import { useFetchJob } from "../../hooks/jobs/useFetchJob";
 import { useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -38,7 +38,7 @@ const JobListWithDetails: React.FC<Props> = ({
     navigate(`/jobs/${job.jobId}`);
   };
 
-  const handleJobUpdate = () => {
+  const handlejobEdit = () => {
     refetch();
     queryClient.invalidateQueries(["jobs"]);
   };
@@ -72,7 +72,7 @@ const JobListWithDetails: React.FC<Props> = ({
               jobId={parsedJobId ?? -1}
               userId={loggedInUserId || ""}
               userType={userType || ""}
-              onJobUpdate={handleJobUpdate}
+              onjobEdit={handlejobEdit}
             />
           )}
         </div>

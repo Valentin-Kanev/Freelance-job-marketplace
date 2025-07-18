@@ -4,7 +4,7 @@ import {
   loginSchema,
   LoginValidation,
 } from "../../validationSchemas/userManagmentValidationScheema";
-import { useLoginUser } from "../../hooks/useAuth";
+import { useLoginUser } from "../../hooks/authentication/useLoginUser";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQueryClient } from "react-query";

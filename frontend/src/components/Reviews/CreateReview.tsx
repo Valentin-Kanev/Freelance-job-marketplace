@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaStar } from "react-icons/fa";
-import { useSubmitReview } from "../../hooks/useReview";
+import { useSubmitReview } from "../../hooks/reviews/useSubmitReview";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastManager";
 import Modal from "../UI/Modal";

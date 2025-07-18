@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useMessages } from "../../hooks/useChat";
+import { useMessages } from "../../hooks/messages/useMessages";
 import { useAuth } from "../../contexts/AuthContext";
 import { Message } from "../../types/MessageTypes";
 

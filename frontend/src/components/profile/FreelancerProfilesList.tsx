@@ -1,4 +1,4 @@
-import { useProfiles } from "../../hooks/useProfiles";
+import { useProfiles } from "../../hooks/profiles/useProfiles";
 import Button from "../UI/Button";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";

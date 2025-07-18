@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSendMessage } from "../../hooks/useChat";
+import { useSendMessage } from "../../hooks/messages/useSendMessage";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface ChatFormProps {

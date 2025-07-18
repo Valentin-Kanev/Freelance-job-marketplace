@@ -1,4 +1,4 @@
-import { useFreelancerReviews } from "../../hooks/useReview";
+import { useFreelancerReviews } from "../../hooks/reviews/useFreelancerReviews";
 import { useAuth } from "../../contexts/AuthContext";
 import ExpandableText from "../UI/ExpandableText";
 import { Link } from "react-router-dom";

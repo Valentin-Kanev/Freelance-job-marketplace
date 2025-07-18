@@ -1,18 +1,26 @@
-import React, { useState } from "react";
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
 import { initialJobDetails } from "../../../utils/initialJobDetails";
+import { useCreateJob } from "../../../hooks/jobs/useCreateJob";
 import StatusMessage from "../../UI/StatusMessage";
+import { useState } from "react";
 
-interface CreateJobProps {
-  userId: string;
-  isLoggedIn: boolean;
-}
-
-const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
+const CreateJob: React.FC<{ userId: string; isLoggedIn: boolean }> = ({
+  userId,
+  isLoggedIn,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [serverError, setServerError] = useState<string | undefined>();
   const { addToast } = useToast();
+
+  const mutation = useCreateJob(
+    () => {
+      addToast("Job created successfully!");
+      setIsModalOpen(false);
+    },
+    (msg) => setServerError(msg)
+  );
 
   return (
     <div>
@@ -30,12 +38,11 @@ const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
       >
         {isLoggedIn && userId ? (
           <JobForm
-            userId={userId}
-            initialJobDetails={initialJobDetails}
-            onSubmitSuccess={() => {
-              addToast("Job created successfully!");
-              setIsModalOpen(false);
-            }}
+            isUpdate={false}
+            defaultValues={initialJobDetails}
+            onSubmit={(data) => mutation.mutate({ ...data, clientId: userId })}
+            isLoading={mutation.isLoading}
+            serverError={serverError}
             onClose={() => setIsModalOpen(false)}
           />
         ) : (

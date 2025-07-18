@@ -3,8 +3,8 @@ import {
   applyForJob,
   fetchJobApplications,
   fetchMyApplications,
-} from "../api/applicationApi";
-import { Application, MyApplication } from "../types/ApplicationTypes";
+} from "../../api/applicationApi";
+import { Application, MyApplication } from "../../types/ApplicationTypes";
 
 export const useApplyForJob = (
   onSuccess?: (data: Application) => void,

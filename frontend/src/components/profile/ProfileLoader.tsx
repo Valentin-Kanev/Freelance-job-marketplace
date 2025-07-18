@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useUserProfile } from "../../hooks/useProfiles";
+import { useUserProfile } from "../../hooks/profiles/useUserProfile";
 import { ProfileDetails } from "./ProfileDetails";
 import { useAuth } from "../../contexts/AuthContext";
 

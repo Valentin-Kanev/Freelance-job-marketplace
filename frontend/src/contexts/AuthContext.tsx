@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useQueryClient } from "react-query";
-import { useAuthUser } from "../hooks/useAuth";
+import { useAuthenticatedUser } from "../hooks/authentication/useAuthenticatedUser";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -16,7 +16,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const queryClient = useQueryClient();
-  const { data: authUser, isLoading } = useAuthUser();
+  const { data: authUser, isLoading } = useAuthenticatedUser();
 
   const isLoggedIn = !!authUser;
   const loggedInUserId = authUser?.id || null;

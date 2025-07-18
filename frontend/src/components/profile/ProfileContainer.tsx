@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useUserProfile } from "../../hooks/useProfiles";
+import { useUserProfile } from "../../hooks/profiles/useUserProfile";
 import { ProfileDetails } from "./ProfileDetails";
-import { useUpdateProfile } from "../../hooks/useProfiles";
+import { useUpdateProfile } from "../../hooks/profiles/useUpdateProfile";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import EditProfileForm from "./EditProfileForm";

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
-import { useFetchMyJobs } from "../../hooks/useJobs";
+import { useFetchMyJobs } from "../../hooks/jobs/useFetchMyJobs";
 
 const MyJobs = ({ clientId }: { clientId: string }) => {
   const { data: jobs, isLoading, error } = useFetchMyJobs(clientId);

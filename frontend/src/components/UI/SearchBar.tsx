@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSearchJobsByTitle } from "../../hooks/useJobs";
-import { useSearchProfiles } from "../../hooks/useProfiles";
+import { useSearchJobsByTitle } from "../../hooks/jobs/useSearchJobsByTitle";
+import { useSearchProfiles } from "../../hooks/profiles/useSearchProfiles";
 import { Job } from "../../types/JobTypes";
 import { Profile } from "../../types/ProfileTypes";
 

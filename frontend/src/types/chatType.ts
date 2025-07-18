@@ -1,4 +1,4 @@
-export type User = {
+export type ChatUser = {
   id: string;
   username: string;
 };
@@ -7,5 +7,5 @@ export type ChatRoom = {
   userOneId: string;
   userTwoId: string;
   createdAt: string;
-  otherUser: User;
+  otherUser: ChatUser;
 };

@@ -4,7 +4,7 @@ import {
   createUserSchema,
   CreateUserValidation,
 } from "../../validationSchemas/userManagmentValidationScheema";
-import { useRegisterUser } from "../../hooks/useAuth";
+import { useRegisterUser } from "../../hooks/authentication/useRegisterUser";
 import Input from "../UI/Input";
 
 interface RegisterProps {

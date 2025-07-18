@@ -1,4 +1,4 @@
-import { useCreateChatRoom } from "../../hooks/useChat";
+import { useCreateChatRoom } from "../../hooks/chat/useCreateChatRoom";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";
 

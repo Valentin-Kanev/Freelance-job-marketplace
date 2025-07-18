@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
-import EditJobModal from "./JobActions/EditJob";
+import EditJob from "./JobActions/EditJob";
 import DeleteJob from "./JobActions/DeleteJob";
 import ApplyForJobModal from "../jobApplications/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
-import { useFetchJob } from "../../hooks/useJobs";
+import { useFetchJob } from "../../hooks/jobs/useFetchJob";
 import { HiOutlineClipboardList } from "react-icons/hi";
 
 interface JobDetailsProps {
@@ -15,7 +15,7 @@ interface JobDetailsProps {
   userType: string;
   isInModal?: boolean;
   currentModal?: string | null;
-  onJobUpdate?: () => void;
+  onjobEdit?: () => void;
   onJobDelete?: () => void;
 }
 
@@ -25,7 +25,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
   userType,
   isInModal = false,
   currentModal = null,
-  onJobUpdate,
+  onjobEdit,
   onJobDelete,
 }) => {
   const { data: job, isError } = useFetchJob(jobId);
@@ -105,10 +105,10 @@ const JobDetails: React.FC<JobDetailsProps> = ({
           )}
 
           {activeModal === "edit" && (
-            <EditJobModal
+            <EditJob
               job={job}
               onClose={() => setActiveModal(null)}
-              onSuccess={onJobUpdate}
+              onSuccess={onjobEdit}
             />
           )}
           {activeModal === "delete" && (

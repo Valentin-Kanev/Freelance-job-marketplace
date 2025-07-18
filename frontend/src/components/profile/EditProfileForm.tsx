@@ -8,7 +8,7 @@ import {
   updateProfileSchema,
   UpdateProfileValidation,
 } from "../../validationSchemas/profileValidationSchema";
-import { useUpdateProfile } from "../../hooks/useProfiles";
+import { useUpdateProfile } from "../../hooks/profiles/useUpdateProfile";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastManager";
 

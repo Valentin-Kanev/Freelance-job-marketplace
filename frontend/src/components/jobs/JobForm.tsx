@@ -1,73 +1,48 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createJobSchema,
   CreateJobValidation,
 } from "../../validationSchemas/jobValidationSchema";
-import { useJobMutations } from "../../hooks/useJobs";
 import Input from "../UI/Input";
-import { CreateJobData, UpdateJobData } from "../../types/JobTypes";
 
 interface JobFormProps {
-  userId: string;
-  initialJobDetails: Partial<CreateJobValidation> & { jobId?: number };
+  isUpdate: boolean;
+  defaultValues: CreateJobValidation;
+  onSubmit: (data: CreateJobValidation) => void;
   onClose: () => void;
-  onSubmitSuccess: (job: CreateJobData | UpdateJobData) => void;
+  serverError?: string;
+  isLoading?: boolean;
+  onSuccess?: () => void;
 }
 
 const JobForm: React.FC<JobFormProps> = ({
-  userId,
-  initialJobDetails,
-  onClose,
-  onSubmitSuccess,
+  isUpdate,
+  defaultValues,
+  onSubmit,
+  serverError,
+  isLoading,
 }) => {
-  const isUpdate = Boolean(initialJobDetails.jobId);
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<CreateJobValidation>({
     resolver: zodResolver(createJobSchema),
     defaultValues: {
-      ...initialJobDetails,
-      budget: Number(initialJobDetails.budget) || 0,
-      deadline: initialJobDetails.deadline
-        ? new Date(initialJobDetails.deadline)
+      ...defaultValues,
+      budget: Number(defaultValues.budget) || 0,
+      deadline: defaultValues.deadline
+        ? new Date(defaultValues.deadline)
         : undefined,
     },
   });
 
-  const { handleJobSubmit } = useJobMutations(
-    (job) => {
-      onSubmitSuccess(job);
-      onClose();
-    },
-    (errorMessage: string) => {
-      setError("root.serverError", { message: errorMessage });
-    }
-  );
-
-  const onSubmit = (data: CreateJobValidation) => {
-    const payload = isUpdate
-      ? {
-          ...(data as UpdateJobData),
-          jobId: initialJobDetails.jobId!,
-        }
-      : {
-          ...data,
-          clientId: userId,
-        };
-
-    handleJobSubmit(isUpdate, payload);
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {errors.root?.serverError && (
+      {serverError && (
         <div className="rounded bg-red-100 px-4 py-2 text-red-700">
-          {errors.root.serverError.message}
+          {serverError}
         </div>
       )}
 
@@ -115,6 +90,7 @@ const JobForm: React.FC<JobFormProps> = ({
       <button
         type="submit"
         className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
+        disabled={isLoading}
       >
         {isUpdate ? "Update Job" : "Create Job"}
       </button>
