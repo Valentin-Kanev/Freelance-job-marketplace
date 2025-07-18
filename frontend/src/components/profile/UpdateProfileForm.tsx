@@ -12,14 +12,14 @@ import { useUpdateProfile } from "../../hooks/profiles/useUpdateProfile";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastManager";
 
-interface EditProfileProps {
+interface UpdateProfileProps {
   profile: Profile;
   isOpen: boolean;
   onSave: (updatedData: Profile) => void;
   onClose: () => void;
 }
 
-const EditProfileForm: React.FC<EditProfileProps> = ({
+const UpdateProfileForm: React.FC<UpdateProfileProps> = ({
   profile,
   isOpen,
   onClose,
@@ -64,7 +64,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title="Edit Profile">
+      <Modal isOpen={isOpen} onClose={onClose} title="Update Profile">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {errors.root?.message && (
             <div className="rounded bg-red-100 px-4 py-2 text-red-700">
@@ -114,4 +114,4 @@ const EditProfileForm: React.FC<EditProfileProps> = ({
   );
 };
 
-export default EditProfileForm;
+export default UpdateProfileForm;

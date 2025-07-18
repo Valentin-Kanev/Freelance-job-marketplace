@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
-import { useClientWrittenReviews } from "../../hooks/reviews/useClientWrittenReviews";
+import { useFetchClientWrittenReviews } from "../../hooks/reviews/useFetchClientWrittenReviews";
 
-const ClientWrittenReviews = ({ clientId }: { clientId: string }) => {
-  const { data: reviews, isLoading, error } = useClientWrittenReviews(clientId);
+const ClientWrittenReviewsList = ({ clientId }: { clientId: string }) => {
+  const {
+    data: reviews,
+    isLoading,
+    error,
+  } = useFetchClientWrittenReviews(clientId);
 
   return (
     <div>
@@ -41,4 +45,4 @@ const ClientWrittenReviews = ({ clientId }: { clientId: string }) => {
   );
 };
 
-export default ClientWrittenReviews;
+export default ClientWrittenReviewsList;

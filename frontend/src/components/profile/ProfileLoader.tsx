@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useUserProfile } from "../../hooks/profiles/useUserProfile";
+import { useFetchUserProfile } from "../../hooks/profiles/useFetchUserProfile";
 import { ProfileDetails } from "./ProfileDetails";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -11,7 +11,7 @@ const ProfileLoader = () => {
     isLoading,
     isError,
     error,
-  } = useUserProfile(userId || null);
+  } = useFetchUserProfile(userId || null);
   const { loggedInUserId } = useAuth();
   const isOwner = profile?.userId === loggedInUserId;
 
@@ -29,7 +29,7 @@ const ProfileLoader = () => {
         <ProfileDetails
           profile={profile}
           isOwner={isOwner}
-          onEdit={() => navigate("/profile-management")}
+          onUpdate={() => navigate("/profile-management")}
         />
       )}
     </>

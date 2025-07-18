@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useChatRooms } from "../../hooks/chat/useChatRooms";
+import { useFetchChatRooms } from "../../hooks/chat/useFetchChatRooms";
 import { ChatRoom } from "../../types/chatType";
 
 interface ChatRoomListProps {
@@ -7,11 +7,11 @@ interface ChatRoomListProps {
   selectedRoomId?: string | null;
 }
 
-const ChatRoomList: React.FC<ChatRoomListProps> = ({
+const ChatRoomsList: React.FC<ChatRoomListProps> = ({
   onSelectRoom,
   selectedRoomId,
 }) => {
-  const { data: chatRooms, isLoading } = useChatRooms();
+  const { data: chatRooms, isLoading } = useFetchChatRooms();
   const [localSelectedRoomId, setLocalSelectedRoomId] = useState<string | null>(
     selectedRoomId || null
   );
@@ -48,4 +48,4 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
   );
 };
 
-export default ChatRoomList;
+export default ChatRoomsList;

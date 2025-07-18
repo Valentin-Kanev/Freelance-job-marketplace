@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useJobs } from "../../hooks/jobs/useJobs";
+import { useFetchJobs } from "../../hooks/jobs/useFetchJobs";
 import { useAuth } from "../../contexts/AuthContext";
 import JobListWithDetails from "./JobListWithDetails";
 import Modal from "../UI/Modal";
@@ -8,7 +8,7 @@ import { initialJobDetails } from "../../utils/initialJobDetails";
 import { useCreateJob } from "../../hooks/jobs/useCreateJob";
 
 const JobManagement: React.FC = () => {
-  const { data: jobs, isLoading, isError, error } = useJobs();
+  const { data: jobs, isLoading, isError, error } = useFetchJobs();
   const { isLoggedIn, loggedInUserId } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>(undefined);

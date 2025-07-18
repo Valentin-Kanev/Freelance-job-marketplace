@@ -7,7 +7,7 @@ interface JobListProps {
   onSelectJob: (job: Job) => void;
 }
 
-const JobList: React.FC<JobListProps> = ({
+const JobsList: React.FC<JobListProps> = ({
   jobs,
   selectedJobId,
   onSelectJob,
@@ -55,4 +55,4 @@ const JobList: React.FC<JobListProps> = ({
   );
 };
 
-export default JobList;
+export default JobsList;

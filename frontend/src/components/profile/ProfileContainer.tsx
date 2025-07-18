@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useUserProfile } from "../../hooks/profiles/useUserProfile";
+import { useFetchUserProfile } from "../../hooks/profiles/useFetchUserProfile";
 import { ProfileDetails } from "./ProfileDetails";
 import { useUpdateProfile } from "../../hooks/profiles/useUpdateProfile";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import EditProfileForm from "./EditProfileForm";
+import UpdateProfileForm from "./UpdateProfileForm";
 import StatusMessage from "../UI/StatusMessage";
 import { UpdateProfileData } from "../../types/ProfileTypes";
 
@@ -19,7 +19,7 @@ export function ProfileContainer({
   const { loggedInUserId, userType } = useAuth();
   const userId = propUserId ?? freelancerId ?? loggedInUserId;
 
-  const { data: profile, isLoading, isError } = useUserProfile(userId);
+  const { data: profile, isLoading, isError } = useFetchUserProfile(userId);
   const { mutate: updateProfile } = useUpdateProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,10 +47,10 @@ export function ProfileContainer({
         <>
           <ProfileDetails
             profile={profile}
-            onEdit={() => setIsModalOpen(true)}
+            onUpdate={() => setIsModalOpen(true)}
             isOwner={isOwner}
           />
-          <EditProfileForm
+          <UpdateProfileForm
             profile={profile}
             onSave={handleSave}
             isOpen={isModalOpen}

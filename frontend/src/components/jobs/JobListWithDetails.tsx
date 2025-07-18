@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import JobList from "./JobList";
+import JobsList from "./JobsList";
 import JobDetails from "./JobDetails";
 import StatusMessage from "../UI/StatusMessage";
 import { Job } from "../../types/JobTypes";
@@ -55,7 +55,7 @@ const JobListWithDetails: React.FC<Props> = ({
               <StatusMessage message="No jobs available." />
             )}
           {!isLoading && !isError && Array.isArray(jobs) && jobs.length > 0 && (
-            <JobList
+            <JobsList
               jobs={jobs}
               selectedJobId={parsedJobId}
               onSelectJob={handleSelectJob}

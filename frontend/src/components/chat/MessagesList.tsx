@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useMessages } from "../../hooks/messages/useMessages";
+import { useFetchMessages } from "../../hooks/messages/useFetchMessages";
 import { useAuth } from "../../contexts/AuthContext";
 import { Message } from "../../types/MessageTypes";
 
@@ -8,7 +8,7 @@ interface MessagesListProps {
 }
 
 const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
-  const { data: messages, isLoading, error } = useMessages(roomId);
+  const { data: messages, isLoading, error } = useFetchMessages(roomId);
   const { loggedInUserId } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
 

@@ -1,4 +1,4 @@
-import { useFetchMyApplications } from "../../hooks/application/useApplication";
+import { useFetchMyApplications } from "../../hooks/application/useFetchMyApplications";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
 import { Link } from "react-router-dom";

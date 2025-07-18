@@ -1,10 +1,10 @@
 import { useState } from "react";
-import ReviewList from "../reviews/FreelancerReviewsList";
-import MyJobs from "./MyJobsList";
-import MyReviews from "../reviews/ClientWrittenReviewsList";
+import FreelancerReviewsList from "../reviews/FreelancerReviewsList";
+import MyJobsList from "./MyJobsList";
+import MyReviewsList from "../reviews/ClientWrittenReviewsList";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";
-import StartChat from "../chat/StartChat";
+import StartChatButton from "../chat/StartChatButton";
 import { useAuth } from "../../contexts/AuthContext";
 import FloatingChatButton from "../chat/FloatingChatButton";
 import { useChat } from "../../contexts/ChatContext";
@@ -13,13 +13,13 @@ import { Profile } from "../../types/ProfileTypes";
 interface ProfileDetailsProps {
   profile: Profile;
   isOwner: boolean;
-  onEdit: () => void;
+  onUpdate: () => void;
 }
 
 export function ProfileDetails({
   profile,
   isOwner,
-  onEdit,
+  onUpdate,
 }: ProfileDetailsProps) {
   const { loggedInUserId, isLoggedIn } = useAuth();
   const isFreelancer = profile.userType === "freelancer";
@@ -76,7 +76,7 @@ export function ProfileDetails({
       </div>
       {!isProfileOwner && isLoggedIn && (
         <div className="mt-6">
-          <StartChat
+          <StartChatButton
             targetUserId={profile.userId}
             onStartChat={handleStartChat}
           />
@@ -85,8 +85,8 @@ export function ProfileDetails({
       {isOwner && (
         <div className="mt-6 flex justify-left">
           <Button
-            label="Edit Profile"
-            onClick={onEdit}
+            label="Update Profile"
+            onClick={onUpdate}
             className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
           />
         </div>
@@ -143,17 +143,17 @@ export function ProfileDetails({
       </div>
       <div className="mt-6">
         {activeTab === "reviews" && (
-          <ReviewList
+          <FreelancerReviewsList
             freelancerId={profile.profileId}
             isFreelancer={isFreelancer}
           />
         )}
         {activeTab === "applications" && isFreelancer && <MyApplications />}
         {activeTab === "jobs" && !isFreelancer && (
-          <MyJobs clientId={profile.userId} />
+          <MyJobsList clientId={profile.userId} />
         )}
         {activeTab === "myReviews" && !isFreelancer && (
-          <MyReviews clientId={profile.userId} />
+          <MyReviewsList clientId={profile.userId} />
         )}
       </div>
       <FloatingChatButton

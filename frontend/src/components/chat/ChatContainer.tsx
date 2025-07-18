@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ChatRoomList from "./ChatsList";
+import ChatRoomsList from "./ChatRoomsList";
 import MessagesList from "./MessagesList";
 import ChatForm from "./ChatForm";
 
@@ -15,7 +15,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
   return (
     <div className="flex h-full bg-gray-50 rounded-lg shadow-lg overflow-hidden w-full">
       <div className="w-1/4 border-r overflow-y-auto">
-        <ChatRoomList
+        <ChatRoomsList
           onSelectRoom={setSelectedRoomId}
           selectedRoomId={selectedRoomId}
         />

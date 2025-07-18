@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { Profile } from "../../types/ProfileTypes";
 import { fetchUserProfile } from "../../api/profileApi";
 
-export const useUserProfile = (userId: string | null) => {
+export const useFetchUserProfile = (userId: string | null) => {
   return useQuery<Profile, Error>(
     ["profile", userId],
     () => fetchUserProfile(userId!),

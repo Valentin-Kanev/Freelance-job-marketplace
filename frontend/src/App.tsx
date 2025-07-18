@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import JobManagement from "./components/jobs/JobsManagment";
+import JobManagement from "./components/jobs/JobsManagement";
 import JobListWithDetails from "./components/jobs/JobListWithDetails";
 import ProtectedRoute from "./components/userAuthentication/Protectedroute";
 import Header from "./components/UI/Header";
@@ -13,7 +13,7 @@ import { SocketProvider } from "./contexts/SocketContext";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";
-import { useJobs } from "./hooks/jobs/useJobs";
+import { useFetchJobs } from "./hooks/jobs/useFetchJobs";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -37,7 +37,7 @@ const ProfileWithUserId = () => {
 };
 
 const JobDetailsWrapper = () => {
-  const { data: jobs, isLoading, isError, error } = useJobs();
+  const { data: jobs, isLoading, isError, error } = useFetchJobs();
   return (
     <JobListWithDetails
       jobs={jobs || []}

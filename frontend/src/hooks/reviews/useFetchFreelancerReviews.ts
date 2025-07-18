@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { Review } from "../../types/ReviewTypes";
 import { fetchFreelancerReviews } from "../../api/reviewApi";
 
-export const useFreelancerReviews = (freelancerId: string) => {
+export const useFetchFreelancerReviews = (freelancerId: string) => {
   return useQuery<Review[], Error>(
     ["freelancerReviews", freelancerId],
     () => fetchFreelancerReviews(freelancerId),

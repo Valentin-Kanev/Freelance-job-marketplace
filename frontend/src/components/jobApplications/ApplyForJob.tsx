@@ -4,7 +4,7 @@ import {
   createApplicationSchema,
   CreateApplicationValidation,
 } from "../../validationSchemas/applicationValidationSchema";
-import { useApplyForJob } from "../../hooks/application/useApplication";
+import { useApplyForJob } from "../../hooks/application/useApplyForJob";
 import Button from "../UI/Button";
 import { useToast } from "../../contexts/ToastManager";
 import { useAuth } from "../../contexts/AuthContext";

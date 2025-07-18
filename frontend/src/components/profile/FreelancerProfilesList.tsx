@@ -1,11 +1,11 @@
-import { useProfiles } from "../../hooks/profiles/useProfiles";
+import { useFetchProfiles } from "../../hooks/profiles/useFetchProfiles";
 import Button from "../UI/Button";
 import { Link } from "react-router-dom";
 import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
 
 const FreelancerProfilesList = () => {
-  const { data: profiles, isLoading, isError, error } = useProfiles();
+  const { data: profiles, isLoading, isError, error } = useFetchProfiles();
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-4 mt-16">
