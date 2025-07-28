@@ -1,4 +1,4 @@
-import { CreateJobData, Job, editJobData } from "../types/JobTypes";
+import { CreateJobData, Job, EditJobData } from "../types/JobTypes";
 import { fetchClient } from "./utils/fetchClientApi";
 
 export const fetchJobs = async (): Promise<Job[]> => {
@@ -17,11 +17,11 @@ export const editJob = async ({
   data,
 }: {
   jobId: number;
-  data: editJobData;
+  data: EditJobData;
 }): Promise<Job> => {
   const response = await fetchClient<{
     message?: string;
-    data?: editJobData;
+    data?: EditJobData;
   }>(`/jobs/${jobId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

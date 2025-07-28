@@ -1,4 +1,4 @@
-export interface Profile {
+export type Profile = {
   userType: string;
   profileId: string;
   userId: string;
@@ -6,7 +6,7 @@ export interface Profile {
   description: string;
   hourlyRate?: number;
   username: string;
-}
+};
 
 export type UpdateProfileData = Partial<
   Omit<Profile, "userType" | "profileId" | "userId" | "username"> & {

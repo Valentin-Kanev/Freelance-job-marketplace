@@ -1,18 +1,18 @@
-export interface User {
+export type User = {
   id: number;
   username: string;
   email: string;
   userType: string;
-}
+};
 
-export interface RegisterUserData {
+export type RegisterUserData = {
   username: string;
   password: string;
   email: string;
   userType: string;
-}
+};
 
-export interface LoginUserData {
+export type LoginUserData = {
   email: string;
   password: string;
-}
+};

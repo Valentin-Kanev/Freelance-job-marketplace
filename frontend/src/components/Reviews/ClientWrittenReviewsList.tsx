@@ -3,7 +3,9 @@ import StatusMessage from "../UI/StatusMessage";
 import ExpandableText from "../UI/ExpandableText";
 import { useFetchClientWrittenReviews } from "../../hooks/reviews/useFetchClientWrittenReviews";
 
-const ClientWrittenReviewsList = ({ clientId }: { clientId: string }) => {
+const ClientWrittenReviewsList: React.FC<{ clientId: string }> = ({
+  clientId,
+}) => {
   const {
     data: reviews,
     isLoading,

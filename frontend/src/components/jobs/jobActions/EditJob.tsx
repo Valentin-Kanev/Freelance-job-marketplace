@@ -1,7 +1,7 @@
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
-import { Job, editJobData } from "../../../types/JobTypes";
+import { Job, EditJobData } from "../../../types/JobTypes";
 import { useEditJob } from "../../../hooks/jobs/useEditJob";
 import { useState } from "react";
 
@@ -9,18 +9,28 @@ const EditJob: React.FC<{
   job: Job;
   onSuccess?: () => void;
   onClose: () => void;
+  handleOnSubmit?: (data: EditJobData) => void;
 }> = ({ job, onSuccess, onClose }) => {
   const [serverError, setServerError] = useState<string | undefined>();
   const { addToast } = useToast();
 
-  const mutation = useEditJob(
+  const editJobMutation = useEditJob(
     () => {
       addToast("Job updated successfully!");
       onSuccess?.();
       onClose();
     },
-    (msg) => setServerError(msg)
+    (errorMessage: string) => setServerError(errorMessage)
   );
+
+  const handleOnSubmit = (data: EditJobData) => {
+    editJobMutation.mutate({
+      jobId: job.jobId,
+      data: Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== undefined)
+      ) as EditJobData,
+    });
+  };
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Update Job">
@@ -32,17 +42,11 @@ const EditJob: React.FC<{
           budget: job.budget,
           deadline: new Date(job.deadline),
         }}
-        onSubmit={(data) =>
-          mutation.mutate({
-            jobId: job.jobId,
-            data: Object.fromEntries(
-              Object.entries(data).filter(([_, v]) => v !== undefined)
-            ) as editJobData,
-          })
-        }
-        isLoading={mutation.isLoading}
+        onSubmit={handleOnSubmit}
+        isLoading={editJobMutation.isLoading}
         serverError={serverError}
         onClose={onClose}
+        onSuccess={onSuccess}
       />
     </Modal>
   );

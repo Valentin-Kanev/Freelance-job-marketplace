@@ -8,14 +8,14 @@ import { useFetchJob } from "../../hooks/jobs/useFetchJob";
 import { useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
 
-interface Props {
+interface JobListWithDetailsProps {
   jobs: Job[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
 }
 
-const JobListWithDetails: React.FC<Props> = ({
+const JobListWithDetails: React.FC<JobListWithDetailsProps> = ({
   jobs,
   isLoading,
   isError,

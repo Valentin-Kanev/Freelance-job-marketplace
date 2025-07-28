@@ -1,29 +1,33 @@
 import { Link } from "react-router-dom";
 import ExpandableText from "../UI/ExpandableText";
+import React from "react";
 
-export default function ReviewCard({
-  review,
-}: {
+interface ReviewCardProps {
   review: {
-    id: string;
     clientId: string;
     clientUsername: string;
     rating: number;
     reviewText: string;
   };
-}) {
+}
+
+const ReviewCard: React.FC<ReviewCardProps> = ({
+  review: { clientId, clientUsername, rating, reviewText },
+}) => {
   return (
     <div className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
       <Link
-        to={`/profiles/${review.clientId}`}
+        to={`/profiles/${clientId}`}
         className="text-lg font-semibold text-blue-600"
       >
-        {review.clientUsername}
+        {clientUsername}
       </Link>
       <p className="text-yellow-500 font-semibold">
-        Rating: {"⭐".repeat(review.rating)}
+        Rating: {"⭐".repeat(rating)}
       </p>
-      <ExpandableText text={review.reviewText} />
+      <ExpandableText text={reviewText} />
     </div>
   );
-}
+};
+
+export default ReviewCard;

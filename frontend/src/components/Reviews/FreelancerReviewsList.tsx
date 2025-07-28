@@ -8,10 +8,10 @@ interface ReviewListProps {
   isFreelancer: boolean;
 }
 
-export default function FreelancerReviewsList({
+const FreelancerReviewsList: React.FC<ReviewListProps> = ({
   freelancerId,
   isFreelancer,
-}: ReviewListProps) {
+}: ReviewListProps) => {
   const { isLoggedIn } = useAuth();
   const {
     data: reviews,
@@ -38,4 +38,6 @@ export default function FreelancerReviewsList({
       </div>
     )
   );
-}
+};
+
+export default FreelancerReviewsList;

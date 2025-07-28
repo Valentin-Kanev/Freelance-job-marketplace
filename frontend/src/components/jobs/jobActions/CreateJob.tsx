@@ -5,6 +5,7 @@ import { initialJobDetails } from "../../../utils/initialJobDetails";
 import { useCreateJob } from "../../../hooks/jobs/useCreateJob";
 import StatusMessage from "../../UI/StatusMessage";
 import { useState } from "react";
+import { CreateJobValidation } from "../../../validationSchemas/jobValidationSchema";
 
 const CreateJob: React.FC<{ userId: string; isLoggedIn: boolean }> = ({
   userId,
@@ -14,13 +15,17 @@ const CreateJob: React.FC<{ userId: string; isLoggedIn: boolean }> = ({
   const [serverError, setServerError] = useState<string | undefined>();
   const { addToast } = useToast();
 
-  const mutation = useCreateJob(
+  const createJobMutation = useCreateJob(
     () => {
       addToast("Job created successfully!");
       setIsModalOpen(false);
     },
-    (msg) => setServerError(msg)
+    (errorMessage: string) => setServerError(errorMessage)
   );
+
+  const handleOnSubmit = (data: CreateJobValidation) => {
+    createJobMutation.mutate({ ...data, clientId: userId });
+  };
 
   return (
     <div>
@@ -40,8 +45,8 @@ const CreateJob: React.FC<{ userId: string; isLoggedIn: boolean }> = ({
           <JobForm
             isUpdate={false}
             defaultValues={initialJobDetails}
-            onSubmit={(data) => mutation.mutate({ ...data, clientId: userId })}
-            isLoading={mutation.isLoading}
+            onSubmit={handleOnSubmit}
+            isLoading={createJobMutation.isLoading}
             serverError={serverError}
             onClose={() => setIsModalOpen(false)}
           />

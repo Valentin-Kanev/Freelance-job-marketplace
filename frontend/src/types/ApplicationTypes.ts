@@ -1,14 +1,14 @@
-export interface Application {
+export type Application = {
   applicationId: number;
   jobId: number;
   freelancerId: string;
   username: string;
   coverLetter: string;
-}
+};
 
-export interface MyApplication {
+export type MyApplication = {
   jobId: number;
   jobTitle: string;
   coverLetter: string;
   applicationDate: string;
-}
+};

@@ -10,6 +10,6 @@ export type Job = {
 
 export type CreateJobData = Omit<Job, "jobId" | "clientUsername">;
 
-export type editJobData = Partial<
+export type EditJobData = Partial<
   Omit<Job, "jobId" | "clientUsername" | "clientId">
 >;

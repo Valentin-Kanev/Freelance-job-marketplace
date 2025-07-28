@@ -1,4 +1,4 @@
-export interface Review {
+export type Review = {
   id: string;
   freelancerId: string;
   clientId: string;
@@ -6,7 +6,7 @@ export interface Review {
   reviewText: string;
   clientUsername: string;
   freelancerUsername: string;
-}
+};
 
 export type SubmitReviewData = Required<
   Omit<Review, "id" | "freelancerId" | "clientUsername" | "freelancerUsername">

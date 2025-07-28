@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FreelancerReviewsList from "../reviews/FreelancerReviewsList";
-import MyJobsList from "./MyJobsList";
+import MyJobsList from "../jobs/MyJobsList";
 import MyReviewsList from "../reviews/ClientWrittenReviewsList";
 import MyApplications from "../jobApplications/MyApplicationsList";
 import Button from "../UI/Button";

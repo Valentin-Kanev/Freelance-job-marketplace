@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Job, editJobData } from "../../types/JobTypes";
+import { Job, EditJobData } from "../../types/JobTypes";
 import { editJob } from "../../api/jobApi";
 
 export const useEditJob = (
@@ -9,7 +9,7 @@ export const useEditJob = (
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ jobId, data }: { jobId: number; data: editJobData }) => {
+    ({ jobId, data }: { jobId: number; data: EditJobData }) => {
       return editJob({ jobId, data });
     },
     {
