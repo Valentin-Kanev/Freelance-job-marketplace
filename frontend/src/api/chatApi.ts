@@ -1,18 +1,6 @@
-import { ChatRoom } from "../types/chatType";
-import { Message } from "../types/MessageTypes";
-import { fetchClient } from "./utils/fetchClientApi";
-
-export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
-  return fetchClient<ChatRoom[]>("/chat-rooms");
-};
-
-export const fetchMessages = async ({
-  roomId,
-}: {
-  roomId: string;
-}): Promise<Message[]> => {
-  return fetchClient<Message[]>(`/chat-rooms/${roomId}/messages`);
-};
+import { ChatRoom } from "../components/chat/ChatTypes";
+import { ChatMessage } from "../components/chat/MessageTypes";
+import { fetchClient } from "./apiUtils/fetchClientApi";
 
 export const sendMessage = async ({
   roomId,
@@ -22,12 +10,12 @@ export const sendMessage = async ({
   roomId: string;
   senderId: string;
   content: string;
-}): Promise<Message> => {
+}): Promise<ChatMessage> => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("No auth token found");
   }
-  return fetchClient<Message>(`/chat-rooms/${roomId}/messages`, {
+  return fetchClient<ChatMessage>(`/chat-rooms/${roomId}/messages`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -48,7 +36,6 @@ export const createChatRoom = async ({
   if (!token) {
     throw new Error("No auth token found");
   }
-
   return fetchClient<ChatRoom>("/chat-rooms", {
     method: "POST",
     headers: {
@@ -57,4 +44,19 @@ export const createChatRoom = async ({
     },
     body: JSON.stringify({ userOneId, userTwoId }),
   });
+};
+
+export const fetchChatRooms = async (): Promise<ChatRoom[]> => {
+  return fetchClient<ChatRoom[]>("/chat-rooms");
+};
+
+export const fetchMessages = async ({
+  roomId,
+}: {
+  roomId: string;
+}): Promise<ChatMessage[]> => {
+  const data = await fetchClient<ChatMessage[]>(
+    `/chat-rooms/${roomId}/messages`
+  );
+  return data;
 };

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import FreelancerReviewsList from "../reviews/FreelancerReviewsList";
-import MyJobsList from "../jobs/MyJobsList";
+import MyJobsList from "./MyJobsList";
 import MyReviewsList from "../reviews/ClientWrittenReviewsList";
-import MyApplications from "../jobApplications/MyApplicationsList";
+import MyApplications from "./MyApplicationsList";
 import Button from "../UI/Button";
 import StartChatButton from "../chat/StartChatButton";
 import { useAuth } from "../../contexts/AuthContext";
 import FloatingChatButton from "../chat/FloatingChatButton";
 import { useChat } from "../../contexts/ChatContext";
-import { Profile } from "../../types/ProfileTypes";
+import { Profile } from "./ProfileTypes";
 
 interface ProfileDetailsProps {
   profile: Profile;
@@ -16,11 +16,11 @@ interface ProfileDetailsProps {
   onUpdate: () => void;
 }
 
-export function ProfileDetails({
+export const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   profile,
   isOwner,
   onUpdate,
-}: ProfileDetailsProps) {
+}) => {
   const { loggedInUserId, isLoggedIn } = useAuth();
   const isFreelancer = profile.userType === "freelancer";
   const isProfileOwner = loggedInUserId === profile.userId;
@@ -164,4 +164,4 @@ export function ProfileDetails({
       />
     </div>
   );
-}
+};

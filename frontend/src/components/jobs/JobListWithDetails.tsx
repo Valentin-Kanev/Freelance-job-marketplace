@@ -3,24 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import JobsList from "./JobsList";
 import JobDetails from "./JobDetails";
 import StatusMessage from "../UI/StatusMessage";
-import { Job } from "../../types/JobTypes";
+import { Job } from "./JobTypes";
 import { useFetchJob } from "../../hooks/jobs/useFetchJob";
 import { useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
+import { useFetchJobs } from "../../hooks/jobs/useFetchJobs";
 
-interface JobListWithDetailsProps {
-  jobs: Job[];
-  isLoading: boolean;
-  isError: boolean;
-  error: Error | null;
-}
-
-const JobListWithDetails: React.FC<JobListWithDetailsProps> = ({
-  jobs,
-  isLoading,
-  isError,
-  error,
-}) => {
+const JobListWithDetails: React.FC = () => {
+  const { data: jobs, isLoading, isError, error } = useFetchJobs();
   const navigate = useNavigate();
   const { jobId } = useParams<{ jobId: string }>();
   const parsedJobId = jobId ? Number(jobId) : null;

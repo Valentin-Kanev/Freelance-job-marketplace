@@ -1,7 +1,7 @@
 import Modal from "../../UI/Modal";
 import JobForm from "../JobForm";
 import { useToast } from "../../../contexts/ToastManager";
-import { Job, EditJobData } from "../../../types/JobTypes";
+import { Job, EditJobData } from "../JobTypes";
 import { useEditJob } from "../../../hooks/jobs/useEditJob";
 import { useState } from "react";
 

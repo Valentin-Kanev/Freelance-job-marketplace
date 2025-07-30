@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { Job } from "../../types/JobTypes";
+import { Job } from "../../components/jobs/JobTypes";
 import { fetchJob } from "../../api/jobApi";
 
 export const useFetchJob = (jobId: number) => {
@@ -7,8 +7,5 @@ export const useFetchJob = (jobId: number) => {
     enabled: typeof jobId === "number" && jobId > 0,
     retry: 2,
     staleTime: 30 * 1000,
-    onError: (error: Error) => {
-      console.error("Error fetching job:", error.message);
-    },
   });
 };

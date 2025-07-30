@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFetchChatRooms } from "../../hooks/chat/useFetchChatRooms";
-import { ChatRoom } from "../../types/chatType";
+import { ChatRoom } from "./ChatTypes";
 
 interface ChatRoomListProps {
   onSelectRoom: (roomId: string) => void;

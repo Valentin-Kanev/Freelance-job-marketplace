@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { Profile } from "../../types/ProfileTypes";
+import { Profile } from "../../components/profile/ProfileTypes";
 import { searchProfiles } from "../../api/profileApi";
 
 export const useSearchProfiles = (query: string) => {
@@ -10,9 +10,6 @@ export const useSearchProfiles = (query: string) => {
       enabled: query.trim().length > 0,
       staleTime: 30 * 1000,
       retry: 2,
-      onError: (error: Error) => {
-        console.error("Error searching profiles:", error.message);
-      },
     }
   );
 };

@@ -3,7 +3,7 @@ import { useFetchUserProfile } from "../../hooks/profiles/useFetchUserProfile";
 import { ProfileDetails } from "./ProfileDetails";
 import { useAuth } from "../../contexts/AuthContext";
 
-const ProfileLoader = () => {
+export const ProfileLoader: React.FC = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const {
@@ -35,5 +35,3 @@ const ProfileLoader = () => {
     </>
   );
 };
-
-export default ProfileLoader;

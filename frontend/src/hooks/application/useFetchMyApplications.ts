@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { fetchMyApplications } from "../../api/applicationApi";
-import { MyApplication } from "../../types/ApplicationTypes";
+import { MyApplication } from "../../components/jobApplications/ApplicationTypes";
 
 export const useFetchMyApplications = () => {
   return useQuery<MyApplication[], Error>(
@@ -8,9 +8,6 @@ export const useFetchMyApplications = () => {
     fetchMyApplications,
     {
       retry: 2,
-      onError: (error: Error) => {
-        console.error("Error fetching my applications:", error.message);
-      },
     }
   );
 };

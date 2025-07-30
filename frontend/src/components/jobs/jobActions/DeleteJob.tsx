@@ -9,9 +9,10 @@ interface DeleteJobModalProps {
   jobId: number;
   onSuccess?: () => void;
   onClose: () => void;
+  isOpen: boolean;
 }
 
-const DeleteJob: React.FC<DeleteJobModalProps & { isOpen: boolean }> = ({
+const DeleteJob: React.FC<DeleteJobModalProps> = ({
   jobId,
   onSuccess,
   onClose,

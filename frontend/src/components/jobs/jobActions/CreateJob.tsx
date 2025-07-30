@@ -7,10 +7,12 @@ import StatusMessage from "../../UI/StatusMessage";
 import { useState } from "react";
 import { CreateJobValidation } from "../../../validationSchemas/jobValidationSchema";
 
-const CreateJob: React.FC<{ userId: string; isLoggedIn: boolean }> = ({
-  userId,
-  isLoggedIn,
-}) => {
+interface CreateJobProps {
+  userId: string;
+  isLoggedIn: boolean;
+}
+
+const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>();
   const { addToast } = useToast();

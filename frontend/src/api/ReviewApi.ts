@@ -1,5 +1,5 @@
-import { Review, SubmitReviewData } from "../types/ReviewTypes";
-import { fetchClient } from "./utils/fetchClientApi";
+import { Review, SubmitReviewData } from "../components/reviews/ReviewTypes";
+import { fetchClient } from "./apiUtils/fetchClientApi";
 
 export const submitReview = async (
   freelancerId: string,

@@ -10,12 +10,7 @@ export const useLoginUser = () => {
     onSuccess: (data: { token: string; userId: string }) => {
       if (data.token) {
         localStorage.setItem("authToken", data.token);
-      } else {
-        console.error("No token returned from login");
       }
-    },
-    onError: (error: Error) => {
-      console.error("Error logging in:", error.message);
     },
   });
 };

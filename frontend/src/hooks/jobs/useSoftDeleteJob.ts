@@ -8,8 +8,5 @@ export const useSoftDeleteJob = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("jobs");
     },
-    onError: (error: Error) => {
-      console.error("Error deleting job:", error.message);
-    },
   });
 };

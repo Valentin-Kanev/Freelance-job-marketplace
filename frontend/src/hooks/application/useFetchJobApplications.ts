@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { fetchJobApplications } from "../../api/applicationApi";
-import { Application } from "../../types/ApplicationTypes";
+import { Application } from "../../components/jobApplications/ApplicationTypes";
 
 export const useFetchJobApplications = (jobId: number) => {
   return useQuery<Application[], Error>(
@@ -9,9 +9,6 @@ export const useFetchJobApplications = (jobId: number) => {
     {
       staleTime: 30 * 1000,
       retry: 2,
-      onError: (error: Error) => {
-        console.error("Error fetching applications:", error.message);
-      },
     }
   );
 };

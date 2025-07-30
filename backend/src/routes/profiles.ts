@@ -161,11 +161,15 @@ router.put(
       }
 
       const isFreelancer = user.userType === "freelancer";
-      const updateData: any = {
+      const updateData: {
+        skills?: string;
+        description?: string;
+        hourlyRate?: string | null;
+      } = {
         skills,
         description,
         hourlyRate:
-          isFreelancer && hourlyRate !== undefined ? sql`${hourlyRate}` : null,
+          isFreelancer && hourlyRate !== undefined ? String(hourlyRate) : null,
       };
 
       const updatedProfile = await db

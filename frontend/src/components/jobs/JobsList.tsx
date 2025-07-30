@@ -1,4 +1,4 @@
-import { Job } from "../../types/JobTypes";
+import { Job } from "./JobTypes";
 import { formatBudget } from "../../utils/formatBudget";
 
 interface JobListProps {

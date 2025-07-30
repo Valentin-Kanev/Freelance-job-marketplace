@@ -2,8 +2,8 @@ import {
   User,
   RegisterUserData,
   LoginUserData,
-} from "../types/AuthenticationTypes";
-import { fetchClient } from "./utils/fetchClientApi";
+} from "../components/userAuthentication/AuthenticationTypes";
+import { fetchClient } from "./apiUtils/fetchClientApi";
 
 export const registerUser = async (data: RegisterUserData): Promise<User> => {
   return fetchClient<User>("/register", {

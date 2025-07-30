@@ -43,16 +43,11 @@ const CreateReview: React.FC<CreateReviewProps> = ({
   });
 
   const rating = watch("rating");
-  const submitReviewMutation = useSubmitReview(
-    () => {
-      reset();
-      onClose();
-      addToast("Review submitted successfully!");
-    },
-    (error: Error) => {
-      setError("root", { message: error.message });
-    }
-  );
+  const submitReviewMutation = useSubmitReview(() => {
+    reset();
+    onClose();
+    addToast("Review submitted successfully!");
+  });
 
   const onSubmit = (data: CreateReviewValidation) => {
     if (!loggedInUserId) {

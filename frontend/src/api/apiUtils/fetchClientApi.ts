@@ -14,14 +14,7 @@ export const fetchClient = async <T>(
   });
 
   if (!response.ok) {
-    const contentType = response.headers.get("Content-Type");
     let errorMessage = "Something went wrong";
-    if (contentType && contentType.includes("application/json")) {
-      const errorData = await response.json();
-      errorMessage = errorData?.message || errorMessage;
-    } else {
-      errorMessage = `Error ${response.status}: ${response.statusText}`;
-    }
     throw new Error(errorMessage);
   }
 

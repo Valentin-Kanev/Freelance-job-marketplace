@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const login = (token: string) => {
     localStorage.setItem("authToken", token);
-    queryClient.invalidateQueries(["authUser"]);
+    queryClient.invalidateQueries("authUser");
   };
 
   const logout = () => {
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.removeItem("userId");
     localStorage.removeItem("userType");
     queryClient.invalidateQueries("userProfile");
-    queryClient.invalidateQueries(["authUser"]);
+    queryClient.invalidateQueries("authUser");
   };
 
   return (

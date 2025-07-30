@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import Modal from "../UI/Modal";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import { Profile } from "../../types/ProfileTypes";
+import { Profile } from "./ProfileTypes";
 import {
   updateProfileSchema,
   UpdateProfileValidation,

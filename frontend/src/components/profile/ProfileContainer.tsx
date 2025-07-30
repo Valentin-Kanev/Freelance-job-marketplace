@@ -6,18 +6,13 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import UpdateProfileForm from "./UpdateProfileForm";
 import StatusMessage from "../UI/StatusMessage";
-import { UpdateProfileData } from "../../types/ProfileTypes";
+import { UpdateProfileData } from "./ProfileTypes";
 
-interface ProfileContainerProps {
-  userId?: string | null;
-}
-
-export function ProfileContainer({
-  userId: propUserId,
-}: ProfileContainerProps) {
+export const ProfileContainer: React.FC = () => {
   const { freelancerId } = useParams<{ freelancerId: string }>();
   const { loggedInUserId, userType } = useAuth();
-  const userId = propUserId ?? freelancerId ?? loggedInUserId;
+  // const userId = propUserId ?? freelancerId ?? loggedInUserId;
+  const userId = freelancerId ?? loggedInUserId;
 
   const { data: profile, isLoading, isError } = useFetchUserProfile(userId);
   const { mutate: updateProfile } = useUpdateProfile();
@@ -60,4 +55,4 @@ export function ProfileContainer({
       )}
     </div>
   );
-}
+};

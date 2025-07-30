@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Job, EditJobData } from "../../types/JobTypes";
+import { Job, EditJobData } from "../../components/jobs/JobTypes";
 import { editJob } from "../../api/jobApi";
 
 export const useEditJob = (
@@ -19,7 +19,6 @@ export const useEditJob = (
         onSuccessCallback?.(editedJob);
       },
       onError: (error: Error) => {
-        console.error("Error updating job:", error.message);
         onErrorCallback?.(error.message);
       },
     }

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Application } from "../../types/ApplicationTypes";
+import { Application } from "../../components/jobApplications/ApplicationTypes";
 import { applyForJob } from "../../api/applicationApi";
 
 export const useApplyForJob = (
@@ -21,7 +21,6 @@ export const useApplyForJob = (
         onSuccess?.(data);
       },
       onError: (error: Error) => {
-        console.error("Error applying for job:", error.message);
         onError?.(error);
       },
     }

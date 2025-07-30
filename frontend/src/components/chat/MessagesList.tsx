@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useFetchMessages } from "../../hooks/messages/useFetchMessages";
 import { useAuth } from "../../contexts/AuthContext";
-import { Message } from "../../types/MessageTypes";
+import { ChatMessage } from "./MessageTypes";
 
 interface MessagesListProps {
   roomId: string;
@@ -27,8 +27,8 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
           <p className="text-center text-gray-500">No messages yet.</p>
         ) : (
           <ul className="space-y-2">
-            {messages?.map((message: Message, index: number) => {
-              const isLoggedUser = message.senderId === loggedInUserId;
+            {messages?.map((chatMessage: ChatMessage, index: number) => {
+              const isLoggedUser = chatMessage.senderId === loggedInUserId;
 
               return (
                 <li
@@ -40,15 +40,17 @@ const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
                   }`}
                 >
                   {!isLoggedUser && (
-                    <p className="font-bold mb-1">{message.senderUsername}</p>
+                    <p className="font-bold mb-1">
+                      {chatMessage.senderUsername}
+                    </p>
                   )}
-                  <p>{message.content}</p>
+                  <p>{chatMessage.content}</p>
                   <p
                     className={`text-xs mt-1 self-end ${
                       isLoggedUser ? "text-white/70" : "text-gray-500"
                     }`}
                   >
-                    {new Date(message.timestamp).toLocaleString("en-US", {
+                    {new Date(chatMessage.timestamp).toLocaleString("en-US", {
                       year: "numeric",
                       month: "2-digit",
                       day: "2-digit",

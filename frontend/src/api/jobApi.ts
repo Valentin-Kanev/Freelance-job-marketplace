@@ -1,9 +1,5 @@
-import { CreateJobData, Job, EditJobData } from "../types/JobTypes";
-import { fetchClient } from "./utils/fetchClientApi";
-
-export const fetchJobs = async (): Promise<Job[]> => {
-  return fetchClient<Job[]>("/jobs");
-};
+import { CreateJobData, Job, EditJobData } from "../components/jobs/JobTypes";
+import { fetchClient } from "./apiUtils/fetchClientApi";
 
 export const createJob = async (jobData: CreateJobData): Promise<Job> => {
   return fetchClient<Job>("/jobs", {
@@ -41,6 +37,10 @@ export const softDeleteJob = async (jobId: number): Promise<void> => {
       "Content-Type": "application/json",
     },
   });
+};
+
+export const fetchJobs = async (): Promise<Job[]> => {
+  return fetchClient<Job[]>("/jobs");
 };
 
 export const fetchJob = async (jobId: number): Promise<Job> => {

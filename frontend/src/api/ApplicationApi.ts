@@ -1,5 +1,8 @@
-import { Application, MyApplication } from "../types/ApplicationTypes";
-import { fetchClient } from "./utils/fetchClientApi";
+import {
+  Application,
+  MyApplication,
+} from "../components/jobApplications/ApplicationTypes";
+import { fetchClient } from "./apiUtils/fetchClientApi";
 
 export const applyForJob = async (
   jobId: number,

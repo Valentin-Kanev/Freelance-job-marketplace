@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { Review } from "../../types/ReviewTypes";
+import { Review } from "../../components/reviews/ReviewTypes";
 import { fetchFreelancerReviews } from "../../api/reviewApi";
 
 export const useFetchFreelancerReviews = (freelancerId: string) => {
@@ -9,9 +9,6 @@ export const useFetchFreelancerReviews = (freelancerId: string) => {
     {
       staleTime: 30 * 1000,
       retry: 2,
-      onError: (error: Error) => {
-        console.error("Error fetching reviews:", error.message);
-      },
     }
   );
 };

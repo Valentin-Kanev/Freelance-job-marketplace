@@ -3,17 +3,16 @@ import JobManagement from "./components/jobs/JobsManagement";
 import JobListWithDetails from "./components/jobs/JobListWithDetails";
 import ProtectedRoute from "./components/userAuthentication/Protectedroute";
 import Header from "./components/UI/Header";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { ProfileContainer } from "./components/profile/ProfileContainer";
 import AuthMode from "./components/userAuthentication/AuthMode";
 import { ToastProvider } from "./contexts/ToastManager";
 import FreelancerProfilesList from "./components/profile/FreelancerProfilesList";
-import ProfileLoader from "./components/profile/ProfileLoader";
+import { ProfileLoader } from "./components/profile/ProfileLoader";
 import { SocketProvider } from "./contexts/SocketContext";
 import ChatContainer from "./components/chat/ChatContainer";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ChatButtonWrapper } from "./components/chat/ChatButtonWrapper";
-import { useFetchJobs } from "./hooks/jobs/useFetchJobs";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -24,27 +23,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <ChatButtonWrapper />
       </div>
     </div>
-  );
-};
-
-const ProfileWithUserId = () => {
-  const { loggedInUserId } = useAuth();
-  return loggedInUserId ? (
-    <ProfileContainer userId={loggedInUserId} />
-  ) : (
-    <div>Please log in to view your profile.</div>
-  );
-};
-
-const JobDetailsWrapper = () => {
-  const { data: jobs, isLoading, isError, error } = useFetchJobs();
-  return (
-    <JobListWithDetails
-      jobs={jobs || []}
-      isLoading={isLoading}
-      isError={isError}
-      error={error}
-    />
   );
 };
 
@@ -60,7 +38,7 @@ const App: React.FC = () => {
                   <Route path="/auth/login" element={<AuthMode />} />
                   <Route path="/auth/register" element={<AuthMode />} />
                   <Route path="/jobs" element={<JobManagement />} />
-                  <Route path="/jobs/:jobId" element={<JobDetailsWrapper />} />
+                  <Route path="/jobs/:jobId" element={<JobListWithDetails />} />
                   <Route
                     path="/profiles"
                     element={<FreelancerProfilesList />}
@@ -70,7 +48,7 @@ const App: React.FC = () => {
                     path="/profile-management"
                     element={
                       <ProtectedRoute>
-                        <ProfileWithUserId />
+                        <ProfileContainer />
                       </ProtectedRoute>
                     }
                   />

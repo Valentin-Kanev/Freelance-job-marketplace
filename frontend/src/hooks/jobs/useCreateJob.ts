@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { CreateJobData, Job } from "../../types/JobTypes";
+import { CreateJobData, Job } from "../../components/jobs/JobTypes";
 import { createJob } from "../../api/jobApi";
 
 export const useCreateJob = (
@@ -12,10 +12,6 @@ export const useCreateJob = (
     onSuccess: (newJob) => {
       queryClient.invalidateQueries("jobs");
       onSuccessCallback?.(newJob);
-    },
-    onError: (error: Error) => {
-      console.error("Error creating job:", error.message);
-      onErrorCallback?.(error.message);
     },
   });
 };

@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Profile, UpdateProfileData } from "../../types/ProfileTypes";
+import {
+  Profile,
+  UpdateProfileData,
+} from "../../components/profile/ProfileTypes";
 import { updateProfile } from "../../api/profileApi";
 
 export const useUpdateProfile = (
@@ -18,7 +21,6 @@ export const useUpdateProfile = (
       onSuccessCallback?.();
     },
     onError: (error) => {
-      console.error("Error updating profile:", error.message);
       onErrorCallback?.(error.message);
     },
   });

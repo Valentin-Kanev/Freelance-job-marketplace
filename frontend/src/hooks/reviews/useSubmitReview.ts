@@ -6,10 +6,7 @@ type SubmitReviewArgs = {
   data: { clientId: string; rating: number; reviewText: string };
 };
 
-export const useSubmitReview = (
-  onSuccess?: () => void,
-  onError?: (error: Error) => void
-) => {
+export const useSubmitReview = (onSuccess?: () => void) => {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -22,7 +19,12 @@ export const useSubmitReview = (
       },
       onError: (error: Error) => {
         console.error("Error submitting review:", error.message);
-        onError?.(error);
+        error = error.message
+          ? new Error(error.message)
+          : new Error(
+              "An unexpected error occurred while submitting the review."
+            );
+        throw error;
       },
     }
   );
