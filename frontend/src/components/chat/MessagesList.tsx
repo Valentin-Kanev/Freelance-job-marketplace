@@ -3,9 +3,9 @@ import { useFetchMessages } from "../../hooks/messages/useFetchMessages";
 import { useAuth } from "../../contexts/AuthContext";
 import { ChatMessage } from "./MessageTypes";
 
-interface MessagesListProps {
+type MessagesListProps = {
   roomId: string;
-}
+};
 
 const MessagesList: React.FC<MessagesListProps> = ({ roomId }) => {
   const { data: messages, isLoading, error } = useFetchMessages(roomId);

@@ -11,11 +11,10 @@ import { UpdateProfileData } from "./ProfileTypes";
 export const ProfileContainer: React.FC = () => {
   const { freelancerId } = useParams<{ freelancerId: string }>();
   const { loggedInUserId, userType } = useAuth();
-  // const userId = propUserId ?? freelancerId ?? loggedInUserId;
   const userId = freelancerId ?? loggedInUserId;
 
   const { data: profile, isLoading, isError } = useFetchUserProfile(userId);
-  const { mutate: updateProfile } = useUpdateProfile();
+  const { mutate: updateProfileMutation } = useUpdateProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isOwner = loggedInUserId === profile?.userId;
@@ -26,7 +25,7 @@ export const ProfileContainer: React.FC = () => {
     const dataToSend =
       userType === "freelancer" ? { ...rest, hourlyRate } : rest;
 
-    updateProfile({ profileId: profile.profileId, data: dataToSend });
+    updateProfileMutation({ profileId: profile.profileId, data: dataToSend });
     setIsModalOpen(false);
   };
 

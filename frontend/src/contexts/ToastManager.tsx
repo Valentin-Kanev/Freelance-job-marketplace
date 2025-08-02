@@ -1,9 +1,9 @@
 import { useState, createContext, useContext } from "react";
 import Toast from "../components/UI/Toast";
 
-interface ToastContextType {
+type ToastContextType = {
   addToast: (message: string, duration?: number) => void;
-}
+};
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 

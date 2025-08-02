@@ -17,10 +17,6 @@ export const sendMessage = async ({
   }
   return fetchClient<ChatMessage>(`/chat-rooms/${roomId}/messages`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ senderId, content }),
   });
 };
@@ -38,10 +34,6 @@ export const createChatRoom = async ({
   }
   return fetchClient<ChatRoom>("/chat-rooms", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ userOneId, userTwoId }),
   });
 };
@@ -55,8 +47,5 @@ export const fetchMessages = async ({
 }: {
   roomId: string;
 }): Promise<ChatMessage[]> => {
-  const data = await fetchClient<ChatMessage[]>(
-    `/chat-rooms/${roomId}/messages`
-  );
-  return data;
+  return fetchClient<ChatMessage[]>(`/chat-rooms/${roomId}/messages`);
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import FreelancerReviewsList from "../reviews/FreelancerReviewsList";
+import FreelancerReviewsList from "./FreelancerReviewsList";
 import MyJobsList from "./MyJobsList";
-import MyReviewsList from "../reviews/ClientWrittenReviewsList";
+import MyReviewsList from "./ClientWrittenReviewsList";
 import MyApplications from "./MyApplicationsList";
 import Button from "../UI/Button";
 import StartChatButton from "../chat/StartChatButton";
@@ -10,11 +10,11 @@ import FloatingChatButton from "../chat/FloatingChatButton";
 import { useChat } from "../../contexts/ChatContext";
 import { Profile } from "./ProfileTypes";
 
-interface ProfileDetailsProps {
+type ProfileDetailsProps = {
   profile: Profile;
   isOwner: boolean;
   onUpdate: () => void;
-}
+};
 
 export const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   profile,

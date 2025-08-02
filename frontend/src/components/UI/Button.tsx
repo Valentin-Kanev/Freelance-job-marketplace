@@ -1,11 +1,11 @@
-interface CustomButtonProps {
+type CustomButtonProps = {
   label: string;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   children?: React.ReactNode;
-}
+};
 
 const Button: React.FC<CustomButtonProps> = ({
   label,

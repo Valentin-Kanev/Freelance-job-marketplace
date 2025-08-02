@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-interface ExpandableTextProps {
+type ExpandableTextProps = {
   text: string;
   limit?: number;
-}
+};
 
 const ExpandableText: React.FC<ExpandableTextProps> = ({
   text,

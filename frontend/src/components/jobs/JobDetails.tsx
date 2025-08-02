@@ -3,13 +3,13 @@ import Button from "../UI/Button";
 import JobApplicationsList from "../jobApplications/JobApplicationsList";
 import EditJob from "./JobActions/EditJob";
 import DeleteJob from "./JobActions/DeleteJob";
-import ApplyForJobModal from "../jobApplications/ApplyForJobModal";
 import { Link } from "react-router-dom";
 import { formatBudget } from "../../utils/formatBudget";
 import { useFetchJob } from "../../hooks/jobs/useFetchJob";
 import { HiOutlineClipboardList } from "react-icons/hi";
+import ApplyForJob from "../jobApplications/ApplyForJob";
 
-interface JobDetailsProps {
+type JobDetailsProps = {
   jobId: number;
   userId: string;
   userType: string;
@@ -17,7 +17,7 @@ interface JobDetailsProps {
   currentModal?: string | null;
   onjobEdit?: () => void;
   onJobDelete?: () => void;
-}
+};
 
 const JobDetails: React.FC<JobDetailsProps> = ({
   jobId,
@@ -120,7 +120,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({
             />
           )}
           {activeModal === "apply" && (
-            <ApplyForJobModal
+            <ApplyForJob
               jobId={job.jobId}
               onClose={() => setActiveModal(null)}
             />

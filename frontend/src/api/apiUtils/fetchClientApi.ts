@@ -1,7 +1,8 @@
 export const fetchClient = async <T>(
   url: string,
   options?: RequestInit,
-  baseUrl: string = "http://localhost:3000"
+  baseUrl: string = process.env.REACT_APP_API_BASE_URL ||
+    "http://localhost:3000"
 ): Promise<T> => {
   const token = localStorage.getItem("authToken");
   const response = await fetch(`${baseUrl}${url}`, {
@@ -15,6 +16,12 @@ export const fetchClient = async <T>(
 
   if (!response.ok) {
     let errorMessage = "Something went wrong";
+    const errorData: Error = await response.json();
+    if (errorData && typeof errorData === "object") {
+      errorMessage = errorData?.message || errorMessage;
+    } else {
+      errorMessage = `Error ${response.status}: ${response.statusText}`;
+    }
     throw new Error(errorMessage);
   }
 

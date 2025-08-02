@@ -3,10 +3,10 @@ import JobApplicationItem from "./JobApplicationItem";
 import StatusMessage from "../UI/StatusMessage";
 import { useAuth } from "../../contexts/AuthContext";
 
-interface JobApplicationsListProps {
+type JobApplicationsListProps = {
   jobId: number;
   creatorId: string;
-}
+};
 
 const JobApplicationsList: React.FC<JobApplicationsListProps> = ({
   jobId,

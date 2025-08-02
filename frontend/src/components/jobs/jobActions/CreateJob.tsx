@@ -7,10 +7,10 @@ import StatusMessage from "../../UI/StatusMessage";
 import { useState } from "react";
 import { CreateJobValidation } from "../../../validationSchemas/jobValidationSchema";
 
-interface CreateJobProps {
+type CreateJobProps = {
   userId: string;
   isLoggedIn: boolean;
-}
+};
 
 const CreateJob: React.FC<CreateJobProps> = ({ userId, isLoggedIn }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

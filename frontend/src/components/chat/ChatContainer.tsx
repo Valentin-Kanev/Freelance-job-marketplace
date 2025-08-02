@@ -3,9 +3,9 @@ import ChatRoomsList from "./ChatRoomsList";
 import MessagesList from "./MessagesList";
 import ChatForm from "./ChatForm";
 
-interface ChatContainerProps {
+type ChatContainerProps = {
   initialRoomId?: string | null;
-}
+};
 
 const ChatContainer: React.FC<ChatContainerProps> = ({ initialRoomId }) => {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(

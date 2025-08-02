@@ -3,9 +3,9 @@ import { io, Socket } from "socket.io-client";
 
 const SocketContext = createContext<Socket | null>(null);
 
-interface SocketProviderProps {
+type SocketProviderProps = {
   children: React.ReactNode;
-}
+};
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -13,7 +13,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      console.error("No auth token found in localStorage");
       return;
     }
 

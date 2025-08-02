@@ -2,13 +2,13 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { useQueryClient } from "react-query";
 import { useAuthenticatedUser } from "../hooks/authentication/useAuthenticatedUser";
 
-interface AuthContextType {
+type AuthContextType = {
   isLoggedIn: boolean;
   loggedInUserId: string | null;
   userType: string | null;
   login: (token: string) => void;
   logout: () => void;
-}
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

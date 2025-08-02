@@ -7,9 +7,9 @@ import {
 import { useRegisterUser } from "../../hooks/authentication/useRegisterUser";
 import Input from "../UI/Input";
 
-interface RegisterProps {
+type RegisterProps = {
   onRegistrationSuccess: () => void;
-}
+};
 
 const Register: React.FC<RegisterProps> = ({ onRegistrationSuccess }) => {
   const {

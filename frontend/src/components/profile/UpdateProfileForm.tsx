@@ -12,12 +12,12 @@ import { useUpdateProfile } from "../../hooks/profiles/useUpdateProfile";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastManager";
 
-interface UpdateProfileProps {
+type UpdateProfileProps = {
   profile: Profile;
   isOpen: boolean;
   onSave: (updatedData: Profile) => void;
   onClose: () => void;
-}
+};
 
 const UpdateProfileForm: React.FC<UpdateProfileProps> = ({
   profile,

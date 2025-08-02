@@ -1,21 +1,18 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import JobsList from "./JobsList";
 import JobDetails from "./JobDetails";
 import StatusMessage from "../UI/StatusMessage";
 import { Job } from "./JobTypes";
 import { useFetchJob } from "../../hooks/jobs/useFetchJob";
-import { useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFetchJobs } from "../../hooks/jobs/useFetchJobs";
 
 const JobListWithDetails: React.FC = () => {
   const { data: jobs, isLoading, isError, error } = useFetchJobs();
-  const navigate = useNavigate();
   const { jobId } = useParams<{ jobId: string }>();
   const parsedJobId = jobId ? Number(jobId) : null;
-  const queryClient = useQueryClient();
   const { loggedInUserId, userType } = useAuth();
+  const navigate = useNavigate();
 
   const {
     isLoading: isJobLoading,
@@ -26,11 +23,6 @@ const JobListWithDetails: React.FC = () => {
 
   const handleSelectJob = (job: Job) => {
     navigate(`/jobs/${job.jobId}`);
-  };
-
-  const handlejobEdit = () => {
-    refetch();
-    queryClient.invalidateQueries(["jobs"]);
   };
 
   return (
@@ -62,7 +54,7 @@ const JobListWithDetails: React.FC = () => {
               jobId={parsedJobId ?? -1}
               userId={loggedInUserId || ""}
               userType={userType || ""}
-              onjobEdit={handlejobEdit}
+              onjobEdit={() => refetch()}
             />
           )}
         </div>

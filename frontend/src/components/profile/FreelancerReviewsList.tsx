@@ -1,12 +1,12 @@
 import { useFetchFreelancerReviews } from "../../hooks/reviews/useFetchFreelancerReviews";
 import { useAuth } from "../../contexts/AuthContext";
 import StatusMessage from "../UI/StatusMessage";
-import ReviewCard from "./ReviewCard";
+import ReviewCard from "../reviews/ReviewCard";
 
-interface ReviewListProps {
+type ReviewListProps = {
   freelancerId: string;
   isFreelancer: boolean;
-}
+};
 
 const FreelancerReviewsList: React.FC<ReviewListProps> = ({
   freelancerId,

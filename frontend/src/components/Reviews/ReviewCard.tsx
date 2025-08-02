@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
 import ExpandableText from "../UI/ExpandableText";
-import React from "react";
 
-interface ReviewCardProps {
+type ReviewCardProps = {
   review: {
     clientId: string;
     clientUsername: string;
     rating: number;
     reviewText: string;
   };
-}
+};
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
   review: { clientId, clientUsername, rating, reviewText },

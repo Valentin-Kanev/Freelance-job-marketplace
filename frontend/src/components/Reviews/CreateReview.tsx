@@ -12,11 +12,11 @@ import {
   CreateReviewValidation,
 } from "../../validationSchemas/reviewValidationSchema";
 
-interface CreateReviewProps {
+type CreateReviewProps = {
   freelancerId: string;
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
 const CreateReview: React.FC<CreateReviewProps> = ({
   freelancerId,

@@ -1,12 +1,12 @@
 import ChatContainer from "./ChatContainer";
 import { useAuth } from "../../contexts/AuthContext";
 
-interface FloatingChatButtonProps {
+type FloatingChatButtonProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   chatRoomId: string | null;
   isVisible: boolean;
-}
+};
 
 const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   isOpen,

@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useSendMessage } from "../../hooks/messages/useSendMessage";
 import { useAuth } from "../../contexts/AuthContext";
 
-interface ChatFormProps {
+type ChatFormProps = {
   roomId: string;
-}
+};
 
 const ChatForm: React.FC<ChatFormProps> = ({ roomId }) => {
   const [message, setMessage] = useState("");

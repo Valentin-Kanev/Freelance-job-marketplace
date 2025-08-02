@@ -8,11 +8,12 @@ import { useApplyForJob } from "../../hooks/application/useApplyForJob";
 import Button from "../UI/Button";
 import { useToast } from "../../contexts/ToastManager";
 import { useAuth } from "../../contexts/AuthContext";
+import Modal from "../UI/Modal";
 
-interface ApplyForJobProps {
+type ApplyForJobProps = {
   jobId: number;
   onClose: () => void;
-}
+};
 
 const ApplyForJob: React.FC<ApplyForJobProps> = ({ jobId, onClose }) => {
   const { loggedInUserId } = useAuth();
@@ -42,7 +43,6 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ jobId, onClose }) => {
       setError("root.serverError", { message: "User not authenticated." });
       return;
     }
-
     submitApplication({
       jobId,
       data: {
@@ -53,49 +53,51 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ jobId, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
-      {errors.root?.serverError && (
-        <div className="rounded bg-red-100 px-4 py-2 text-red-700">
-          {errors.root.serverError.message}
-        </div>
-      )}
-
-      <div>
-        <label
-          htmlFor="coverLetter"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Cover Letter
-        </label>
-        <textarea
-          id="coverLetter"
-          {...register("coverLetter")}
-          className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Write your cover letter here..."
-          rows={5}
-        />
-        {errors.coverLetter && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.coverLetter.message}
-          </p>
+    <Modal isOpen={true} onClose={onClose} title="Apply for Job">
+      <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
+        {errors.root?.serverError && (
+          <div className="rounded bg-red-100 px-4 py-2 text-red-700">
+            {errors.root.serverError.message}
+          </div>
         )}
-      </div>
 
-      <div className="flex justify-center gap-3">
-        <Button
-          type="button"
-          label="Cancel"
-          onClick={onClose}
-          className="bg-gray-400 text-white hover:bg-gray-500"
-        />
-        <Button
-          type="submit"
-          label={isSubmitting ? "Submitting..." : "Submit"}
-          disabled={isSubmitting}
-          className="bg-blue-600 text-white hover:bg-blue-700"
-        />
-      </div>
-    </form>
+        <div>
+          <label
+            htmlFor="coverLetter"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Cover Letter
+          </label>
+          <textarea
+            id="coverLetter"
+            {...register("coverLetter")}
+            className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Write your cover letter here..."
+            rows={5}
+          />
+          {errors.coverLetter && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.coverLetter.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-center gap-3">
+          <Button
+            type="button"
+            label="Cancel"
+            onClick={onClose}
+            className="bg-gray-400 text-white hover:bg-gray-500"
+          />
+          <Button
+            type="submit"
+            label={isSubmitting ? "Submitting..." : "Submit"}
+            disabled={isSubmitting}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          />
+        </div>
+      </form>
+    </Modal>
   );
 };
 

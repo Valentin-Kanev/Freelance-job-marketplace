@@ -4,14 +4,14 @@ import CreateReview from "../reviews/CreateReview";
 import Button from "../UI/Button";
 import ExpandableText from "../UI/ExpandableText";
 
-interface ApplicationItemProps {
+type ApplicationItemProps = {
   application: {
     applicationId: number;
     freelancerId: string;
     username: string;
     coverLetter: string;
   };
-}
+};
 
 const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
   const [isReviewing, setIsReviewing] = useState(false);

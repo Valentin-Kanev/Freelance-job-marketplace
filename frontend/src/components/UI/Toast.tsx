@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 
-interface ToastProps {
+type ToastProps = {
   message: string;
   duration?: number;
   onClose?: () => void;
-}
+};
 
 const Toast: React.FC<ToastProps> = ({ message, duration = 3000, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);

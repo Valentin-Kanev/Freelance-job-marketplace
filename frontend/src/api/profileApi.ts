@@ -6,17 +6,12 @@ export const updateProfile = async (
   data: UpdateProfileData
 ): Promise<Profile> => {
   const token = localStorage.getItem("authToken");
-
   if (!token) {
     throw new Error("No token provided. Please log in.");
   }
-
   return fetchClient<Profile>(`/profiles/user/${profileId}`, {
     method: "PUT",
     body: JSON.stringify(data),
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
 

@@ -7,11 +7,15 @@ export const useCreateJob = (
   onErrorCallback?: (errorMessage: string) => void
 ) => {
   const queryClient = useQueryClient();
-
   return useMutation<Job, Error, CreateJobData>(createJob, {
     onSuccess: (newJob) => {
       queryClient.invalidateQueries("jobs");
       onSuccessCallback?.(newJob);
+    },
+    onError: (error: Error) => {
+      onErrorCallback?.(
+        error.message || "An error occurred while creating the job."
+      );
     },
   });
 };

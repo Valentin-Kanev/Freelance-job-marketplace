@@ -1,11 +1,11 @@
 import { Job } from "./JobTypes";
 import { formatBudget } from "../../utils/formatBudget";
 
-interface JobListProps {
+type JobListProps = {
   jobs: Job[];
   selectedJobId: number | null;
   onSelectJob: (job: Job) => void;
-}
+};
 
 const JobsList: React.FC<JobListProps> = ({
   jobs,

@@ -2,10 +2,10 @@ import { useCreateChatRoom } from "../../hooks/chat/useCreateChatRoom";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "../UI/Button";
 
-interface StartChatProps {
+type StartChatProps = {
   targetUserId: string;
   onStartChat: (roomId: string) => void;
-}
+};
 
 const StartChat: React.FC<StartChatProps> = ({ targetUserId, onStartChat }) => {
   const { loggedInUserId } = useAuth();

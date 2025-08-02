@@ -7,11 +7,10 @@ import { initialJobDetails } from "../../utils/initialJobDetails";
 import { useCreateJob } from "../../hooks/jobs/useCreateJob";
 
 const JobManagement: React.FC = () => {
+  const { mutate: createJob, isLoading: isCreating } = useCreateJob();
   const { isLoggedIn, loggedInUserId } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>(undefined);
-
-  const { mutate: createJob, isLoading: isCreating } = useCreateJob();
 
   return (
     <div className="bg-gray-50 flex-col items-center overflow-hidden h-screen no-scrollbar">

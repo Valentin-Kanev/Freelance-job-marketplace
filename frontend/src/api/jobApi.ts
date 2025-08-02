@@ -20,7 +20,6 @@ export const editJob = async ({
     data?: EditJobData;
   }>(`/jobs/${jobId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (response && response.data) {
@@ -33,9 +32,6 @@ export const softDeleteJob = async (jobId: number): Promise<void> => {
   return fetchClient<void>(`/jobs/${jobId}`, {
     method: "PATCH",
     body: JSON.stringify({ deletedAt: new Date() }),
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 };
 

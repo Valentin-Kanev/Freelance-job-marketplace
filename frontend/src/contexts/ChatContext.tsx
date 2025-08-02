@@ -1,17 +1,17 @@
 import { createContext, useState, useContext } from "react";
 
-interface ChatContextProps {
+type ChatContextProps = {
   isChatOpen: boolean;
   chatRoomId: string | null;
   openChat: (roomId: string) => void;
   closeChat: () => void;
-}
+};
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
-interface ChatProviderProps {
+type ChatProviderProps = {
   children: React.ReactNode;
-}
+};
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);

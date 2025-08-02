@@ -1,6 +1,6 @@
-interface StatusMessageProps {
+type StatusMessageProps = {
   message: string;
-}
+};
 
 const StatusMessage: React.FC<StatusMessageProps> = ({ message }) => {
   return (

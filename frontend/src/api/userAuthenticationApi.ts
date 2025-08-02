@@ -26,15 +26,10 @@ export const loginUser = async (
 
 export const fetchUserProfile = async (): Promise<User> => {
   const token = localStorage.getItem("authToken");
-
   if (!token) {
     throw new Error("No token found. Please log in.");
   }
-
   return fetchClient<User>("/profile", {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };

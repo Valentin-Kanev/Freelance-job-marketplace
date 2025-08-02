@@ -6,7 +6,7 @@ import {
 } from "../../validationSchemas/jobValidationSchema";
 import Input from "../UI/Input";
 
-interface JobFormProps {
+type JobFormProps = {
   isUpdate: boolean;
   defaultValues: CreateJobValidation;
   onSubmit: (data: CreateJobValidation) => void;
@@ -14,7 +14,7 @@ interface JobFormProps {
   serverError?: string;
   isLoading?: boolean;
   onSuccess?: () => void;
-}
+};
 
 const JobForm: React.FC<JobFormProps> = ({
   isUpdate,

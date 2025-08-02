@@ -5,12 +5,12 @@ import { useSoftDeleteJob } from "../../../hooks/jobs/useSoftDeleteJob";
 import { useToast } from "../../../contexts/ToastManager";
 import { useNavigate } from "react-router-dom";
 
-interface DeleteJobModalProps {
+type DeleteJobModalProps = {
   jobId: number;
   onSuccess?: () => void;
   onClose: () => void;
   isOpen: boolean;
-}
+};
 
 const DeleteJob: React.FC<DeleteJobModalProps> = ({
   jobId,

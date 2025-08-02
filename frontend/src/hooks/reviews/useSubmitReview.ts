@@ -18,7 +18,6 @@ export const useSubmitReview = (onSuccess?: () => void) => {
         onSuccess?.();
       },
       onError: (error: Error) => {
-        console.error("Error submitting review:", error.message);
         error = error.message
           ? new Error(error.message)
           : new Error(
