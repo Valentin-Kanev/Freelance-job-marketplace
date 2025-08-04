@@ -32,8 +32,9 @@ const DeleteJob: React.FC<DeleteJobModalProps> = ({
         onClose();
         navigate("/");
       },
-      onError: (err: any) => {
-        const message = err?.message || "Error deleting job.";
+      onError: (error) => {
+        const message =
+          error instanceof Error ? error.message : "Error deleting job.";
         setError(message);
       },
     });

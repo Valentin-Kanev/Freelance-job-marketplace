@@ -7,8 +7,7 @@ export const useSearchJobsByTitle = (title: string) => {
     ["jobs", title],
     () => (title ? searchJobsByTitle(title) : Promise.resolve([])),
     {
-      enabled: Boolean(title),
-      staleTime: 30 * 1000,
+      enabled: !!title,
       retry: 2,
     }
   );

@@ -1,8 +1,7 @@
 export const fetchClient = async <T>(
   url: string,
   options?: RequestInit,
-  baseUrl: string = process.env.REACT_APP_API_BASE_URL ||
-    "http://localhost:3000"
+  baseUrl: string = process.env.REACT_APP_BASE_URL || "http://localhost:3000"
 ): Promise<T> => {
   const token = localStorage.getItem("authToken");
   const response = await fetch(`${baseUrl}${url}`, {

@@ -8,7 +8,6 @@ export const useSearchProfiles = (query: string) => {
     () => searchProfiles(query),
     {
       enabled: query.trim().length > 0,
-      staleTime: 30 * 1000,
       retry: 2,
     }
   );

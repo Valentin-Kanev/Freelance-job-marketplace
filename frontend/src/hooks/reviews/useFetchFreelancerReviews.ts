@@ -7,7 +7,6 @@ export const useFetchFreelancerReviews = (freelancerId: string) => {
     ["freelancerReviews", freelancerId],
     () => fetchFreelancerReviews(freelancerId),
     {
-      staleTime: 30 * 1000,
       retry: 2,
     }
   );

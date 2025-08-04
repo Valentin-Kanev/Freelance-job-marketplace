@@ -8,9 +8,6 @@ export const useFetchUserProfile = (userId: string | null) => {
     () => fetchUserProfile(userId!),
     {
       enabled: !!userId,
-      cacheTime: 0,
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
     }
   );
 };

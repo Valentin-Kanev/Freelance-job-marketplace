@@ -7,7 +7,6 @@ export const useFetchJobApplications = (jobId: number) => {
     ["jobApplications", jobId],
     () => fetchJobApplications(jobId),
     {
-      staleTime: 30 * 1000,
       retry: 2,
     }
   );

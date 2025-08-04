@@ -4,7 +4,6 @@ import { fetchJobs } from "../../api/jobApi";
 
 export const useFetchJobs = () => {
   return useQuery<Job[], Error>("jobs", fetchJobs, {
-    staleTime: 30 * 1000,
     retry: 2,
   });
 };
